@@ -1,0 +1,76 @@
+---
+import Head from '@/components/Head.astro';
+import Header from '@/components/Header.astro';
+import Footer from '@/components/Footer/index.astro';
+import StatusBar from '@/components/StatusBar.astro';
+import CommandPalette from '@/components/CommandPalette.astro';
+import ShortcutSheet from '@/components/ShortcutSheet.astro';
+import type { Schema } from '@/components/JsonLd.astro';
+import '@/styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+  ogImage?: string;
+  ogType?: 'website' | 'article';
+  canonical?: string;
+  noIndex?: boolean;
+  schemas?: Schema[];
+  /** Source path for the page in the repo, used by [view source] in the footer. */
+  sourcePath?: string;
+}
+
+const {
+  title,
+  description,
+  ogImage,
+  ogType,
+  canonical,
+  noIndex,
+  schemas,
+  sourcePath = `src/pages${Astro.url.pathname === '/' ? '/index.astro' : `${Astro.url.pathname}.astro`}`,
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="en" dir="ltr" data-print-source={`hypertext.studio${Astro.url.pathname}`}>
+  <head>
+    <Head
+      title={title}
+      description={description}
+      ogImage={ogImage}
+      ogType={ogType}
+      canonical={canonical}
+      noIndex={noIndex}
+      schemas={schemas}
+    />
+  </head>
+  <body data-source-path={sourcePath}>
+    <!--
+      Welcome. The page you're reading is a static document.
+      Source: github.com/TheHypertextStudio/website
+      Notes on construction live in the colophon.
+    -->
+    <a class="skip-link" href="#main">Skip to main content</a>
+    <Header />
+    <main id="main">
+      <slot />
+    </main>
+    <StatusBar />
+    <Footer sourcePath={sourcePath} />
+    <CommandPalette />
+    <ShortcutSheet />
+    <script>
+      import '@/scripts/main';
+    </script>
+    <script>
+      // Greet the curious. Intentional view-source easter egg
+      // (see docs/content/style-guide.md §"two exceptions") — must stay
+      // console.log so it reads as a friendly note, not a warning.
+      /* eslint-disable no-console */
+      console.log('%cHypertext Studio', 'font: 600 14px Inter, sans-serif; color: #0033CC;');
+      console.log('Source: https://github.com/TheHypertextStudio/website');
+      /* eslint-enable no-console */
+    </script>
+  </body>
+</html>

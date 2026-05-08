@@ -1,0 +1,14 @@
+# Cloudflare Pages redirects.
+# Format:  source  destination  [status]
+
+# Apex / www unification handled by DNS, but make double-sure for any www hits
+# that slip through:
+https://www.hypertext.studio/*  https://hypertext.studio/:splat  301
+
+# Worker-backed endpoints. These live on the same origin via Pages Functions
+# routing in production; in dev, Wrangler serves them on subdomains.
+/api/poem            /api/poem            200
+/webmention          /webmention          200
+/webmentions         /webmentions         200
+/micropub            /micropub            200
+/oembed              /oembed              200

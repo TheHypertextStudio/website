@@ -1,0 +1,34 @@
+---
+/**
+ * Footer wordmark anchor — the self-closing custom-element tag
+ * `<hypertext-studio/>`. Sits in the bottom-left of the anchor row, sized
+ * to absorb the remaining vertical space so the footer reads as a closing
+ * scene rather than two top-anchored bands with a void between them.
+ */
+---
+
+<div class="footer-wordmark" aria-hidden="true">
+  <span class="syntax">&lt;</span>hypertext-studio<span class="syntax"> /&gt;</span>
+</div>
+
+<style>
+  .footer-wordmark {
+    font-family: var(--font-sans);
+    font-weight: 700;
+    /* Larger on desktop so it actually anchors the band; capped so it never
+     * pushes the small-print row off-screen. */
+    font-size: clamp(3rem, 12vw, 9rem);
+    line-height: 0.85;
+    letter-spacing: -0.04em;
+    color: var(--color-text);
+    padding-inline: var(--layout-margin);
+    padding-block-end: var(--space-sm);
+    overflow: hidden;
+    white-space: nowrap;
+  }
+
+  .footer-wordmark .syntax {
+    color: var(--color-rule);
+    font-weight: 500;
+  }
+</style>

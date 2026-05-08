@@ -1,0 +1,155 @@
+/* =============================================================================
+ * Layout primitives. CSS Grid with logical properties.
+ * Single primary text column; optional marginalia at ≥64rem.
+ * ============================================================================= */
+
+.page {
+  display: grid;
+  grid-template-columns:
+    1fr
+    min(var(--measure), calc(100% - 4rem))
+    min(var(--measure-aside), 1fr)
+    1fr;
+  grid-template-areas: '. main aside .';
+  column-gap: var(--layout-gap);
+  /* Sections inside .page get deliberate vertical rhythm so top-level blocks
+   * (thesis, mission, work, etc.) never bunch against one another. */
+  row-gap: var(--space-xxl);
+  padding-block: var(--space-xxl) var(--space-xl);
+}
+
+.page > * {
+  grid-column: main;
+}
+
+/* Visual rule above each in-page section heading — quiet but deliberate. */
+.page > section > h2:first-child::before {
+  content: '';
+  display: block;
+  inline-size: 3rem;
+  block-size: 1px;
+  background: var(--color-rule);
+  margin-block-end: var(--space-md);
+}
+
+.page > [data-aside] {
+  grid-column: aside;
+}
+
+.page > [data-bleed] {
+  grid-column: main / aside;
+}
+
+@media (max-width: 64rem) {
+  .page {
+    grid-template-columns: 1fr;
+    grid-template-areas: 'main';
+    padding-inline: var(--layout-margin);
+    padding-block: var(--space-xl);
+  }
+  .page > [data-aside],
+  .page > [data-bleed] {
+    grid-column: main;
+  }
+}
+
+main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xxl);
+}
+
+section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.stack-sm {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+.stack-md {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+.stack-lg {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.flow > * + * {
+  margin-block-start: var(--space-md);
+}
+
+/* ---------------------------------------------------------------------------
+ * Prose pages — privacy, colophon, contact, about, 404, studies index. The
+ * column is capped at the body measure regardless of viewport width so long
+ * lines never run edge-to-edge.
+ * ------------------------------------------------------------------------ */
+
+.prose-layout {
+  max-inline-size: var(--measure);
+  margin-inline: auto;
+  padding-inline: var(--layout-margin);
+  padding-block: var(--space-xl);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.prose-layout section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.prose-layout h1 {
+  font-family: var(--font-sans);
+  font-size: 2rem;
+  letter-spacing: -0.01em;
+  margin-block-end: var(--space-md);
+}
+
+.prose-layout h2 {
+  font-family: var(--font-sans);
+  font-size: var(--font-size-h2);
+  margin-block: var(--space-xl) var(--space-sm);
+}
+
+.prose-layout p,
+.prose-layout li {
+  font-family: var(--font-serif);
+  font-size: var(--font-size-body);
+  line-height: var(--leading-body);
+  margin: 0;
+  text-wrap: pretty;
+}
+
+/* Long URLs, code spans, and slugs in prose can't break inside themselves
+ * by default; at narrow viewports they push the page past the viewport
+ * edge. Allow the browser to break them at any character so mobile widths
+ * read cleanly. */
+.prose-layout a,
+.prose-layout code,
+.prose a,
+.prose code {
+  overflow-wrap: anywhere;
+}
+
+.prose-layout .lede {
+  font-size: 1.125rem;
+  color: var(--color-secondary);
+  margin-block-end: var(--space-md);
+}
+
+.prose-layout code {
+  background: rgba(0, 0, 0, 0.04);
+  padding: 0.05em 0.3em;
+  border-radius: 2px;
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+}

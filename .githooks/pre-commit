@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+# Run lint-staged on staged files. Fast (only what's changed).
+# Skip with: git commit --no-verify (don't, except for emergencies).
+
+set -euo pipefail
+
+if ! command -v pnpm >/dev/null 2>&1; then
+  echo "pre-commit: pnpm not on PATH; skipping lint-staged" >&2
+  exit 0
+fi
+
+# lint-staged reads its config from package.json.
+exec pnpm exec lint-staged

@@ -1,0 +1,89 @@
+---
+import t from '@/i18n';
+import { isoDate } from '@/i18n/format';
+
+interface Props {
+  sourcePath?: string;
+}
+
+const { sourcePath = 'src/pages/index.astro' } = Astro.props;
+
+const lastUpdated = import.meta.env.PUBLIC_BUILD_TIME
+  ? isoDate(new Date(import.meta.env.PUBLIC_BUILD_TIME))
+  : isoDate(new Date());
+
+const sourceUrl = `https://github.com/TheHypertextStudio/website/blob/main/${sourcePath}`;
+---
+
+<small class="small-print">
+  <span>{t.footer.smallPrint.location}</span>
+  <span class="sep" aria-hidden="true">·</span>
+  <span
+    >{t.footer.smallPrint.lastUpdatedLabel} <time datetime={lastUpdated}>{lastUpdated}</time></span
+  >
+  <span class="sep" aria-hidden="true">·</span>
+  <a href={sourceUrl} rel="external noopener" title="Open this page's source on GitHub"
+    >{t.footer.smallPrint.viewSourceLabel}</a
+  >
+  <span class="sep" aria-hidden="true">·</span>
+  <button
+    type="button"
+    data-action="print"
+    aria-label={t.footer.smallPrint.printLabel}
+    title={t.footer.smallPrint.printLabel}>{t.footer.smallPrint.printLabel}</button
+  >
+  <span class="sep" aria-hidden="true">·</span>
+  <button
+    type="button"
+    data-action="palette"
+    aria-label="Open the command palette"
+    title="Open the command palette">{t.footer.smallPrint.paletteLabel}</button
+  >
+</small>
+
+<script>
+  document
+    .querySelector<HTMLButtonElement>('[data-action="palette"]')
+    ?.addEventListener('click', () => {
+      document.querySelector<HTMLDialogElement>('#command-palette')?.showModal?.();
+    });
+  document
+    .querySelector<HTMLButtonElement>('[data-action="print"]')
+    ?.addEventListener('click', () => window.print());
+</script>
+
+<style>
+  .small-print {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+    align-items: center;
+    justify-content: center;
+    padding-inline: var(--layout-margin);
+    padding-block: var(--space-md);
+    font-family: var(--font-mono);
+    font-size: var(--font-size-meta);
+    color: var(--color-secondary);
+    border-block-start: var(--rule-thin);
+  }
+
+  .sep {
+    color: var(--color-rule);
+  }
+
+  .small-print a,
+  .small-print button {
+    color: var(--color-secondary);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.2em;
+    font: inherit;
+    cursor: pointer;
+  }
+
+  .small-print a:hover,
+  .small-print button:hover {
+    color: var(--color-link);
+    text-decoration-thickness: 2px;
+  }
+</style>

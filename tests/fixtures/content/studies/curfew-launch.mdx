@@ -1,0 +1,72 @@
+---
+title: "Curfew, the launch study"
+summary: "A small piece of software that lets you revoke your own consent to your devices, ahead of the impulse to use them. Notes from the first release."
+publishedAt: 2026-04-08
+modifiedAt: 2026-04-12
+product: curfew
+tags:
+  - attention
+  - consent
+  - launch
+timeRequired: "PT9M"
+syndicatedTo:
+  - https://bsky.app/profile/hypertext.studio/post/3kpcurfewlaunchexample
+  - https://fed.brid.gy/r/https://hypertext.studio/studies/curfew-launch
+---
+
+Curfew is a small piece of software. It lets you set rules for how you use
+your phone, and — this is the part that matters — it lets you set those rules
+in advance, when you are calm, and apply them later, when you are not.
+
+The design question behind Curfew is whether a person can make a binding
+agreement with their own attention. Most attention-software answers no, then
+sells the disagreement back as a feature. We wanted to know what the answer
+looked like when it was yes.
+
+## What we shipped
+
+The first release does three things and refuses to do a fourth.
+
+It lets you write a set of rules — no Twitter after nine, no shopping apps
+on weekdays, no anything between midnight and morning — and lock those rules
+behind a delay you choose at the moment of writing. Once the delay is set,
+the rules cannot be revised faster than that. If you wrote a one-hour delay
+and then change your mind, the change takes an hour to apply. The point is
+not the delay. The point is that the version of you that planned ahead
+gets to outvote the version of you that did not.
+
+It records, with your permission, what you tried to open during a curfew.
+Not as a guilt log. As a piece of information about which rules are doing
+work and which are theater. The record is local. We do not see it. Nobody
+sees it but you.
+
+It refuses to gamify any of this. There are no streaks. There is no shaming.
+There are no badges for compliance and no scoreboard for relapse. The
+software's job is to be a calm instrument, not a calorie tracker for guilt.
+
+## What the experiment taught
+
+Two things that surprised us, written here so the next experiment can use
+them.
+
+The first: people did not ask for fewer rules. They asked for sharper ones.
+A rule that said "no social apps after ten" was less useful than a rule that
+named the specific app and the specific failure mode. Specificity is part of
+consent. Vague rules turn out to be a way of not actually deciding.
+
+The second: the delay was, for most users, the entire product. The locking
+mechanism — the part we worried would feel paternalistic — was the part
+people described as "the relief." A small finding, but a clear one. The
+question of attention software is not how much it can do for you. It is how
+much you can ask it to hold against you.
+
+## What's next
+
+A second release in the autumn that adds shared rules — a household-level
+curfew that two phones agree to enforce together. The design question there
+is consent at the boundary between two people who already trust each other,
+which is a different shape of problem than the single-user case and one we
+do not yet know how to answer well.
+
+If you want to read more about how this connects to the studio's larger
+question, the [mission](/colophon) is the right place to start.

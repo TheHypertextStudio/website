@@ -1,0 +1,196 @@
+---
+/**
+ * Product dialog — the studio's first-party recontextualization surface.
+ *
+ * Each product has its own separately deployed site (logdate.app, etc.) that
+ * showcases features and how to use the product. This dialog does the
+ * opposite job: it documents the studio's research perspective on the
+ * product — the design question being tested, what the studio is
+ * investigating, the operational status, and references back out to the
+ * product's own site and to related studies on this site.
+ *
+ * No feature list. No CTA pitch. The reader who wants to use the product
+ * follows the canonical link out; the reader who wants to understand what
+ * the studio thinks the product is for stays.
+ */
+import t from '@/i18n';
+
+interface Metadata {
+  stage: string;
+  platforms: string[];
+}
+
+interface Props {
+  slug: string;
+  name: string;
+  url: string;
+  hero: string;
+  heroAlt: string;
+  question: string;
+  investigation: string;
+  metadata: Metadata;
+  ready: boolean;
+}
+
+const { slug, name, url, hero, heroAlt, question, investigation, metadata, ready } = Astro.props;
+const labels = t.work.metadata;
+
+const displayUrl = ready && url ? url.replace(/^https?:\/\//, '') : '';
+---
+
+<dialog id={`${slug}-detail`} class="product-dialog" aria-labelledby={`${slug}-title`}>
+  <article class="product-dialog__inner">
+    <header class="product-dialog__head">
+      <h2 id={`${slug}-title`} class="product-dialog__name">{name}</h2>
+      <button
+        type="button"
+        class="product-dialog__close"
+        aria-label={t.work.card.closeProduct.replace('{product}', name)}
+        data-dialog-close
+      >
+        ×
+      </button>
+    </header>
+
+    <figure class="product-dialog__hero">
+      <img src={hero} alt={heroAlt} />
+    </figure>
+
+    <p class="product-dialog__question">{question}</p>
+
+    <p class="product-dialog__investigation">{investigation}</p>
+
+    <dl class="product-dialog__meta">
+      <dt>{labels.stage}</dt>
+      <dd>{metadata.stage}</dd>
+      <dt>{labels.platforms}</dt>
+      <dd>{metadata.platforms.join(', ')}</dd>
+    </dl>
+
+    <footer class="product-dialog__foot">
+      {
+        ready && url ? (
+          <p>
+            The product itself lives at{' '}
+            <a href={url} rel="external noopener">
+              {displayUrl}
+            </a>
+            .
+          </p>
+        ) : (
+          <p>The product is {metadata.stage.toLowerCase()}; it does not yet have a public site.</p>
+        )
+      }
+    </footer>
+  </article>
+</dialog>
+
+<style>
+  .product-dialog {
+    inline-size: min(40rem, calc(100vw - 2rem));
+    max-block-size: 90dvh;
+    margin: auto;
+    background: var(--color-bg);
+    border: var(--rule-thin);
+    color: var(--color-text);
+  }
+
+  .product-dialog__inner {
+    padding: var(--space-lg);
+    overflow-y: auto;
+    max-block-size: calc(90dvh - 2px);
+  }
+
+  .product-dialog__head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-block-end: var(--space-md);
+  }
+
+  .product-dialog__name {
+    font-family: var(--font-sans);
+    font-size: var(--font-size-title-lg);
+    font-weight: 600;
+    margin: 0;
+  }
+
+  .product-dialog__close {
+    font-family: var(--font-mono);
+    font-size: 1.5rem;
+    line-height: 1;
+    color: var(--color-secondary);
+    inline-size: 2rem;
+    block-size: 2rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .product-dialog__hero {
+    margin: 0 0 var(--space-lg);
+    aspect-ratio: 16 / 9;
+    background: rgba(0, 0, 0, 0.02);
+    border: var(--rule-thin);
+    overflow: hidden;
+  }
+
+  .product-dialog__hero img {
+    inline-size: 100%;
+    block-size: 100%;
+    object-fit: cover;
+  }
+
+  .product-dialog__question {
+    font-family: var(--font-serif);
+    font-size: var(--font-size-body-lg);
+    line-height: var(--leading-body);
+    color: var(--color-text);
+    margin: 0 0 var(--space-md);
+    text-wrap: pretty;
+  }
+
+  .product-dialog__investigation {
+    font-family: var(--font-serif);
+    font-size: var(--font-size-body);
+    line-height: var(--leading-body);
+    color: var(--color-secondary);
+    margin: 0 0 var(--space-lg);
+    text-wrap: pretty;
+  }
+
+  .product-dialog__meta {
+    margin-block-end: var(--space-lg);
+    padding-block: var(--space-md);
+    border-block: var(--rule-thin);
+  }
+
+  .product-dialog__foot {
+    font-family: var(--font-serif);
+    font-size: var(--font-size-body);
+    color: var(--color-secondary);
+  }
+
+  .product-dialog__foot p {
+    margin: 0;
+  }
+</style>
+
+<script>
+  const dialogs = document.querySelectorAll<HTMLDialogElement>('dialog.product-dialog');
+  document.querySelectorAll<HTMLButtonElement>('[data-dialog-target]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const id = btn.getAttribute('data-dialog-target');
+      const dlg = id ? document.querySelector<HTMLDialogElement>(`#${id}`) : null;
+      dlg?.showModal();
+    });
+  });
+  dialogs.forEach((dlg) => {
+    dlg.querySelector('[data-dialog-close]')?.addEventListener('click', () => dlg.close());
+    // Backdrop click closes — click on the dialog element itself (the area
+    // outside .product-dialog__inner).
+    dlg.addEventListener('click', (e) => {
+      if (e.target === dlg) dlg.close();
+    });
+  });
+</script>

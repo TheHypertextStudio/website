@@ -1,0 +1,103 @@
+---
+import Marquee from './Marquee.astro';
+import Wordmark from './Wordmark.astro';
+import Studio from './Studio.astro';
+import SiteMap from './SiteMap.astro';
+import Identity from './Identity.astro';
+import StatusPanel from './StatusPanel.astro';
+import Colophon from './Colophon.astro';
+import Poem from './Poem.astro';
+import Signature from './Signature.astro';
+import SmallPrint from './SmallPrint.astro';
+
+interface Props {
+  sourcePath?: string;
+}
+
+const { sourcePath } = Astro.props;
+---
+
+<footer class="studio-footer" aria-label="Closing">
+  <Marquee />
+  <div class="studio-footer__core">
+    <Studio />
+    <SiteMap />
+    <Identity />
+    <StatusPanel />
+  </div>
+  <Colophon />
+  <div class="studio-footer__anchor">
+    <Wordmark />
+  </div>
+  <Poem />
+  <Signature />
+  <SmallPrint sourcePath={sourcePath} />
+</footer>
+
+<style>
+  .studio-footer {
+    block-size: 100dvh;
+    max-block-size: 100dvh;
+    display: grid;
+    /* Marquee + core + colophon hold their natural height; the anchor row
+     * absorbs the rest of the viewport so the wordmark never floats with
+     * empty space above or below it. Poem, signature, small print follow. */
+    grid-template-rows:
+      auto /* marquee */
+      auto /* operational core */
+      auto /* colophon */
+      minmax(0, 1fr) /* wordmark anchor — fills remaining space */
+      auto /* poem (build-embedded fallback when DNS is silent) */
+      auto /* signature */
+      auto; /* small print */
+    background: var(--color-bg);
+    border-block-start: var(--rule-thin);
+    overflow: hidden;
+  }
+
+  .studio-footer > .colophon {
+    padding-inline: var(--layout-margin);
+    padding-block: var(--space-md) var(--space-lg);
+    border-block-end: var(--rule-thin);
+  }
+
+  .studio-footer__core {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr 1fr 1.2fr;
+    gap: var(--space-lg);
+    padding-inline: var(--layout-margin);
+    padding-block: var(--space-xl) var(--space-lg);
+    align-content: start;
+    min-block-size: 0;
+    overflow: hidden;
+    border-block-end: var(--rule-thin);
+  }
+
+  .studio-footer__anchor {
+    display: flex;
+    align-items: end;
+    justify-content: start;
+    min-block-size: 0;
+    overflow: hidden;
+  }
+
+  @media (max-width: 64rem) {
+    .studio-footer__core {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  @media (max-width: 48rem) {
+    .studio-footer__core {
+      grid-template-columns: 1fr;
+      gap: var(--space-md);
+      padding-block: var(--space-lg);
+    }
+    .studio-footer {
+      block-size: auto;
+      max-block-size: none;
+      min-block-size: 100dvh;
+      overflow: visible;
+    }
+  }
+</style>

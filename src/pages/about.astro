@@ -1,0 +1,41 @@
+---
+import Base from '@/layouts/Base.astro';
+import t from '@/i18n';
+
+interface AboutSection {
+  heading: string;
+  id: string;
+  body: string;
+}
+
+const sections = t.about.sections as ReadonlyArray<AboutSection>;
+---
+
+<Base
+  title="About"
+  description="Hypertext Studio is a small design lab building sustainable, human-centered software."
+  sourcePath="src/pages/about.astro"
+>
+  <article class="prose-layout">
+    <header>
+      <h1>{t.about.title}</h1>
+      <p class="lede">{t.about.lede}</p>
+    </header>
+
+    {
+      sections.map((s) => (
+        <section>
+          <h2 id={s.id}>
+            <a class="anchor" href={`#${s.id}`} aria-label={`Permalink to ${s.heading}`}>
+              #
+            </a>
+            {s.heading}
+          </h2>
+          {s.body.split('\n\n').map((para: string) => (
+            <p>{para}</p>
+          ))}
+        </section>
+      ))
+    }
+  </article>
+</Base>

@@ -1,0 +1,34 @@
+---
+import t from '@/i18n';
+---
+
+<section class="thesis" aria-labelledby="thesis-heading">
+  <h1 id="thesis-heading" class="sr-only">{t.site.name}</h1>
+  <p>{t.thesis.body}</p>
+</section>
+
+<style>
+  .thesis {
+    padding-block: var(--space-lg);
+  }
+
+  .thesis p {
+    font-family: var(--font-serif);
+    font-size: var(--font-size-display);
+    line-height: var(--leading-display);
+    color: var(--color-text);
+    max-inline-size: 16em;
+    text-wrap: balance;
+    margin: 0;
+    font-feature-settings:
+      'kern' 1,
+      'onum' 1;
+    letter-spacing: -0.005em;
+  }
+
+  @media (max-width: 36rem) {
+    .thesis p {
+      font-size: 2rem;
+    }
+  }
+</style>

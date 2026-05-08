@@ -1,0 +1,170 @@
+---
+/**
+ * Colophon — the closing scene at the foot of every published study and
+ * note. Carries the POSSE trail (First published / Also at / Last revised /
+ * Cited by) and a quiet "how to respond" paragraph. Same prose on every
+ * page; it earns repetition the way an edition note does.
+ *
+ * See docs/indieweb.md for the conceptual frame.
+ */
+import { displaySource } from '@/lib/webmentions';
+import { isoDate } from '@/i18n/format';
+import t from '@/i18n';
+
+interface Props {
+  /** First-publication date for this document (frontmatter publishedAt). */
+  publishedAt: Date;
+  /** Last revision date, if the document has been edited since publishing. */
+  modifiedAt?: Date;
+  /** POSSE syndication URLs from frontmatter (Bluesky, fediverse, etc.). */
+  syndicatedTo?: string[];
+  /** Total citations (replies + mentions) so the colophon mirrors the heading. */
+  citationsCount?: number;
+}
+
+const { publishedAt, modifiedAt, syndicatedTo = [], citationsCount = 0 } = Astro.props;
+
+const labels = t.indieweb.colophon;
+---
+
+<aside class="post-colophon" aria-labelledby="post-colophon-heading">
+  <h2 id="post-colophon-heading" class="post-colophon-heading">
+    <span aria-hidden="true">§ </span>{labels.heading}
+  </h2>
+
+  <dl class="post-colophon-dl">
+    <dt>{labels.firstPublished}</dt>
+    <dd>
+      <time datetime={publishedAt.toISOString()} class="dt-published">
+        {isoDate(publishedAt)}
+      </time>
+    </dd>
+
+    {
+      syndicatedTo.length > 0 && (
+        <>
+          <dt>{labels.alsoAt}</dt>
+          <dd>
+            <ul class="post-colophon-syndication" role="list">
+              {syndicatedTo.map((url) => (
+                <li>
+                  <a class="u-syndication" href={url} rel="syndication external">
+                    {displaySource(url)}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </dd>
+        </>
+      )
+    }
+
+    {
+      modifiedAt && (
+        <>
+          <dt>{labels.lastRevised}</dt>
+          <dd>
+            <time datetime={modifiedAt.toISOString()} class="dt-updated">
+              {isoDate(modifiedAt)}
+            </time>
+          </dd>
+        </>
+      )
+    }
+
+    {
+      citationsCount > 0 && (
+        <>
+          <dt>{labels.citedBy}</dt>
+          <dd>
+            <a href="#citations-heading">{citationsCount}</a>
+          </dd>
+        </>
+      )
+    }
+  </dl>
+
+  <p class="post-colophon-respond">{labels.respondNote}</p>
+</aside>
+
+<style>
+  .post-colophon {
+    max-inline-size: var(--measure);
+    margin-block-start: var(--space-xl);
+    margin-block-end: var(--space-xl);
+    margin-inline: auto;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+  }
+
+  .post-colophon-heading {
+    font-family: var(--font-mono);
+    font-size: var(--font-size-label-sm);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--color-secondary);
+    text-align: center;
+    margin: 0;
+    padding-block: var(--space-md);
+    border-block: var(--rule-thin);
+  }
+
+  /* Edition-note dl: monospace labels in the existing meta type, body face
+   * for values, generous label-to-value gap. Mirrors StatusPanel's pattern. */
+  .post-colophon-dl {
+    grid-template-columns: max-content 1fr;
+    column-gap: var(--space-md);
+    row-gap: var(--space-sm);
+    font-family: var(--font-mono);
+    font-size: var(--font-size-meta);
+    line-height: var(--leading-meta);
+    margin: 0;
+  }
+
+  .post-colophon-dl dt {
+    font-family: var(--font-mono);
+    font-size: var(--font-size-meta);
+    text-transform: none;
+    letter-spacing: 0.02em;
+    color: var(--color-secondary);
+    align-self: baseline;
+  }
+
+  .post-colophon-dl dd {
+    margin: 0;
+    color: var(--color-text);
+  }
+
+  .post-colophon-dl time {
+    font-variant-numeric: tabular-nums;
+  }
+
+  .post-colophon-syndication {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+  }
+
+  .post-colophon-syndication a {
+    word-break: break-all;
+  }
+
+  /* Respond note: serif body face, set apart from the dl by a quiet rule.
+   * Same prose on every page — earns repetition the way an edition note does. */
+  .post-colophon-respond {
+    margin: 0;
+    padding-block-start: var(--space-md);
+    border-block-start: var(--rule-thin);
+    font-family: var(--font-serif);
+    font-size: var(--font-size-body-sm);
+    line-height: var(--leading-body);
+    color: var(--color-text);
+    max-inline-size: var(--measure);
+    text-wrap: pretty;
+  }
+</style>

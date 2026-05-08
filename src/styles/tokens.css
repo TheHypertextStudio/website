@@ -1,0 +1,110 @@
+/* =============================================================================
+ * Design tokens — single source of truth for color, type, space.
+ * Spec §7. Use logical properties everywhere; avoid directional names.
+ * ============================================================================= */
+
+:root {
+  /* --- Color ------------------------------------------------------------- */
+  --color-bg: #f5f1e8; /* warm cream */
+  --color-text: #1a1814; /* warm near-black */
+  --color-link: #0033cc; /* classic blue */
+  --color-visited: #6b4fa0; /* faded purple */
+  --color-secondary: #6b6358; /* warm gray */
+  --color-rule: #d4cfc0; /* low-contrast tan/sepia */
+  --color-selection-bg: #fbe6a2;
+  --color-selection-text: var(--color-text);
+  --color-backdrop: rgba(26, 24, 20, 0.6);
+  --color-focus: #0033cc;
+
+  /* --- Typography ------------------------------------------------------- */
+  --font-serif:
+    'Source Serif 4', 'Source Serif Pro', 'Iowan Old Style', 'Charter', 'Georgia', serif;
+  --font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', 'Helvetica Neue', sans-serif;
+  --font-mono: 'IBM Plex Mono', 'JetBrains Mono', 'SF Mono', 'Menlo', 'Consolas', monospace;
+
+  /* Type scale — semantic MD3-flavored steps. Each role has a clear job:
+   * display    — branding-level statements (thesis, hero)
+   * headline   — page titles (h1)
+   * title-lg   — section headings (h2)
+   * title      — sub-section headings (h3)
+   * title-sm   — secondary headings (h4)
+   * body-lg    — lede paragraphs, opening prose
+   * body       — running prose
+   * body-sm    — captions, meta, small prose
+   * label      — overline / mono caps for sections, panels
+   * label-sm   — densest UI labels
+   */
+  --font-size-display: clamp(2.25rem, 4.5vw, 3.5rem);
+  --font-size-headline: 2rem;
+  --font-size-title-lg: 1.5rem;
+  --font-size-title: 1.25rem;
+  --font-size-title-sm: 1.0625rem;
+  --font-size-body-lg: 1.125rem;
+  --font-size-body: 1rem;
+  --font-size-body-sm: 0.9375rem;
+  --font-size-label: 0.8125rem;
+  --font-size-label-sm: 0.75rem;
+
+  /* Back-compat aliases used by older components (will remove later). */
+  --font-size-h2: var(--font-size-title-lg);
+  --font-size-small: var(--font-size-body-sm);
+  --font-size-meta: var(--font-size-label-sm);
+
+  /* Line heights */
+  --leading-display: 1.05;
+  --leading-headline: 1.15;
+  --leading-title: 1.3;
+  --leading-body: 1.55;
+  --leading-meta: 1.5;
+  --leading-heading: var(--leading-title);
+
+  /* --- Space ------------------------------------------------------------ */
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 2rem;
+  --space-xl: 4rem;
+  --space-xxl: 8rem;
+
+  /* --- Layout ----------------------------------------------------------- */
+  --measure: 36rem; /* main column max-width */
+  --measure-aside: 14rem; /* marginalia max-width */
+  --layout-gap: 2rem;
+  --layout-margin: 2rem;
+
+  /* --- Radii / borders -------------------------------------------------- */
+  --rule-thin: 1px solid var(--color-rule);
+
+  /* --- Motion (subtle, always honoring prefers-reduced-motion) --------- */
+  --t-fast: 120ms;
+  --t-med: 240ms;
+  --ease: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Mobile root rebases body type, per §7.1. */
+@media (max-width: 30rem) {
+  :root {
+    font-size: 16px;
+  }
+}
+@media (min-width: 30rem) {
+  :root {
+    font-size: 18px;
+  }
+}
+
+/* High-contrast preference raises link + text contrast. */
+@media (prefers-contrast: more) {
+  :root {
+    --color-text: #000000;
+    --color-link: #0000cc;
+    --color-rule: #000000;
+  }
+}
+
+/* Forced colors mode (Windows high-contrast): hand back to system. */
+@media (forced-colors: active) {
+  :root {
+    color-scheme: light dark;
+  }
+}

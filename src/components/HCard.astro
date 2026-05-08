@@ -1,0 +1,24 @@
+---
+import { SITE_URL, STUDIO_LOCATION, STUDIO_EMAIL, SOCIAL } from '@/consts';
+import t from '@/i18n';
+---
+
+<article class="h-card" hidden>
+  <a class="u-url u-uid p-name" rel="me" href={SITE_URL}>{t.site.name}</a>
+  <p class="p-note">{t.site.description}</p>
+  <img class="u-photo" src="/favicon.svg" alt="" />
+  <a class="u-email" href={`mailto:${STUDIO_EMAIL}`}>{STUDIO_EMAIL}</a>
+  <span class="p-locality">{STUDIO_LOCATION.locality}</span>,
+  <span class="p-region">{STUDIO_LOCATION.region}</span>
+  <a rel="me" href={SOCIAL.github}>GitHub</a>
+  <a rel="me" href={SOCIAL.bluesky}>Bluesky</a>
+  <a rel="me" href={SOCIAL.fediverse}>Fediverse</a>
+</article>
+
+<style>
+  .h-card[hidden] {
+    /* h-card content is for parsers, not readers. Display:none would still be
+     * parsed, but the [hidden] attribute is more explicit and future-proof. */
+    display: none;
+  }
+</style>

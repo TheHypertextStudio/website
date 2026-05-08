@@ -1,0 +1,52 @@
+---
+import { SITE_URL, SITE_NAME, STUDIO_LOCATION, SOCIAL, STUDIO_EMAIL } from '@/consts';
+
+export type Schema = Record<string, unknown>;
+
+interface Props {
+  schemas?: Schema[];
+}
+
+const { schemas = [] } = Astro.props;
+
+const organization: Schema = {
+  '@type': 'Organization',
+  '@id': `${SITE_URL}/#organization`,
+  name: SITE_NAME,
+  url: SITE_URL,
+  logo: `${SITE_URL}/favicon.svg`,
+  description: 'A small design lab building sustainable, human-centered software.',
+  email: STUDIO_EMAIL,
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: '1810 East Sahara Avenue, STE 75246',
+    addressLocality: STUDIO_LOCATION.locality,
+    addressRegion: STUDIO_LOCATION.region,
+    postalCode: '89104',
+    addressCountry: STUDIO_LOCATION.country,
+  },
+  contactPoint: {
+    '@type': 'ContactPoint',
+    contactType: 'customer support',
+    email: STUDIO_EMAIL,
+    availableLanguage: ['English'],
+  },
+  sameAs: [SOCIAL.github, SOCIAL.bluesky, SOCIAL.twitter],
+};
+
+const website: Schema = {
+  '@type': 'WebSite',
+  '@id': `${SITE_URL}/#website`,
+  url: SITE_URL,
+  name: SITE_NAME,
+  publisher: { '@id': `${SITE_URL}/#organization` },
+  inLanguage: 'en',
+};
+
+const graph = {
+  '@context': 'https://schema.org',
+  '@graph': [organization, website, ...schemas],
+};
+---
+
+<script is:inline type="application/ld+json" set:html={JSON.stringify(graph)} />

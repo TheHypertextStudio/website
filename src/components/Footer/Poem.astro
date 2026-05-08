@@ -1,0 +1,58 @@
+---
+/**
+ * Pulls a line of writing from a TXT record on hypertext.studio (via the
+ * /api/poem worker). The studio rotates the record at the registrar — no
+ * deploy needed. When no record is set or the worker is unreachable, the
+ * band keeps a build-embedded fallback so the page still reads complete.
+ */
+import t from '@/i18n';
+
+const fallback = t.footer.poem.fallback;
+---
+
+<figure class="poem" data-poem>
+  <blockquote>
+    <p data-poem-text>{fallback}</p>
+  </blockquote>
+</figure>
+
+<script>
+  const txt = document.querySelector<HTMLElement>('[data-poem-text]');
+  if (txt) {
+    fetch('/api/poem', { cache: 'default' })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data: { poem?: string } | null) => {
+        if (data?.poem && data.poem.trim()) {
+          txt.textContent = data.poem;
+        }
+      })
+      .catch(() => {
+        /* keep the build-embedded fallback */
+      });
+  }
+</script>
+
+<style>
+  .poem {
+    margin: 0;
+    padding-inline: var(--layout-margin);
+    padding-block: var(--space-md);
+    text-align: center;
+    font-family: var(--font-serif);
+  }
+
+  .poem blockquote {
+    margin: 0;
+    font-style: italic;
+    font-size: 1rem;
+    line-height: var(--leading-heading);
+    color: var(--color-secondary);
+    text-wrap: balance;
+    max-inline-size: 32rem;
+    margin-inline: auto;
+  }
+
+  .poem[hidden] {
+    display: none;
+  }
+</style>

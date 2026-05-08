@@ -1,0 +1,21 @@
+# Hypertext Studio
+
+> A small design lab building sustainable, human-centered software.
+
+The studio works on three products and publishes design studies alongside each major release.
+
+## Products
+
+- [LogDate](https://logdate.app): A more careful home for personal memory.
+- Curfew (in design): Software for the version of us that planned ahead.
+- Termsly (in design): Know what's actually being agreed to.
+
+## Studies
+
+- (none yet — the first study will publish alongside the next release)
+
+## About
+
+- [Privacy](https://hypertext.studio/privacy): What the studio collects from a visit (almost nothing) and why.
+- [Colophon](https://hypertext.studio/colophon): How this site is built.
+- [Source](https://github.com/TheHypertextStudio/website): The studio's website source code.

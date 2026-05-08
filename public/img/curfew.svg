@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Curfew placeholder screenshot">
+  <defs>
+    <linearGradient id="cg" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0%" stop-color="#0033CC" stop-opacity="0.08"/>
+      <stop offset="100%" stop-color="#0033CC" stop-opacity="0.02"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="600" fill="#F0EAD6"/>
+  <rect width="800" height="600" fill="url(#cg)"/>
+  <g transform="translate(400 280)">
+    <circle r="120" fill="none" stroke="#1A1814" stroke-width="2" stroke-opacity="0.18"/>
+    <circle r="120" fill="none" stroke="#0033CC" stroke-width="3" stroke-dasharray="565" stroke-dashoffset="170" transform="rotate(-90)"/>
+    <text text-anchor="middle" y="6" font-family="Inter, sans-serif" font-size="44" font-weight="600" fill="#1A1814">22:30</text>
+    <text text-anchor="middle" y="42" font-family="IBM Plex Mono, monospace" font-size="14" fill="#6B6358" letter-spacing="2">FOCUS</text>
+  </g>
+  <text x="400" y="500" text-anchor="middle" font-family="Source Serif 4, serif" font-style="italic" font-size="22" fill="#6B6358">tomorrow's plan, kept by tonight's resolve.</text>
+</svg>

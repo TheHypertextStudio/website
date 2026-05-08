@@ -1,0 +1,146 @@
+---
+title: "Three products, one privacy stance"
+summary: "LogDate, Curfew, and Termsly each handle different data, but they hold the same line on what the studio is allowed to know. A study of the shared architecture and what it costs."
+publishedAt: 2026-01-19
+tags:
+  - privacy
+  - architecture
+  - method
+draft: true
+---
+
+## The shared question
+
+LogDate, Curfew, and Termsly handle different kinds of data. LogDate
+holds journal entries, mostly text and audio, intimately personal.
+Curfew holds rules and small records of what was attempted under
+those rules. Termsly holds a reader's annotations, a writer's edit
+history, and the documents under review. The three products do not
+share a codebase, and they do not share a backend. They share one
+decision.
+
+The decision is about leverage. Specifically: what kind of leverage
+the studio is willing to have over a person who uses any of its
+software. The answer the studio has converged on, applied identically
+across the three products, is _the minimum that lets the software
+work, and not a byte more_.
+
+This is the shared privacy stance. The rest of the study is the
+architecture that follows from it, what that architecture rules out,
+and what the position costs the studio.
+
+## The architectural answer
+
+Three rules, applied identically across the three products, hold the
+position up.
+
+The first is local-first state. The canonical copy of a user's data
+lives on their device. The cloud, when there is one, exists for
+synchronization between devices belonging to the same user; it does
+not exist as the source of truth. A user who deletes the
+application and reinstalls it from a fresh device pulls down a copy
+from the cloud and proceeds from there; a user who deletes the
+application and also revokes the cloud has erased the data and the
+studio cannot recover it. The studio is comfortable with this; the
+inability to recover other people's data is part of what the studio
+means by _not being able to read it_.
+
+The second is end-to-end encryption on sync. When data leaves a
+device it is encrypted with a key that lives only on the user's
+devices and never reaches the studio's servers. The server stores
+opaque blobs and metadata sufficient to route those blobs to the
+user's other devices. The server cannot decrypt them. The
+encryption is built on standard primitives, not bespoke ones, and
+the implementation is open source for each product so that any
+reader who wants to verify can do so against running code.
+
+The third is zero-knowledge servers. The phrase is precise. The
+studio's servers do not contain a representation of user data that
+the studio could read if asked, even with full access to the
+hardware. There is no internal admin tool by which a member of the
+studio can pull up a particular user's journal entries, rule
+history, or annotation set. There is no analytics pipeline that
+ingests user data into the studio's data warehouse, because there
+is no studio data warehouse for user content. The studio cannot
+read what it does not have access to. This is not a self-imposed
+policy that could be relaxed in a future quarter. It is an
+architectural property of the deployment.
+
+## What this rules out, on purpose
+
+A privacy stance described in the abstract is a press release. The
+useful version is a list of features the studio has said no to,
+because those features depend on a posture the studio has decided
+not to take.
+
+Usage analytics on entry content is the first. The studio does not
+track what a person writes about. There are no automated topic
+classifications, no sentiment analyses, no per-entry telemetry. The
+studio knows how often a product is opened and how long sessions
+are, in aggregated form, because those signals matter for the
+basic question of whether the product works at all. What is written
+_into_ the product is not measured.
+
+Personalization of memory surfacing is the second. LogDate, in
+particular, would be more useful in a narrow sense if it could
+choose, on the user's behalf, which past entry to surface today. It
+does not, because personalization of that kind requires the system
+to know what is in each entry, and the system does not know that.
+Date-based surfacing — the same date last year — is what is
+available when content is opaque, and the studio considers that
+trade acceptable.
+
+Cross-device search-as-a-service is the third. A search that runs
+on the server is faster and supports richer queries than a search
+that runs on the device. The price is a server that can read the
+documents being searched. The studio runs search on the device. It
+is slower in some cases. It is, by construction, search the studio
+cannot watch.
+
+Each of these is a feature a competing product offers. Each of
+them, the studio has chosen to do without, because the cost of
+having them is a kind of leverage the studio has decided not to
+have.
+
+## What it costs the studio
+
+Worth naming honestly. The position is not free.
+
+The studio's products ship features more slowly than products that
+treat their own backend as a place to think. A feature that depends
+on having a clear-text view of the data has to be either redesigned
+to run on the device or not built at all. The redesign work is
+real; it is sometimes the larger share of a release.
+
+Support is harder. A user whose sync has stopped working cannot be
+diagnosed by reading their data, because there is no data on the
+studio's side that can be read. The diagnostic flow runs on the
+device, with the user's permission, in the user's view, and that
+is all that is available. The studio considers this a feature for
+the person using the software and a tax on the studio. Both
+descriptions are accurate.
+
+There is no telemetry-driven product loop on user content. The
+studio cannot run an experiment that says _users who write longer
+entries return more often_; the studio cannot see how long entries
+are. Some design decisions that other companies make from data,
+the studio makes from interviews and from its own use of the
+products.
+
+These costs are paid in exchange for a position the studio
+considers load-bearing for the kind of software it wants to make.
+The exchange rate is not always favorable on a per-feature basis.
+It is favorable in the aggregate, by the studio's lights.
+
+## A note for readers who want to verify
+
+Verification is part of the promise. The privacy page documents
+the stance in plain language. The storage and sync layer of each
+product is open source; the source is linked from the colophon of
+each product's site. A reader who wants to confirm that the studio
+does not see what the studio says it does not see can read the
+code.
+
+The studio considers that one of the more important sentences on
+the site, and it is at the bottom of this study because it is the
+answer to the rest.

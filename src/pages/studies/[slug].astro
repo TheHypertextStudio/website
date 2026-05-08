@@ -1,0 +1,223 @@
+---
+import { getCollection, render } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
+import Base from '@/layouts/Base.astro';
+import Citations from '@/components/Citations.astro';
+import Colophon from '@/components/Colophon.astro';
+import { getWebmentions } from '@/lib/webmentions';
+import { isoDate } from '@/i18n/format';
+import { SITE_URL, SITE_NAME } from '@/consts';
+import t from '@/i18n';
+
+export async function getStaticPaths() {
+  const studies = await getCollection('studies');
+  return studies
+    .filter((s: CollectionEntry<'studies'>) => !s.data.draft || import.meta.env.DEV)
+    .map((study: CollectionEntry<'studies'>) => ({
+      params: { slug: study.id },
+      props: { study },
+    }));
+}
+
+interface Props {
+  study: CollectionEntry<'studies'>;
+}
+
+const { study } = Astro.props;
+const { Content } = await render(study);
+const { data } = study;
+
+const canonical = new URL(`/studies/${study.id}`, SITE_URL).toString();
+const mentions = await getWebmentions(canonical);
+const citationsCount = mentions.citations.length;
+---
+
+<Base
+  title={data.title}
+  description={data.summary}
+  ogType="article"
+  canonical={canonical}
+  sourcePath={`src/content/studies/${study.id}.${study.filePath?.split('.').pop() ?? 'mdx'}`}
+>
+  <article class="study h-entry" lang="en">
+    {
+      data.inReplyTo && (
+        <link rel="in-reply-to" href={data.inReplyTo} class="u-in-reply-to" hidden />
+      )
+    }
+    <a class="u-url" href={canonical} hidden>{canonical}</a>
+
+    <header class="study-header">
+      <h1 class="p-name">{data.title}</h1>
+      <p class="study-summary p-summary">{data.summary}</p>
+      <p class="study-meta">
+        <span class="p-author h-card">
+          <a class="u-url p-name" href={SITE_URL} rel="author">{data.author ?? SITE_NAME}</a>
+        </span>
+        {
+          data.product && (
+            <>
+              <span aria-hidden="true">·</span>
+              <span>{data.product}</span>
+            </>
+          )
+        }
+        <span aria-hidden="true">·</span>
+        <time class="dt-published" datetime={data.publishedAt.toISOString()}>
+          {isoDate(data.publishedAt)}
+        </time>
+        {
+          data.timeRequired && (
+            <>
+              <span aria-hidden="true">·</span>
+              <span>{data.timeRequired}</span>
+            </>
+          )
+        }
+      </p>
+    </header>
+
+    <div class="study-body e-content">
+      <Content />
+    </div>
+
+    {
+      data.tags.length > 0 && (
+        <footer class="study-tags" aria-label={t.indieweb.post.tagsLabel}>
+          <ul role="list">
+            {data.tags.map((t: string) => (
+              <li>
+                <a class="p-category" href={`/studies?tag=${encodeURIComponent(t)}`}>
+                  {t}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </footer>
+      )
+    }
+  </article>
+
+  <Citations groups={mentions} />
+
+  <Colophon
+    publishedAt={data.publishedAt}
+    modifiedAt={data.modifiedAt}
+    syndicatedTo={data.syndicatedTo}
+    citationsCount={citationsCount}
+  />
+</Base>
+
+<style>
+  .study {
+    max-inline-size: var(--measure);
+    margin-inline: auto;
+    padding-inline: var(--layout-margin);
+    padding-block: var(--space-xxl) var(--space-xl);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xl);
+  }
+
+  .study-header {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+  }
+
+  .study-product {
+    margin: 0;
+  }
+
+  .study .p-name {
+    font-family: var(--font-sans);
+    font-size: var(--font-size-headline);
+    line-height: var(--leading-headline);
+    font-weight: 700;
+    letter-spacing: -0.015em;
+    margin: 0;
+  }
+
+  .study-summary {
+    font-family: var(--font-serif);
+    font-size: var(--font-size-body-lg);
+    line-height: var(--leading-body);
+    color: var(--color-secondary);
+    text-wrap: pretty;
+    margin: 0;
+  }
+
+  .study-meta {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: var(--font-size-meta);
+    color: var(--color-secondary);
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 0.5ch;
+    align-items: baseline;
+  }
+
+  .study-meta .p-author a {
+    color: var(--color-secondary);
+    text-decoration: none;
+  }
+  .study-meta .p-author a:hover {
+    color: var(--color-link);
+    text-decoration: underline;
+  }
+
+  .study-body {
+    font-family: var(--font-serif);
+    font-size: var(--font-size-body);
+    line-height: var(--leading-body);
+    color: var(--color-text);
+  }
+
+  .study-body :global(p) {
+    margin-block: var(--space-md);
+  }
+
+  .study-body :global(h2),
+  .study-body :global(h3) {
+    margin-block-start: var(--space-xl);
+  }
+
+  .study-body :global(blockquote) {
+    margin-inline: 0;
+    padding-inline-start: var(--space-md);
+    border-inline-start: var(--rule-thin);
+    color: var(--color-secondary);
+  }
+
+  .study-tags ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+  }
+
+  .study-tags a {
+    font-family: var(--font-mono);
+    font-size: var(--font-size-label-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--color-secondary);
+    text-decoration: none;
+    border: 1px solid var(--color-rule);
+    border-radius: 999px;
+    padding: 0.3em 0.75em;
+  }
+
+  .study-tags a:hover {
+    color: var(--color-link);
+    border-color: var(--color-link);
+  }
+
+  /* Hidden microformat-only elements (u-url, u-in-reply-to). */
+  .study [hidden] {
+    display: none;
+  }
+</style>

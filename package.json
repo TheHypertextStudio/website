@@ -1,0 +1,78 @@
+{
+  "name": "@hypertextstudio/website",
+  "private": true,
+  "type": "module",
+  "version": "0.1.0",
+  "description": "hypertext.studio — the studio's public face. A small design lab building sustainable, human-centered software.",
+  "homepage": "https://hypertext.studio",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:TheHypertextStudio/website.git"
+  },
+  "license": "MIT",
+  "packageManager": "pnpm@10.33.3",
+  "engines": {
+    "node": ">=24",
+    "pnpm": ">=10"
+  },
+  "scripts": {
+    "predev": "bash scripts/portless-reset.sh && bash scripts/content-id.sh",
+    "predev:astro": "bash scripts/content-id.sh",
+    "dev": "portless run astro dev",
+    "dev:astro": "astro dev",
+    "prebuild": "bash scripts/content-id.sh && bash scripts/og.sh",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "check": "astro check",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "lint": "eslint . && astro check",
+    "lint:fix": "eslint . --fix",
+    "pretypecheck": "astro sync",
+    "typecheck": "astro check && tsc --noEmit",
+    "test": "vitest run",
+    "test:e2e": "playwright test --project=chromium",
+    "test:e2e:all": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:a11y": "playwright test --project=chromium --grep @a11y",
+    "test:install": "playwright install --with-deps",
+    "screenshots": "node scripts/screenshots.mjs",
+    "doctor": "bash scripts/doctor.sh"
+  },
+  "dependencies": {
+    "@astrojs/mdx": "^5.0.4",
+    "@astrojs/sitemap": "^3.7.2",
+    "astro": "^6.2.2",
+    "microformats-parser": "^2.0.4"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.9",
+    "@cloudflare/workers-types": "^4.20260505.1",
+    "@playwright/test": "^1.49.0",
+    "@types/node": "^24.0.0",
+    "@typescript-eslint/parser": "^8.59.2",
+    "axe-playwright": "^2.2.2",
+    "eslint": "^9.18.0",
+    "eslint-plugin-astro": "^1.7.0",
+    "eslint-plugin-jsx-a11y": "^6.10.2",
+    "lint-staged": "^15.5.0",
+    "portless": "^0.12.0",
+    "prettier": "^3.6.0",
+    "prettier-plugin-astro": "^0.14.1",
+    "sharp": "^0.34.0",
+    "tsx": "^4.20.0",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8",
+    "wrangler": "^4.86.0"
+  },
+  "lint-staged": {
+    "*.{astro,ts,tsx,js,mjs,cjs,css}": [
+      "prettier --write",
+      "eslint --fix"
+    ],
+    "*.{json,md,mdx,yml,yaml,html}": [
+      "prettier --write"
+    ]
+  }
+}

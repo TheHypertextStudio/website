@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+# Conventional commits enforcement.
+# Format:  type(scope?): subject
+# Types:   feat fix chore docs refactor perf test build ci style revert
+
+set -euo pipefail
+
+msg_file="$1"
+first_line="$(head -n1 "$msg_file")"
+
+# Allow merge / revert / fixup commits unchanged.
+if [[ "$first_line" =~ ^(Merge|Revert|fixup!|squash!) ]]; then
+  exit 0
+fi
+
+# Allow comments-only / empty commits to be filtered by git itself.
+if [[ -z "$first_line" || "$first_line" =~ ^# ]]; then
+  exit 0
+fi
+
+if ! [[ "$first_line" =~ ^(feat|fix|chore|docs|refactor|perf|test|build|ci|style|revert)(\([a-z0-9_-]+\))?(!)?:\ .{3,}$ ]]; then
+  cat <<'EOF' >&2
+✗ commit-msg: subject doesn't follow conventional commits.
+
+Expected:  type(scope?): subject
+Examples:  feat: add command palette
+           fix(footer): poem fallback when worker down
+           chore(deps): bump astro to 6.3
+EOF
+  exit 1
+fi

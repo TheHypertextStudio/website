@@ -1,0 +1,95 @@
+---
+import Base from '@/layouts/Base.astro';
+import t from '@/i18n';
+---
+
+<Base title="Contact" description="Reach Hypertext Studio." sourcePath="src/pages/contact.astro">
+  <article class="prose-layout">
+    <header>
+      <h1>{t.contact.title}</h1>
+      <p class="lede">{t.contact.intro}</p>
+    </header>
+
+    <section class="contact-card">
+      <a class="email" href={`mailto:${t.contact.email}`} title={`Email ${t.contact.email}`}>
+        {t.contact.email}
+      </a>
+      <p>{t.contact.body}</p>
+    </section>
+
+    <section>
+      <h2 id="mail">
+        <a class="anchor" href="#mail" aria-label="Permalink to Mail">#</a>
+        {t.contact.mailing.heading}
+      </h2>
+      <address class="mailing">
+        {
+          t.contact.mailing.lines.map((line: string) => (
+            <>
+              {line}
+              <br />
+            </>
+          ))
+        }
+      </address>
+    </section>
+
+    <section>
+      <h2 id="also">
+        <a class="anchor" href="#also" aria-label="Permalink to Also">#</a>
+        Also
+      </h2>
+      <ul class="channels">
+        {
+          t.contact.channels.map((c) => (
+            <li>
+              <a href={c.href} rel={`${c.rel} external noopener`} title={c.label}>
+                {c.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+  </article>
+</Base>
+
+<style>
+  .contact-card {
+    border-block-start: var(--rule-thin);
+    border-block-end: var(--rule-thin);
+    padding-block: var(--space-lg);
+  }
+
+  .email {
+    font-family: var(--font-mono);
+    font-size: 1.5rem;
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.25em;
+    word-break: break-all;
+    color: var(--color-link);
+  }
+
+  .email:hover {
+    text-decoration-thickness: 2px;
+  }
+
+  .mailing {
+    font-family: var(--font-mono);
+    font-size: var(--font-size-body);
+    line-height: 1.6;
+    font-style: normal;
+    color: var(--color-text);
+  }
+
+  .channels {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-md);
+    font-family: var(--font-sans);
+    font-size: var(--font-size-body);
+  }
+</style>

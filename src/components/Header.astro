@@ -1,0 +1,30 @@
+---
+import t from '@/i18n';
+---
+
+<header class="site-header">
+  <a class="wordmark" href="/" title={t.header.homeLinkTitle} rel="home">
+    {t.site.wordmark}
+  </a>
+</header>
+
+<style>
+  .site-header {
+    padding-block: var(--space-lg);
+    padding-inline: var(--layout-margin);
+  }
+
+  .wordmark {
+    font-family: var(--font-sans);
+    font-weight: 600;
+    font-size: 1rem;
+    letter-spacing: -0.01em;
+    color: var(--color-text);
+    text-decoration: none;
+  }
+
+  .wordmark:hover {
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+</style>

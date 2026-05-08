@@ -1,0 +1,14 @@
+/* TEAM */
+Studio: Hypertext Studio
+Site: hypertext.studio
+Contact: hello [at] hypertext.studio
+Location: North Las Vegas, Nevada, US
+
+/* THANKS */
+Built on Astro, hosted on Cloudflare Pages.
+Typefaces: Source Serif 4, Inter, IBM Plex Mono.
+
+/* SITE */
+Standards: HTML5, CSS3, ES2024
+Components: Astro, vanilla JS islands (Svelte selectively for studies)
+Software: Built and maintained with Claude Code.

@@ -1,0 +1,82 @@
+/* =============================================================================
+ * Minimal reset. Targeted, not aggressive.
+ * ============================================================================= */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+  line-height: var(--leading-body);
+}
+
+img,
+svg,
+video,
+canvas,
+audio,
+iframe {
+  display: block;
+  max-inline-size: 100%;
+  block-size: auto;
+}
+
+input,
+button,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
+
+p,
+figure,
+blockquote,
+dl,
+dd {
+  margin: 0;
+}
+
+ul,
+ol {
+  margin: 0;
+  padding-inline-start: 0;
+}
+
+hr {
+  border: 0;
+  border-block-start: var(--rule-thin);
+  margin-block: var(--space-lg);
+}
+
+dialog {
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: inherit;
+  max-block-size: 100dvh;
+  max-inline-size: 100vw;
+}
+
+dialog:not([open]) {
+  display: none;
+}

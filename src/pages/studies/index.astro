@@ -1,0 +1,328 @@
+---
+import Base from '@/layouts/Base.astro';
+import { getCollection } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
+import { getWebmentions } from '@/lib/webmentions';
+import { SITE_URL } from '@/consts';
+import t from '@/i18n';
+import products from '@/data/products.json';
+
+const allStudies = await getCollection('studies');
+const studies = allStudies
+  .filter((s: CollectionEntry<'studies'>) => !s.data.draft || import.meta.env.DEV)
+  .sort(
+    (a: CollectionEntry<'studies'>, b: CollectionEntry<'studies'>) =>
+      b.data.publishedAt.valueOf() - a.data.publishedAt.valueOf(),
+  );
+
+// Fetch citation counts in parallel at build. Failures are silent (lib
+// returns empty groups). Counts surface as a small meta-line item; zero
+// is rendered silently.
+// Drafts (only visible in dev) have no published URL, so the webmention
+// lookup would always return empty — skip the round-trip.
+const citationCounts = await Promise.all(
+  studies.map((s: CollectionEntry<'studies'>) =>
+    s.data.draft
+      ? Promise.resolve(0)
+      : getWebmentions(`${SITE_URL}/studies/${s.id}`).then((g) => g.citations.length),
+  ),
+);
+
+// Pre-bake per-row data — Astro's JSX expressions don't allow `const`
+// inside arrow-function bodies in template children.
+const studyRows = studies.map((s: CollectionEntry<'studies'>, i: number) => ({
+  study: s,
+  cited: citationCounts[i] ?? 0,
+}));
+---
+
+<Base
+  title={t.studies.indexHeading}
+  description="Design decisions and post-mortems from Hypertext Studio."
+  sourcePath="src/pages/studies/index.astro"
+>
+  <article class="studies-layout">
+    <header class="studies-header">
+      <h1>{t.studies.indexHeading}</h1>
+      <p class="lede">{t.studies.lede}</p>
+    </header>
+
+    <aside class="studies-filters" aria-label={t.studies.filtersLabel}>
+      <span class="label">{t.studies.byProductLabel}</span>
+      <ul role="list">
+        <li>
+          <a class="chip is-active" href="/studies" aria-current="page">
+            {t.studies.allLabel}
+          </a>
+        </li>
+        {
+          products.map((p) => (
+            <li>
+              <a class="chip" href={`/studies?product=${p.slug}`}>
+                {p.name}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </aside>
+
+    {
+      studies.length === 0 ? (
+        <section class="studies-empty">
+          <article class="study-card study-card--empty" aria-labelledby="empty-heading">
+            <h2 id="empty-heading">{t.studies.empty.heading}</h2>
+            <p>{t.studies.empty.body}</p>
+            <footer>
+              <a href={t.studies.empty.subscribeUrl} rel="alternate">
+                {t.studies.empty.subscribeLabel} →
+              </a>
+            </footer>
+          </article>
+        </section>
+      ) : (
+        <section class="studies-list">
+          <ul role="list">
+            {studyRows.map(({ study, cited }) => (
+              <li>
+                <article class="study-card">
+                  <header>
+                    <h2>
+                      <a href={`/studies/${study.id}`}>{study.data.title}</a>
+                    </h2>
+                    <p class="meta">
+                      <time datetime={study.data.publishedAt.toISOString()}>
+                        {study.data.publishedAt.toISOString().slice(0, 10)}
+                      </time>
+                      {study.data.product && (
+                        <>
+                          <span aria-hidden="true">·</span>
+                          <span>{study.data.product}</span>
+                        </>
+                      )}
+                      {study.data.timeRequired && (
+                        <>
+                          <span aria-hidden="true">·</span>
+                          <span>{study.data.timeRequired}</span>
+                        </>
+                      )}
+                      {cited > 0 && (
+                        <>
+                          <span aria-hidden="true">·</span>
+                          <span>
+                            {cited} {t.studies.citedSuffix}
+                          </span>
+                        </>
+                      )}
+                    </p>
+                  </header>
+                  <p class="summary">{study.data.summary}</p>
+                  <footer>
+                    <a href={`/studies/${study.id}`}>Read →</a>
+                  </footer>
+                </article>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )
+    }
+  </article>
+</Base>
+
+<style>
+  .studies-layout {
+    max-inline-size: 60rem;
+    margin-inline: auto;
+    padding-inline: var(--layout-margin);
+    padding-block: var(--space-xxl) var(--space-xl);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xl);
+  }
+
+  .studies-header {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+    max-inline-size: var(--measure);
+  }
+
+  .studies-header h1 {
+    font-family: var(--font-sans);
+    font-size: var(--font-size-headline);
+    font-weight: 700;
+    letter-spacing: -0.015em;
+    margin: 0;
+  }
+
+  .studies-header .lede {
+    font-family: var(--font-serif);
+    font-size: var(--font-size-body-lg);
+    line-height: var(--leading-body);
+    color: var(--color-secondary);
+    text-wrap: pretty;
+    margin: 0;
+  }
+
+  .studies-filters {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-md);
+    padding-block: var(--space-sm);
+    border-block: var(--rule-thin);
+  }
+
+  .studies-filters .label {
+    font-family: var(--font-mono);
+    font-size: var(--font-size-label-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--color-secondary);
+  }
+
+  .studies-filters ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+  }
+
+  .chip {
+    display: inline-flex;
+    padding: 0.3em 0.75em;
+    font-family: var(--font-mono);
+    font-size: var(--font-size-label-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--color-secondary);
+    border: 1px solid var(--color-rule);
+    border-radius: 999px;
+    text-decoration: none;
+    transition:
+      color var(--t-fast) var(--ease),
+      border-color var(--t-fast) var(--ease);
+  }
+
+  .chip:hover {
+    color: var(--color-link);
+    border-color: var(--color-link);
+  }
+
+  .chip.is-active {
+    color: var(--color-bg);
+    background: var(--color-text);
+    border-color: var(--color-text);
+  }
+
+  .studies-list ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .studies-list li {
+    border-block-end: var(--rule-thin);
+  }
+  .studies-list li:first-child {
+    border-block-start: var(--rule-thin);
+  }
+
+  .study-card {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-sm);
+    padding-block: var(--space-lg);
+  }
+
+  .study-card .overline {
+    font-family: var(--font-mono);
+    font-size: var(--font-size-label-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-secondary);
+  }
+
+  .study-card h2 {
+    font-family: var(--font-sans);
+    font-size: var(--font-size-title-lg);
+    font-weight: 600;
+    line-height: var(--leading-title);
+    margin: 0;
+  }
+
+  .study-card h2 a {
+    color: var(--color-text);
+    text-decoration: none;
+  }
+
+  .study-card h2 a:hover {
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+  }
+
+  .study-card .meta {
+    font-family: var(--font-mono);
+    font-size: var(--font-size-label-sm);
+    color: var(--color-secondary);
+    display: inline-flex;
+    gap: 0.5ch;
+    margin: 0;
+  }
+
+  .study-card .summary {
+    font-family: var(--font-serif);
+    font-size: var(--font-size-body);
+    line-height: var(--leading-body);
+    color: var(--color-text);
+    margin: 0;
+    max-inline-size: var(--measure);
+  }
+
+  .study-card footer {
+    font-family: var(--font-sans);
+    font-size: var(--font-size-body-sm);
+  }
+
+  /* Empty state — same shape as a real card so the page reads as scaffolded,
+   * not unfinished. Faded slightly so it's clearly the empty case. */
+  .studies-empty {
+    border-block: var(--rule-thin);
+  }
+
+  .study-card--empty {
+    padding-block: var(--space-xl);
+    text-align: start;
+    color: var(--color-secondary);
+    max-inline-size: var(--measure);
+    margin-inline: 0;
+  }
+
+  .study-card--empty h2 {
+    color: var(--color-text);
+  }
+
+  .study-card--empty p {
+    font-family: var(--font-serif);
+    font-size: var(--font-size-body);
+    line-height: var(--leading-body);
+    margin: 0;
+  }
+
+  @media (min-width: 56rem) {
+    .study-card {
+      grid-template-columns: 12rem 1fr;
+      column-gap: var(--space-lg);
+      align-items: baseline;
+    }
+    .study-card > header {
+      grid-row: span 3;
+    }
+  }
+</style>

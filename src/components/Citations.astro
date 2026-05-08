@@ -1,0 +1,338 @@
+---
+/**
+ * Citations — the visible end of the IndieWeb integration.
+ *
+ * Renders received webmentions as a typeset bibliography ("Cited in") plus
+ * one calm aggregate row for likes / reposts / bookmarks. The empty state
+ * is silence (no placeholder); the colophon's respond note teaches readers
+ * how to reply.
+ *
+ * Conceptual frame and the rationale for "no comment form, no facepile,
+ * no threading" lives in docs/indieweb.md.
+ */
+import {
+  type WebmentionGroups,
+  type Webmention,
+  authorFallback,
+  displaySource,
+  excerptParagraphs,
+} from '@/lib/webmentions';
+import t from '@/i18n';
+
+interface Props {
+  groups: WebmentionGroups;
+}
+
+const { groups } = Astro.props;
+const labels = t.indieweb.citations;
+
+const { citations, likes, reposts, bookmarks } = groups;
+
+// Section is omitted entirely when nothing has been said. The colophon's
+// respond note carries the page on its own — the empty state is silence,
+// not a placeholder.
+const hasCitations = citations.length > 0;
+const hasLightweights = likes.length > 0 || reposts.length > 0 || bookmarks.length > 0;
+const renderSection = hasCitations || hasLightweights;
+
+function formatDate(iso: string | null): { datetime: string; display: string } | null {
+  if (!iso) return null;
+  // Accept either an ISO timestamp or a YYYY-MM-DD; extract the date portion
+  // for display. Webmention senders are inconsistent about precision.
+  const date = iso.slice(0, 10);
+  return { datetime: iso, display: date };
+}
+
+function authorLabel(m: Webmention): string {
+  return m.authorName?.trim() || authorFallback(m.source);
+}
+
+const lightweights: Array<readonly [string, Webmention[]]> = [
+  [labels.likedBy, likes],
+  [labels.repostedBy, reposts],
+  [labels.bookmarkedBy, bookmarks],
+];
+
+const allReaders: Webmention[] = [...likes, ...reposts, ...bookmarks];
+---
+
+{
+  renderSection && (
+    <section class="citations" aria-labelledby="citations-heading">
+      <h2 id="citations-heading" class="citations-heading">
+        <span aria-hidden="true">§ </span>
+        {labels.heading}
+      </h2>
+
+      {hasCitations && (
+        <ol class="citations-list" role="list">
+          {citations.map((m) => {
+            const date = formatDate(m.publishedAt ?? m.receivedAt);
+            const paragraphs = excerptParagraphs(m.content);
+            return (
+              <li>
+                <article class="citation h-cite">
+                  <header class="citation-meta">
+                    {m.authorUrl ? (
+                      <a class="citation-author p-author" href={m.authorUrl} rel="external">
+                        {authorLabel(m)}
+                      </a>
+                    ) : (
+                      <span class="citation-author p-author">{authorLabel(m)}</span>
+                    )}
+                    {date && (
+                      <time class="citation-date dt-published" datetime={date.datetime}>
+                        {date.display}
+                      </time>
+                    )}
+                    <a class="citation-source u-url" href={m.source} rel="external">
+                      {displaySource(m.source)}
+                    </a>
+                  </header>
+                  {paragraphs && (
+                    <blockquote class="citation-excerpt e-content">
+                      {paragraphs.map((p) => (
+                        <p>{p}</p>
+                      ))}
+                    </blockquote>
+                  )}
+                </article>
+              </li>
+            );
+          })}
+        </ol>
+      )}
+
+      {hasLightweights && (
+        <div class="citations-aggregate">
+          <p class="citations-aggregate-counts">
+            {lightweights
+              .filter(([, arr]) => arr.length > 0)
+              .map(([label, arr], i, visible) => (
+                <Fragment>
+                  <span>
+                    {label} {arr.length}.
+                  </span>
+                  {i < visible.length - 1 && <span aria-hidden="true"> </span>}
+                </Fragment>
+              ))}
+          </p>
+          <details class="citations-readers">
+            <summary>{labels.showReaders}</summary>
+            <ul role="list">
+              {allReaders.map((m) => (
+                <li>
+                  {m.authorUrl ? (
+                    <a href={m.authorUrl} rel="external">
+                      {authorLabel(m)}
+                    </a>
+                  ) : (
+                    <span>{authorLabel(m)}</span>
+                  )}
+                  <span aria-hidden="true"> · </span>
+                  <a href={m.source} rel="external" class="citations-readers-source">
+                    {authorFallback(m.source)}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </details>
+        </div>
+      )}
+    </section>
+  )
+}
+
+<style>
+  .citations {
+    max-inline-size: var(--measure);
+    margin-block-start: var(--space-xl);
+    margin-inline: auto;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg);
+  }
+
+  /* Heading styled as a section delim: monospace caps between rules. Real
+   * <h2> for assistive tech; visible bracket delivered by ::before / ::after
+   * pseudo-elements so the rules grow with the heading text width without
+   * needing extra DOM. */
+  .citations-heading {
+    font-family: var(--font-mono);
+    font-size: var(--font-size-label-sm);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--color-secondary);
+    text-align: center;
+    margin: 0;
+    padding-block: var(--space-md);
+    border-block: var(--rule-thin);
+  }
+
+  .citations-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg);
+  }
+
+  .citations-list li {
+    margin: 0;
+  }
+
+  .citation {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+  }
+
+  /* Author + date on one row at desktop, source URL on its own line beneath.
+   * On narrow widths, everything stacks. */
+  .citation-meta {
+    display: grid;
+    grid-template-columns: 1fr max-content;
+    column-gap: var(--space-md);
+    row-gap: var(--space-xs);
+    align-items: baseline;
+  }
+
+  .citation-author {
+    font-family: var(--font-sans);
+    font-size: var(--font-size-body);
+    font-weight: 600;
+    color: var(--color-text);
+    text-decoration: none;
+    grid-column: 1;
+  }
+
+  a.citation-author:hover {
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+  }
+
+  .citation-date {
+    font-family: var(--font-mono);
+    font-size: var(--font-size-meta);
+    color: var(--color-secondary);
+    grid-column: 2;
+    justify-self: end;
+  }
+
+  .citation-source {
+    grid-column: 1 / -1;
+    font-family: var(--font-mono);
+    font-size: var(--font-size-meta);
+    color: var(--color-secondary);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.2em;
+    word-break: break-all;
+  }
+
+  .citation-source:hover {
+    color: var(--color-link);
+  }
+
+  /* Excerpt: typeset as a quotation. No CSS-added quote marks — only what
+   * the source page literally said. Indented from the meta row by the
+   * existing rule color, the way a chapbook blocks a long quotation.
+   * Renders the FULL author content by default (multiple paragraphs ok);
+   * truncation only kicks in for extreme outliers and respects sentence
+   * boundaries when it does. */
+  .citation-excerpt {
+    margin: 0;
+    padding-inline-start: var(--space-md);
+    border-inline-start: var(--rule-thin);
+    font-family: var(--font-serif);
+    font-size: var(--font-size-body);
+    line-height: var(--leading-body);
+    color: var(--color-text);
+    text-wrap: pretty;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+  }
+
+  .citation-excerpt p {
+    margin: 0;
+  }
+
+  /* Lightweight aggregate row. Calm; bare counts; one disclosure for names. */
+  .citations-aggregate {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    padding-block-start: var(--space-md);
+    border-block-start: var(--rule-thin);
+    font-family: var(--font-serif);
+    font-size: var(--font-size-body-sm);
+    color: var(--color-text);
+  }
+
+  .citations-aggregate-counts {
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: 0.5ch;
+    row-gap: var(--space-xs);
+  }
+
+  .citations-readers {
+    font-family: var(--font-mono);
+    font-size: var(--font-size-meta);
+    color: var(--color-secondary);
+  }
+
+  .citations-readers > summary {
+    cursor: pointer;
+    color: var(--color-link);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.2em;
+    list-style: none;
+    inline-size: max-content;
+  }
+
+  .citations-readers > summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .citations-readers > summary::before {
+    content: '▸';
+    display: inline-block;
+    margin-inline-end: 0.4em;
+    font-size: 0.85em;
+    transition: transform var(--t-fast) var(--ease);
+  }
+
+  .citations-readers[open] > summary::before {
+    transform: rotate(90deg);
+  }
+
+  .citations-readers ul {
+    list-style: none;
+    padding: 0;
+    margin-block-start: var(--space-sm);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+  }
+
+  .citations-readers a {
+    color: var(--color-secondary);
+    text-decoration: none;
+  }
+
+  .citations-readers a:hover {
+    color: var(--color-link);
+    text-decoration: underline;
+  }
+
+  .citations-readers-source {
+    /* The second link in each row is the source URL; treat it as muted. */
+    color: var(--color-rule);
+  }
+</style>

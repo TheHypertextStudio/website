@@ -1,0 +1,119 @@
+---
+import Base from '@/layouts/Base.astro';
+import Thesis from '@/components/Thesis.astro';
+import ProductEntry from '@/components/ProductEntry.astro';
+import ProductDialog from '@/components/ProductDialog.astro';
+import HCard from '@/components/HCard.astro';
+import products from '@/data/products.json';
+import t from '@/i18n';
+import { SITE_URL } from '@/consts';
+
+// Emit Schema.org SoftwareApplication for every product the studio claims as
+// in flight. Products without a live URL are real artifacts under design;
+// the schema records their existence and lineage. `url` is omitted when the
+// product hasn't shipped yet — schema.org treats it as optional.
+const softwareSchemas = products.map((p) => {
+  const schema: Record<string, unknown> = {
+    '@type': 'SoftwareApplication',
+    name: p.name,
+    description: p.tagline,
+    applicationCategory: 'Productivity',
+    operatingSystem: p.metadata.platforms.join(', '),
+    creator: { '@id': `${SITE_URL}/#organization` },
+  };
+  if (p.ready && p.url) schema.url = p.url;
+  return schema;
+});
+
+const itemListItems = products.map((p, i) => {
+  const item: Record<string, unknown> = {
+    '@type': 'ListItem',
+    position: i + 1,
+    name: p.name,
+  };
+  if (p.ready && p.url) item.url = p.url;
+  return item;
+});
+
+const itemListSchema = {
+  '@type': 'ItemList',
+  '@id': `${SITE_URL}/#products`,
+  name: 'Hypertext Studio products',
+  itemListElement: itemListItems,
+};
+---
+
+<Base sourcePath="src/pages/index.astro" schemas={[itemListSchema, ...softwareSchemas]}>
+  <HCard />
+  <article class="page">
+    <Thesis />
+
+    <section class="mission" id={t.mission.headingId} aria-labelledby="mission-heading">
+      <h2 id="mission-heading">
+        <a class="anchor" href={`#${t.mission.headingId}`} aria-label="Permalink to Mission">#</a>
+        {t.mission.heading}
+      </h2>
+      {t.mission.body.map((paragraph: string) => <p>{paragraph}</p>)}
+    </section>
+
+    <section id={t.work.headingId} aria-labelledby="work-heading">
+      <h2 id="work-heading">
+        <a class="anchor" href={`#${t.work.headingId}`} aria-label="Permalink to Work">#</a>
+        {t.work.heading}
+      </h2>
+      {
+        products.map((p) => (
+          <ProductEntry
+            slug={p.slug}
+            name={p.name}
+            ready={p.ready}
+            question={p.modal.question}
+            metadata={p.metadata}
+            screenshot={p.screenshot}
+            screenshotAlt={p.screenshotAlt}
+          />
+        ))
+      }
+    </section>
+  </article>
+
+  {
+    /* Dialogs render at the end of the document so the native <dialog>
+       backdrop and focus trap behave correctly. Each one is the studio's
+       first-party recontextualization of a piece of work that lives on
+       its own separately deployed product site. */
+  }
+  {
+    products.map((p) => (
+      <ProductDialog
+        slug={p.slug}
+        name={p.name}
+        url={p.url}
+        ready={p.ready}
+        hero={p.modal.hero}
+        heroAlt={p.modal.heroAlt}
+        question={p.modal.question}
+        investigation={p.modal.investigation}
+        metadata={p.metadata}
+      />
+    ))
+  }
+</Base>
+
+<style>
+  .mission {
+    max-inline-size: var(--measure);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+  }
+
+  .mission p {
+    font-family: var(--font-serif);
+    font-size: var(--font-size-body);
+    line-height: var(--leading-body);
+    color: var(--color-text);
+    margin: 0;
+    text-wrap: pretty;
+  }
+</style>

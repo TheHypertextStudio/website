@@ -1,0 +1,67 @@
+/* =============================================================================
+ * HTML element motifs (§8). Restrained — three deliberate places.
+ * ============================================================================= */
+
+/* Section delimiters: visible </section> <section> markers between blocks. */
+hr.section-delim {
+  border: 0;
+  margin-block: var(--space-xl);
+  text-align: center;
+  block-size: 1.5em;
+  position: relative;
+}
+
+hr.section-delim::after {
+  content: attr(data-content);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-meta);
+  color: var(--color-rule);
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+/* Self-anchoring section headings: a low-contrast # permalink that lifts on
+ * heading hover. Lives outside the heading's left edge at desktop, inline
+ * (and visible) on mobile. Subtle in every state — never the loud blue
+ * underline a default <a> would give us. */
+
+:is(h1, h2, h3, h4, h5, h6) {
+  position: relative;
+  scroll-margin-block-start: var(--space-xl);
+}
+
+.anchor {
+  position: absolute;
+  inset-inline-end: 100%;
+  padding-inline-end: 0.4em;
+  color: var(--color-rule);
+  font-family: var(--font-mono);
+  font-weight: 400;
+  font-size: 0.85em;
+  text-decoration: none;
+  opacity: 0;
+  transition:
+    opacity var(--t-fast) var(--ease),
+    color var(--t-fast) var(--ease);
+}
+
+:is(h1, h2, h3, h4, h5, h6):hover .anchor,
+:is(h1, h2, h3, h4, h5, h6):focus-within .anchor,
+.anchor:focus-visible {
+  opacity: 1;
+}
+
+.anchor:hover,
+.anchor:focus-visible {
+  color: var(--color-secondary);
+  text-decoration: none;
+}
+
+/* Mobile: heading anchors are noise on touch (no hover affordance) and
+ * misalign the heading text edge with body copy. Hide them entirely; the
+ * URL fragment / palette / shortcut keys still cover the use case. */
+@media (max-width: 48rem) {
+  .anchor {
+    display: none;
+  }
+}

@@ -1,0 +1,147 @@
+---
+title: "Diffing the EULA"
+summary: "When terms of service get rewritten, line-level diffs become useless. A study of how Termsly compares two versions of a document that is allowed to be rewritten between them."
+publishedAt: 2026-02-08
+product: termsly
+tags:
+  - consent
+  - documents
+  - method
+draft: true
+inReplyTo: https://www.law.nyu.edu/sites/default/files/upload_documents/Bakos_TheUnreadability.pdf
+---
+
+## A reader's problem and a writer's problem
+
+Termsly works two halves of one task. The reader's half is a tool
+that turns a software agreement into language a person can decide on.
+The writer's half is a tool that helps a product team draft and
+publish agreements that are honest about what they ask of the
+reader. The two halves are built against the same internal model of
+a clause and share most of their machinery; the redline view is one
+of the places they meet.
+
+A redline view shows what changed in a terms-of-service document
+relative to its previous version. Any decent legal team can produce
+one when the document is being edited in place. Most consumer terms
+documents, however, are not edited in place. They are rewritten —
+sometimes paragraph by paragraph, sometimes section by section,
+sometimes whole-cloth — and shipped under a fresh `revision-date`. A
+line-by-line diff between two such versions is mostly noise. The
+job of Termsly's redline view is to compute a diff that is useful
+when the document was rewritten between snapshots.
+
+## What "diff" means when the document is rewritten
+
+A useful redline answers a single question: _what did this document
+ask of the reader yesterday, and what does it ask of the reader
+today?_ That is a question about meaning, not about characters.
+
+Two documents may share no consecutive sentence and yet be the same
+contract. Two documents may share most of their sentences and yet
+have a single material change buried in a definition. A
+character-level diff finds the first kind of similarity and misses
+the second. A meaning-level diff is what the redline view is trying
+to be.
+
+This is the technical heart of the feature, and most of the design
+budget went here.
+
+## Anchoring across paraphrase
+
+The internal model is clause-shaped. Termsly's parser breaks a
+document into clauses — the smallest contiguous spans of legal
+intent, roughly _what the document is asking for in this place_. A
+limitation-of-liability clause is one anchor. A data-sharing-with-
+affiliates clause is another. A right-to-delete-an-account clause
+is a third. The parser is conservative; it splits more often than
+less and prefers extra anchors to merged ones.
+
+Each anchor is represented by a normalized statement of intent.
+That statement is generated from the source clause by an extraction
+model trained against a hand-labelled corpus of paired clauses,
+where each pair consists of two paraphrases of the same legal
+effect with their shared statement written by a lawyer. The
+statement is short — a single sentence, declarative, naming the
+subject and the action. "Affiliates may receive personal data for
+marketing." "The provider disclaims liability above the amount paid
+in the prior twelve months." "The account holder may delete the
+account at any time and the provider must honor the deletion within
+thirty days."
+
+When two versions of a document are compared, anchors in the new
+version are matched to anchors in the old version by the similarity
+of their statements. A high-similarity pair, with no token-level
+changes in the underlying clause that change the statement, is
+_unchanged_. A high-similarity pair with token-level edits that do
+not move the statement is _paraphrased_. A pair where the statements
+differ in any respect that the classifier flags as legally
+meaningful is a _material change_. An anchor in the new version
+with no high-similarity counterpart in the old version is _new_.
+
+Each match is shown to the reader with a short explanation.
+Reviewers flag misses; the misses go back into the training corpus.
+The classifier improves slowly; it is not allowed to improve
+quickly, because a redline produced by a fast-moving classifier is
+harder to trust than a redline produced by a slow-moving one.
+
+## Material change versus cosmetic change
+
+This is the most consequential classification call. The same clause
+can be reworded into a hundred shapes, ninety-nine of which carry
+the same legal effect and one of which does not, and the redline is
+useless if it cannot tell those apart.
+
+The studio's working definition: a _material_ change is any change
+that alters a right, an obligation, a remedy, a data flow, a price,
+or the conditions under which any of those can change in the
+future. A _cosmetic_ change is any change that does not.
+
+Two examples make the line clear. Replacing _we may, in our
+discretion, terminate this agreement_ with _we may terminate this
+agreement at any time_ is cosmetic. The discretion that the first
+phrasing reserves is the same discretion the second phrasing names
+more directly. Replacing _we may terminate this agreement for cause_
+with _we may terminate this agreement at any time_, however, is
+material. The first phrasing requires cause; the second does not.
+The words are nearly identical; the rights are not.
+
+The rule for ambiguity is to escalate to material. Under-flagging
+(calling a material change cosmetic) is a worse failure than
+over-flagging (calling a cosmetic change material), because the
+cost of the second falls on a reader who reads a little more
+carefully and the cost of the first falls on a reader who consents
+to something they did not understand they were consenting to. The
+redline view is allowed to be over-cautious. It is not allowed to
+be quiet.
+
+## What a redline is for
+
+A redline view is not consent. The studio is careful with this
+language because the failure mode of consent UX in this category is
+exactly the move that a redline view, badly framed, can encourage:
+the move from _I read what changed and decided_ to _I was shown
+what changed, so I am bound by it_. The first is consent. The
+second is a legal fiction.
+
+What a redline view is for is _informational scaffolding_. It is
+the instrument that makes consent possible — by reducing the cost
+of finding out what changed from the cost of reading two full
+documents to the cost of reading a list — but it does not, by
+itself, do the consenting. The reader still has to read the list.
+The reader still has to understand what each item asks. The reader
+still has to decide. Termsly's job is to keep that decision
+available to a person who has nine other obligations on a Tuesday
+afternoon. Termsly's job is not to make the decision on the
+reader's behalf.
+
+The writer's half of Termsly is built against the same model and
+asks the writer to mark each material change with a one-sentence
+explanation in plain language at the time of editing. That
+explanation appears alongside the redlined clause in the reader's
+view. The two sides of the tool meet there: the writer says, in
+plain language, what changed and why; the reader sees the redline
+and the writer's explanation together. Both sides of an honest
+agreement are participating in the same document.
+
+That is the feature. The rest is upkeep.

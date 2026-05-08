@@ -1,0 +1,62 @@
+[
+  {
+    "slug": "logdate",
+    "name": "LogDate",
+    "tagline": "A better home to document and store your memories.",
+    "screenshot": "/img/logdate.svg",
+    "screenshotAlt": "LogDate's daily entry view, showing a free-form text area above a list of audio entries from earlier in the day.",
+    "url": "https://logdate.app",
+    "linkTitle": "LogDate",
+    "ready": true,
+    "metadata": {
+      "stage": "Beta",
+      "platforms": ["iOS", "macOS", "Android"]
+    },
+    "modal": {
+      "hero": "/img/logdate.svg",
+      "heroAlt": "LogDate's daily entry view, showing a dated journal entry with attached audio.",
+      "question": "What does personal memory software look like when it isn't designed for surveillance, feed extraction, or social validation?",
+      "investigation": "Personal memory software has, by default, become surveillance-shaped: feeds, social validation, third-party data flows. LogDate asks whether dated, durable, private memory — without any of that — is enough to make a journal worth returning to. Each release tests a specific design assumption; what gets added and what is deliberately omitted are both answers."
+    }
+  },
+  {
+    "slug": "curfew",
+    "name": "Curfew",
+    "tagline": "Software for the version of you that planned ahead.",
+    "screenshot": "/img/curfew.svg",
+    "screenshotAlt": "Curfew's app blocking screen at a configured curfew time, with a friendly explanatory message.",
+    "url": "",
+    "linkTitle": "Curfew",
+    "ready": false,
+    "metadata": {
+      "stage": "In design",
+      "platforms": ["iOS", "macOS"]
+    },
+    "modal": {
+      "hero": "/img/curfew.svg",
+      "heroAlt": "Curfew's blocking screen at a configured curfew window.",
+      "question": "What does it look like to give people real, hard-edged control over their own attention — including the ability to revoke their own consent to their devices, before the impulse to use them arises?",
+      "investigation": "Most attention software runs on nudges, streaks, or shaming — friendly attempts to persuade. Curfew bets the opposite direction: scheduled windows of unavailability, set when judgment is good, held by the device when willpower fails. The product tests what happens when software stops trying to be friendly and just holds a line."
+    }
+  },
+  {
+    "slug": "termsly",
+    "name": "Termsly",
+    "tagline": "Know what you're agreeing to.",
+    "screenshot": "/img/termsly.svg",
+    "screenshotAlt": "Termsly's analysis view of a typical software EULA, with key clauses highlighted in plain language.",
+    "url": "",
+    "linkTitle": "Termsly",
+    "ready": false,
+    "metadata": {
+      "stage": "In design",
+      "platforms": ["Web", "iOS"]
+    },
+    "modal": {
+      "hero": "/img/termsly.svg",
+      "heroAlt": "Termsly's analysis view of a software EULA, with key clauses highlighted in plain language.",
+      "question": "What would informed consent actually require, in UX terms, between digital services and the people who use them?",
+      "investigation": "Informed consent on the web is a one-sided fiction — legal documents written for risk mitigation, agreed to without reading. Termsly works both halves at once: a reading tool that turns those documents into language people can actually decide on, and a writing tool that helps product teams publish honestly to begin with. Neither half alone is sufficient."
+    }
+  }
+]

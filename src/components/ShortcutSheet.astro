@@ -1,0 +1,106 @@
+---
+import t from '@/i18n';
+---
+
+<dialog id="shortcut-sheet" class="shortcut-sheet" aria-labelledby="shortcut-sheet-title">
+  <article>
+    <header>
+      <h2 id="shortcut-sheet-title">{t.shortcuts.heading}</h2>
+      <button type="button" data-dialog-close aria-label="Close keyboard shortcuts">×</button>
+    </header>
+    {
+      t.shortcuts.groups.map((g) => (
+        <section>
+          <h3>{g.label}</h3>
+          <dl>
+            {g.items.map((it) => (
+              <>
+                <dt>
+                  {it.keys.map((k, i) => (
+                    <>
+                      <kbd>{k}</kbd>
+                      {i < it.keys.length - 1 && (
+                        <span class="sep" aria-hidden="true">
+                          +
+                        </span>
+                      )}
+                    </>
+                  ))}
+                </dt>
+                <dd>{it.label}</dd>
+              </>
+            ))}
+          </dl>
+        </section>
+      ))
+    }
+  </article>
+</dialog>
+
+<style>
+  .shortcut-sheet {
+    inline-size: min(28rem, calc(100vw - 2rem));
+    margin: auto;
+    padding: var(--space-lg);
+    background: var(--color-bg);
+    border: var(--rule-thin);
+    color: var(--color-text);
+  }
+
+  .shortcut-sheet header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-block-end: var(--space-md);
+  }
+
+  .shortcut-sheet h2 {
+    font-family: var(--font-sans);
+    font-size: var(--font-size-h2);
+    margin: 0;
+  }
+
+  .shortcut-sheet h3 {
+    font-family: var(--font-mono);
+    font-size: var(--font-size-meta);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-secondary);
+    margin-block: var(--space-md) var(--space-sm);
+  }
+
+  .shortcut-sheet dl {
+    grid-template-columns: max-content 1fr;
+    column-gap: var(--space-md);
+  }
+
+  .shortcut-sheet kbd {
+    font-family: var(--font-mono);
+    font-size: var(--font-size-meta);
+    background: rgba(0, 0, 0, 0.04);
+    padding: 0.1em 0.4em;
+    border-radius: 2px;
+  }
+
+  .shortcut-sheet .sep {
+    color: var(--color-secondary);
+    margin-inline: 0.2em;
+  }
+
+  .shortcut-sheet button[data-dialog-close] {
+    font-family: var(--font-mono);
+    font-size: 1.5rem;
+    line-height: 1;
+    color: var(--color-secondary);
+  }
+</style>
+
+<script>
+  const dlg = document.querySelector<HTMLDialogElement>('#shortcut-sheet');
+  dlg
+    ?.querySelector<HTMLButtonElement>('[data-dialog-close]')
+    ?.addEventListener('click', () => dlg.close());
+  dlg?.addEventListener('click', (e) => {
+    if (e.target === dlg) dlg.close();
+  });
+</script>

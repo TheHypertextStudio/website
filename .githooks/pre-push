@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+# Block pushes that won't pass CI: typecheck + build smoke.
+# Skip with: git push --no-verify (only when you really mean it).
+
+set -euo pipefail
+
+cd "$(git rev-parse --show-toplevel)"
+
+if [[ ! -d node_modules ]]; then
+  echo "pre-push: node_modules missing; run 'make install' before pushing" >&2
+  exit 1
+fi
+
+echo "pre-push: typecheck"
+pnpm run typecheck
+
+echo "pre-push: build smoke"
+pnpm run build >/dev/null
+
+echo "pre-push: ok"

@@ -1,0 +1,135 @@
+---
+title: "Voice without transcription"
+summary: "LogDate records what was said; it doesn't translate it. A study of why audio entries are kept as audio, what that protects, and what it gives up."
+publishedAt: 2026-04-22
+product: logdate
+tags:
+  - memory
+  - audio
+  - design
+draft: true
+---
+
+## The decision
+
+LogDate captures voice. Voice stays voice. There is no transcript pane,
+no searchable text rendering of what was said, no AI summary at the top
+of the entry. Audio entries are stored, played back, and revisited as
+audio.
+
+This is the decision. The rest of the study is about what it costs and
+what it preserves, and why the studio decided that the second of those
+was worth the first.
+
+The default in this category is the opposite. Most journaling apps that
+accept voice immediately turn voice into text — for search, for
+"intelligence", for the convenience of the eye. The transcript becomes
+the canonical artifact; the audio becomes a redundant copy. Within a few
+months, most users stop listening to their own recordings entirely. The
+voice is reduced to data about itself.
+
+LogDate's working hypothesis is that this reduction loses something the
+software is supposed to be holding.
+
+## What voice does that text cannot
+
+A voice carries information that text does not. Hesitation, register,
+pace, the texture of a particular morning. When a person reads their own
+journal entry a year later, they read what they wrote and infer the
+rest. When they listen, they hear it.
+
+Voicemail is the closest commercial precedent worth naming. The
+voicemail left by a parent ten years ago, kept on a phone that has since
+changed twice, is not retained because of its information content. It
+is retained because of the voice. The same logic applies to a journal
+entry recorded on the morning of a difficult day. The transcript would
+say what was happening. The recording says how it sounded.
+
+Walter Ong's distinction between primary and secondary orality is useful
+here without being decorative. Primary orality is speech in cultures
+without writing — speech as the only medium. Secondary orality is
+speech mediated by, and at home alongside, written technology — phone
+calls, podcasts, voice memos. LogDate's audio entries are deliberately
+secondary orality: written-down at the level of the system (the entry
+is dated, indexed, navigable), but not at the level of the speech
+itself. The thing spoken stays spoken.
+
+## What the absence of transcription protects
+
+Three protections are what the decision earns, named here in the order
+they were considered.
+
+The first is the privacy of half-formed thought. A transcript reads
+like a finished document. A recording does not. People who know they
+are being transcribed self-edit before they speak, and self-edit again
+when they look at the transcript. Both edits subtract from what the
+journal is for. A recording asks a different version of the speaker —
+the one willing to think out loud — and does not later confront that
+speaker with their unfinished sentences laid out in print.
+
+The second is the speaker's relationship to their own voice over time.
+Returning to a year-old entry as audio is qualitatively different from
+returning to it as text. The voice is changed; the listener is changed;
+the pair of those things is what the experience of remembrance is. A
+transcript flattens that pair into a single line of words.
+
+The third is more architectural than personal. Without transcription,
+LogDate's servers do not contain a searchable corpus of user thought.
+Nothing on the back end is text-indexable. There is no pile of
+journal-text waiting to be analyzed, profiled, or, in a worst case,
+subpoenaed. Audio in encrypted blobs is harder to misuse than text in
+rows. The studio considers this a feature, and one of the easier ones
+to maintain over time.
+
+## How the entries find their way back
+
+A journal that is never re-read is not a journal. Voice without
+transcription puts more pressure on the navigation surface than a
+text-based system would, and LogDate spends most of its design budget
+there.
+
+Entries are organized by date. The home surface is a calendar; the
+secondary surface is a thin index of dates with audio attached. There
+is no chronological feed in the social-media sense. There is no "for
+you" view. The system surfaces entries on calendar anniversaries — the
+same date last year, the same date five years ago — and surfaces
+nothing else without an explicit request. The reasoning is that the
+units of memory people return to voluntarily are dates, places, and
+people; LogDate knows the first reliably, the second imperfectly, and
+the third not at all, so it builds the surface around dates and adds
+nothing it cannot ground.
+
+The audio itself lives locally. A recorded entry is encrypted on
+device before it is written to disk; the key lives in the device's
+secure enclave; the cloud sync layer carries opaque blobs. No
+third-party transcription service ever sees the audio, because there
+is no third-party transcription service in the loop. There is no
+first-party one either.
+
+This is mentioned because it is operationally tedious. The studio
+could add transcription tomorrow and many users would consider it an
+improvement. The decision not to is not a default; it is a position.
+The position is that the absence is what the software is for.
+
+## What the experiment so far has taught
+
+Two observations from the first year of use, written here as
+observations and not as conclusions.
+
+People return to old audio entries less often than they return to old
+text entries. The number is consistent across cohorts and not
+particularly close. A text entry is two seconds to scan; an audio
+entry is its full duration to revisit. The friction is real, and it
+disadvantages audio under any naive measure of engagement. LogDate
+does not optimize for engagement.
+
+The audio entries that people do return to are described, in the
+small qualitative review the studio runs once per release, as feeling
+more present than the text entries returned to alongside them.
+Several people used the same word: _vivid_. None used it for text.
+This is the part of the result the studio takes seriously.
+
+A journal is for the small number of moments worth returning to.
+Audio loses on the volume-of-revisit metric and wins on the
+value-per-revisit one. The studio is comfortable with that
+trade-off. The next release will not change it.

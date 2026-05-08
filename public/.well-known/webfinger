@@ -1,0 +1,16 @@
+{
+  "subject": "acct:hypertext.studio@hypertext.studio",
+  "aliases": ["https://hypertext.studio/", "https://fed.brid.gy/r/https://hypertext.studio/"],
+  "links": [
+    {
+      "rel": "http://webfinger.net/rel/profile-page",
+      "type": "text/html",
+      "href": "https://hypertext.studio/"
+    },
+    {
+      "rel": "self",
+      "type": "application/activity+json",
+      "href": "https://fed.brid.gy/ap/web/hypertext.studio"
+    }
+  ]
+}

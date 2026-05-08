@@ -1,0 +1,8 @@
+/* Aggregate stylesheet. Imported once from Base layout. */
+@import './tokens.css';
+@import './reset.css';
+@import './typography.css';
+@import './base.css';
+@import './layout.css';
+@import './motifs.css';
+@import './print.css';

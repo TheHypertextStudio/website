@@ -1,0 +1,65 @@
+---
+import Base from '@/layouts/Base.astro';
+import t from '@/i18n';
+---
+
+<Base title="Colophon" description="How this site is built." sourcePath="src/pages/colophon.astro">
+  <article class="page prose">
+    <header>
+      <h1>{t.colophon.title}</h1>
+      <p class="lede">{t.colophon.intro}</p>
+    </header>
+
+    <section>
+      <h2>Stack</h2>
+      <dl>
+        {
+          t.colophon.credits.map((c) => (
+            <>
+              <dt>{c.key}</dt>
+              <dd>{c.value}</dd>
+            </>
+          ))
+        }
+      </dl>
+    </section>
+
+    <section>
+      <h2>Source</h2>
+      <p>
+        Every page on this site is open source. Read it, fork it, learn from it.
+        <a href="https://github.com/TheHypertextStudio/website" rel="external noopener">
+          github.com/TheHypertextStudio/website
+        </a>
+      </p>
+    </section>
+  </article>
+</Base>
+
+<style>
+  .prose h1 {
+    font-family: var(--font-sans);
+    font-size: 2rem;
+    margin-block-end: var(--space-md);
+  }
+  .prose h2 {
+    font-family: var(--font-sans);
+    font-size: var(--font-size-h2);
+    margin-block: var(--space-xl) var(--space-sm);
+  }
+  .prose p,
+  .prose .lede {
+    font-family: var(--font-serif);
+    font-size: var(--font-size-body);
+    line-height: var(--leading-body);
+  }
+  .prose .lede {
+    color: var(--color-secondary);
+    margin-block-end: var(--space-md);
+  }
+  .prose section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+  }
+</style>

@@ -1,0 +1,9 @@
+node_modules
+dist
+.astro
+.wrangler
+pnpm-lock.yaml
+public/fonts
+public/img
+**/*.min.css
+**/*.min.js

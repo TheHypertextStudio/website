@@ -1,0 +1,31 @@
+---
+import Base from '@/layouts/Base.astro';
+import t from '@/i18n';
+---
+
+<Base title={t.page404.title} description={t.page404.body} noIndex sourcePath="src/pages/404.astro">
+  <article class="page prose-404">
+    <h1>{t.page404.title}</h1>
+    <p>{t.page404.body}</p>
+    <p>
+      <a href="/" rel="home">{t.page404.homeLinkLabel} →</a>
+    </p>
+  </article>
+</Base>
+
+<style>
+  .prose-404 {
+    max-inline-size: 32rem;
+  }
+  .prose-404 h1 {
+    font-family: var(--font-sans);
+    font-size: 1.75rem;
+    margin-block-end: var(--space-md);
+  }
+  .prose-404 p {
+    font-family: var(--font-serif);
+    font-size: var(--font-size-body);
+    line-height: var(--leading-body);
+    margin-block-end: var(--space-md);
+  }
+</style>

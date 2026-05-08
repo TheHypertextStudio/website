@@ -1,0 +1,179 @@
+---
+import { getCollection, render } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
+import Base from '@/layouts/Base.astro';
+import Citations from '@/components/Citations.astro';
+import Colophon from '@/components/Colophon.astro';
+import { getWebmentions } from '@/lib/webmentions';
+import { isoDate } from '@/i18n/format';
+import { SITE_URL, SITE_NAME } from '@/consts';
+import t from '@/i18n';
+
+export async function getStaticPaths() {
+  const notes = await getCollection('notes');
+  return notes.map((note: CollectionEntry<'notes'>) => ({
+    params: { slug: note.id },
+    props: { note },
+  }));
+}
+
+interface Props {
+  note: CollectionEntry<'notes'>;
+}
+
+const { note } = Astro.props;
+const { Content } = await render(note);
+const { data } = note;
+
+const canonical = new URL(`/notes/${note.id}`, SITE_URL).toString();
+const mentions = await getWebmentions(canonical);
+const citationsCount = mentions.citations.length;
+
+// Notes have no title; derive a short SEO label from the body (or fall back
+// to the date). The full content still renders below.
+const rawBody = (note.body ?? '').replace(/\s+/g, ' ').trim();
+const snippet = rawBody.length > 80 ? `${rawBody.slice(0, 80).trimEnd()}…` : rawBody;
+const seoTitle = snippet || `${t.indieweb.post.noteLabel} · ${isoDate(data.publishedAt)}`;
+---
+
+<Base
+  title={seoTitle}
+  description={snippet || `A note from ${SITE_NAME}.`}
+  ogType="article"
+  canonical={canonical}
+  sourcePath={`src/content/notes/${note.id}.${note.filePath?.split('.').pop() ?? 'mdx'}`}
+>
+  <article class="note h-entry" lang="en">
+    {
+      data.inReplyTo && (
+        <link rel="in-reply-to" href={data.inReplyTo} class="u-in-reply-to" hidden />
+      )
+    }
+    <a class="u-url" href={canonical} hidden>{canonical}</a>
+
+    {
+      /* Notes have no visible title (mf2 post-type discovery treats e-content
+        without p-name as a "note"). A screen-reader-only h1 keeps the page
+        landmark-correct without breaking the brief note typography. */
+    }
+    <h1 class="sr-only">{t.indieweb.post.noteLabel} · {isoDate(data.publishedAt)}</h1>
+
+    <header class="note-header">
+      <p class="note-meta">
+        <span class="p-author h-card">
+          <a class="u-url p-name" href={SITE_URL} rel="author">{SITE_NAME}</a>
+        </span>
+        <span aria-hidden="true">·</span>
+        <time class="dt-published" datetime={data.publishedAt.toISOString()}>
+          {isoDate(data.publishedAt)}
+        </time>
+        {
+          data.inReplyTo && (
+            <>
+              <span aria-hidden="true">·</span>
+              <span>
+                {t.indieweb.post.inReplyToLabel}{' '}
+                <a href={data.inReplyTo} rel="external">
+                  {new URL(data.inReplyTo).host}
+                </a>
+              </span>
+            </>
+          )
+        }
+      </p>
+    </header>
+
+    <div class="note-body e-content">
+      <Content />
+    </div>
+
+    {
+      data.tags.length > 0 && (
+        <footer class="note-tags" aria-label={t.indieweb.post.tagsLabel}>
+          <ul role="list">
+            {data.tags.map((t: string) => (
+              <li>
+                <span class="p-category">{t}</span>
+              </li>
+            ))}
+          </ul>
+        </footer>
+      )
+    }
+  </article>
+
+  <Citations groups={mentions} />
+
+  <Colophon
+    publishedAt={data.publishedAt}
+    syndicatedTo={data.syndicatedTo}
+    citationsCount={citationsCount}
+  />
+</Base>
+
+<style>
+  .note {
+    max-inline-size: var(--measure);
+    margin-inline: auto;
+    padding-inline: var(--layout-margin);
+    padding-block: var(--space-xxl) var(--space-lg);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+  }
+
+  .note-meta {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: var(--font-size-meta);
+    color: var(--color-secondary);
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 0.5ch;
+    align-items: baseline;
+  }
+
+  .note-meta .p-author a,
+  .note-meta a {
+    color: var(--color-secondary);
+    text-decoration: none;
+  }
+  .note-meta a:hover {
+    color: var(--color-link);
+    text-decoration: underline;
+  }
+
+  .note-body {
+    font-family: var(--font-serif);
+    font-size: var(--font-size-body-lg);
+    line-height: var(--leading-body);
+    color: var(--color-text);
+    text-wrap: pretty;
+  }
+
+  .note-body :global(p) {
+    margin-block: var(--space-md);
+  }
+  .note-body :global(p):first-child {
+    margin-block-start: 0;
+  }
+  .note-body :global(p):last-child {
+    margin-block-end: 0;
+  }
+
+  .note-tags ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+    font-family: var(--font-mono);
+    font-size: var(--font-size-label-sm);
+    color: var(--color-secondary);
+  }
+
+  .note [hidden] {
+    display: none;
+  }
+</style>

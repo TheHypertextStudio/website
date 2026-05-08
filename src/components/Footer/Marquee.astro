@@ -1,0 +1,63 @@
+---
+import t from '@/i18n';
+
+const principles = t.footer.principles;
+// Duplicate the list once in markup so the CSS animation can loop seamlessly
+// by translating -50%.
+const repeated = [...principles, ...principles];
+---
+
+<section class="footer-marquee" aria-label={t.footer.marqueeLabel}>
+  <div class="footer-marquee-track" aria-hidden="false">
+    {
+      repeated.map((p, i) => (
+        <>
+          <span>{p}</span>
+          {i < repeated.length - 1 && <span aria-hidden="true">§</span>}
+        </>
+      ))
+    }
+  </div>
+</section>
+
+<style>
+  .footer-marquee {
+    overflow: hidden;
+    border-block: 1px solid var(--color-rule);
+    padding-block: 0.75rem;
+    font-family: var(--font-mono);
+    font-size: var(--font-size-meta);
+    color: var(--color-secondary);
+    mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
+  }
+
+  .footer-marquee-track {
+    display: flex;
+    gap: 2rem;
+    white-space: nowrap;
+    animation: marquee 90s linear infinite;
+    inline-size: max-content;
+  }
+
+  @keyframes marquee {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-50%);
+    }
+  }
+
+  .footer-marquee:hover .footer-marquee-track {
+    animation-play-state: paused;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .footer-marquee-track {
+      animation: none;
+    }
+    .footer-marquee {
+      overflow-x: auto;
+    }
+  }
+</style>

@@ -1,0 +1,70 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`serializeAtom > matches snapshot 1`] = `
+"<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:thr="http://purl.org/syndication/thread/1.0" xml:lang="en">
+  <title>Hypertext Studio</title>
+  <subtitle>A small design lab building sustainable, human-centered software.</subtitle>
+  <id>tag:hypertext.studio,2026:feed</id>
+  <link rel="self" href="https://hypertext.studio/feed.xml" type="application/atom+xml"/>
+  <link rel="alternate" href="https://hypertext.studio" type="text/html"/>
+  <updated>2026-04-12T00:00:00.000Z</updated>
+  <author><name>Hypertext Studio</name><uri>https://hypertext.studio</uri></author>
+  <entry>
+    <title>Curfew, the launch study</title>
+    <id>tag:hypertext.studio,2026:study/curfew-launch</id>
+    <link rel="alternate" href="https://hypertext.studio/studies/curfew-launch" type="text/html"/>
+    <published>2026-04-08T00:00:00.000Z</published>
+    <updated>2026-04-12T00:00:00.000Z</updated>
+    <author><name>Hypertext Studio</name></author>
+    <link rel="syndication" href="https://bsky.app/profile/hypertext.studio/post/3kpcurfewlaunchexample"/>
+    <category term="attention"/>
+    <category term="consent"/>
+    <summary type="text">A small piece of software that lets you revoke your own consent.</summary>
+  </entry>
+  <entry>
+    <title>Note · 2026-04-08</title>
+    <id>tag:hypertext.studio,2026:note/2026-04-08-on-finishing</id>
+    <link rel="alternate" href="https://hypertext.studio/notes/2026-04-08-on-finishing" type="text/html"/>
+    <published>2026-04-08T18:00:00.000Z</published>
+    <updated>2026-04-08T18:00:00.000Z</updated>
+    <author><name>Hypertext Studio</name></author>
+    <category term="notes"/>
+    <category term="launch"/>
+    <summary type="text">Curfew shipped today. The launch study is up.</summary>
+  </entry>
+</feed>"
+`;
+
+exports[`serializeRss > matches snapshot for one study + one note 1`] = `
+"<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title>Hypertext Studio</title>
+    <link>https://hypertext.studio</link>
+    <description>A small design lab building sustainable, human-centered software.</description>
+    <language>en</language>
+    <lastBuildDate>Sun, 12 Apr 2026 00:00:00 +0000</lastBuildDate>
+    <atom:link href="https://hypertext.studio/feed.xml" rel="self" type="application/rss+xml"/>
+    <item>
+      <title>Curfew, the launch study</title>
+      <link>https://hypertext.studio/studies/curfew-launch</link>
+      <guid isPermaLink="true">https://hypertext.studio/studies/curfew-launch</guid>
+      <pubDate>Wed, 08 Apr 2026 00:00:00 +0000</pubDate>
+      <dc:creator>Hypertext Studio</dc:creator>
+      <description><![CDATA[A small piece of software that lets you revoke your own consent.]]></description>
+      <category>attention</category>
+      <category>consent</category>
+    </item>
+    <item>
+      <link>https://hypertext.studio/notes/2026-04-08-on-finishing</link>
+      <guid isPermaLink="true">https://hypertext.studio/notes/2026-04-08-on-finishing</guid>
+      <pubDate>Wed, 08 Apr 2026 18:00:00 +0000</pubDate>
+      <dc:creator>Hypertext Studio</dc:creator>
+      <description><![CDATA[Curfew shipped today. The launch study is up.]]></description>
+      <category>notes</category>
+      <category>launch</category>
+    </item>
+  </channel>
+</rss>"
+`;

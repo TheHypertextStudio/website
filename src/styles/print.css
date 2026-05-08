@@ -1,0 +1,101 @@
+/* =============================================================================
+ * Print stylesheet. The page reads as a real document on paper:
+ * running header, page numbers, source URL, link URLs printed inline.
+ * ============================================================================= */
+
+@media print {
+  @page {
+    size: letter;
+    margin: 1in 0.75in;
+
+    @top-right {
+      content: 'Hypertext Studio';
+      font-family: 'Inter', sans-serif;
+      font-size: 9pt;
+      color: #666;
+    }
+
+    @bottom-right {
+      content: counter(page);
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 9pt;
+      color: #666;
+    }
+
+    @bottom-left {
+      content: attr(data-print-source);
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 8pt;
+      color: #999;
+    }
+  }
+
+  @page :first {
+    margin-top: 1.5in;
+    @top-right {
+      content: none;
+    }
+  }
+
+  /* Hide all chrome that doesn't belong on paper. The page-margin boxes
+   * above carry the attribution; the screen footer's apparatus (colophon as
+   * faux source, status panel, marquee, wordmark, small print) is on-screen
+   * craft, not print content. */
+  .status-bar,
+  .skip-link,
+  dialog,
+  nav.skip-links,
+  .entry__more,
+  .footer-marquee,
+  footer.studio-footer {
+    display: none !important;
+  }
+
+  html,
+  body {
+    background: white !important;
+    color: black !important;
+    font-size: 11pt;
+    line-height: 1.4;
+  }
+
+  /* Inline external link URLs after link text. Internal anchors stay clean. */
+  a[href]:not([href^='#']):not([href^='/'])::after {
+    content: ' [' attr(href) ']';
+    font-size: 0.85em;
+    font-style: italic;
+    color: #555;
+    word-break: break-all;
+  }
+
+  a[href^='#']::after {
+    content: '';
+  }
+
+  p,
+  li,
+  blockquote {
+    orphans: 3;
+    widows: 3;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    break-after: avoid;
+    page-break-after: avoid;
+  }
+
+  figure,
+  .product-card {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  .study-section {
+    break-before: page;
+  }
+}
