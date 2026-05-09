@@ -38,10 +38,7 @@ export const STATIC_FILES = [
   { path: '/robots.txt', contentType: /text\/plain/ },
   { path: '/humans.txt', contentType: /text\/plain/ },
   { path: '/llms.txt', contentType: /text\/(plain|markdown)/ },
-  {
-    path: '/site.webmanifest',
-    contentType: /(application\/manifest|application\/json|text\/plain)/,
-  },
+  { path: '/site.webmanifest', contentType: /^application\/manifest\+json/ },
   { path: '/.well-known/security.txt', contentType: /text\/plain/ },
   { path: '/.well-known/atproto-did', contentType: /text\/plain/ },
   {
