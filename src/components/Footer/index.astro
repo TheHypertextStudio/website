@@ -5,10 +5,8 @@ import Studio from './Studio.astro';
 import SiteMap from './SiteMap.astro';
 import Identity from './Identity.astro';
 import StatusPanel from './StatusPanel.astro';
-import Colophon from './Colophon.astro';
-import Poem from './Poem.astro';
-import Signature from './Signature.astro';
 import SmallPrint from './SmallPrint.astro';
+import PoemEasterEgg from './PoemEasterEgg.astro';
 
 interface Props {
   sourcePath?: string;
@@ -25,13 +23,11 @@ const { sourcePath } = Astro.props;
     <Identity />
     <StatusPanel />
   </div>
-  <Colophon />
   <div class="studio-footer__anchor">
     <Wordmark />
   </div>
-  <Poem />
-  <Signature />
   <SmallPrint sourcePath={sourcePath} />
+  <PoemEasterEgg />
 </footer>
 
 <style>
@@ -39,26 +35,17 @@ const { sourcePath } = Astro.props;
     block-size: 100dvh;
     max-block-size: 100dvh;
     display: grid;
-    /* Marquee + core + colophon hold their natural height; the anchor row
-     * absorbs the rest of the viewport so the wordmark never floats with
-     * empty space above or below it. Poem, signature, small print follow. */
+    /* Marquee + core hold their natural height; the anchor row absorbs the
+     * rest of the viewport so the wordmark never floats with empty space
+     * above or below it. Small print closes the band. */
     grid-template-rows:
       auto /* marquee */
       auto /* operational core */
-      auto /* colophon */
       minmax(0, 1fr) /* wordmark anchor — fills remaining space */
-      auto /* poem (build-embedded fallback when DNS is silent) */
-      auto /* signature */
       auto; /* small print */
     background: var(--color-bg);
     border-block-start: var(--rule-thin);
     overflow: hidden;
-  }
-
-  .studio-footer > .colophon {
-    padding-inline: var(--layout-margin);
-    padding-block: var(--space-md) var(--space-lg);
-    border-block-end: var(--rule-thin);
   }
 
   .studio-footer__core {

@@ -15,14 +15,17 @@
   .footer-wordmark {
     font-family: var(--font-sans);
     font-weight: 700;
-    /* Larger on desktop so it actually anchors the band; capped so it never
-     * pushes the small-print row off-screen. */
-    font-size: clamp(3rem, 12vw, 9rem);
+    /* Anchors the closing band without bullying the rest of the footer.
+     * Sized to fit comfortably between 2rem gutters at every common
+     * desktop width — the previous 12vw / 9rem cap clipped the `/>` on
+     * narrow desktops (64–80rem) under `white-space: nowrap`. */
+    font-size: clamp(2.5rem, 8vw, 6.5rem);
     line-height: 0.85;
     letter-spacing: -0.04em;
     color: var(--color-text);
     padding-inline: var(--layout-margin);
-    padding-block-end: var(--space-sm);
+    /* Breathing room before the poem reads as a separate beat. */
+    padding-block-end: var(--space-md);
     overflow: hidden;
     white-space: nowrap;
   }

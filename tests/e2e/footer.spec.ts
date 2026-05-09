@@ -28,16 +28,6 @@ test.describe('Footer (closing scene)', () => {
     await expect(page.locator('.footer-wordmark')).toBeVisible();
   });
 
-  test('colophon-as-source markup contains real anchor tags', async ({ page }) => {
-    const colophon = page.locator('section.colophon');
-    await expect(colophon).toContainText('typefaces');
-    await expect(colophon.getByRole('link', { name: /Source Serif 4/ })).toBeAttached();
-    await expect(colophon.getByRole('link', { name: /Astro/ })).toBeAttached();
-    await expect(
-      colophon.getByRole('link', { name: /github\.com\/TheHypertextStudio\/website/ }),
-    ).toBeAttached();
-  });
-
   test('site map links every internal route', async ({ page }) => {
     const items = page
       .locator('section', { has: page.locator('h2', { hasText: 'Site map' }) })
@@ -75,16 +65,6 @@ test.describe('Footer (closing scene)', () => {
     await expect.poll(async () => (await time.textContent())?.trim()).toMatch(/^\d{1,2}:\d{2}/);
   });
 
-  test('poem text renders with the build-embedded fallback', async ({ page }) => {
-    const poem = page.locator('figure.poem [data-poem-text]');
-    await expect(poem).toContainText(/if this work is worth doing/i);
-  });
-
-  test('signature renders italic salutation + name', async ({ page }) => {
-    await expect(page.locator('.signature')).toContainText('Faithfully');
-    await expect(page.locator('.signature')).toContainText('Hypertext Studio');
-  });
-
   test('small-print row has [view source], [print this page], [⌘K]', async ({ page }) => {
     const sp = page.locator('small.small-print');
     await expect(sp.getByRole('link', { name: /view source/ })).toBeAttached();
@@ -101,5 +81,51 @@ test.describe('Footer (closing scene)', () => {
   test('clicking [⌘K] in small-print opens the palette', async ({ page }) => {
     await page.locator('small.small-print button[data-action="palette"]').click();
     await expect(page.locator('dialog#command-palette')).toBeVisible();
+  });
+
+  test('hidden poem easter egg is in the page source for view-source readers', async ({ page }) => {
+    // The poem used to render visibly between the wordmark and small-print
+    // row; it now lives only as an HTML comment + console.info. This guard
+    // keeps the easter egg from quietly disappearing in a future refactor.
+    const html = await page.content();
+    expect(html).toContain('If this work is worth doing, it is worth doing right.');
+    expect(html).toContain('— Hypertext Studio');
+  });
+
+  test('hidden poem easter egg logs to the dev console', async ({ page }) => {
+    const messages: string[] = [];
+    page.on('console', (msg) => {
+      if (msg.type() === 'info') messages.push(msg.text());
+    });
+    await page.goto('/');
+    // Allow the /api/poem fetch to settle (or fall back).
+    await expect
+      .poll(() => messages.some((m) => /worth doing/i.test(m)), { timeout: 5000 })
+      .toBe(true);
+  });
+
+  test('hovering the ❦ ornament in small-print reveals the studio motto tooltip', async ({
+    page,
+  }) => {
+    const motto = page.locator('small.small-print .motto');
+    const tooltip = motto.locator('.motto__tooltip');
+
+    // Resting state: tooltip is in the DOM but visually hidden via opacity 0.
+    await expect(tooltip).toContainText(/worth doing/i);
+    expect(await tooltip.evaluate((el) => parseFloat(getComputedStyle(el).opacity))).toBe(0);
+
+    await motto.hover();
+    await expect
+      .poll(async () => tooltip.evaluate((el) => parseFloat(getComputedStyle(el).opacity)))
+      .toBe(1);
+  });
+
+  test('the ❦ ornament is keyboard-reachable and reveals the motto on focus', async ({ page }) => {
+    const motto = page.locator('small.small-print .motto');
+    const tooltip = motto.locator('.motto__tooltip');
+    await motto.focus();
+    await expect
+      .poll(async () => tooltip.evaluate((el) => parseFloat(getComputedStyle(el).opacity)))
+      .toBe(1);
   });
 });

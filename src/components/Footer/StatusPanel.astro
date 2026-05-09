@@ -28,9 +28,13 @@ const labels = t.footer.statusPanel;
 
 <style>
   .status-panel dl {
+    /* Self-contained — don't lean on the global `dl { display: grid }`
+     * rule in src/styles/base.css for our column layout. */
+    display: grid;
     grid-template-columns: max-content 1fr;
     column-gap: var(--space-md);
     row-gap: var(--space-xs);
+    margin: 0;
     font-family: var(--font-mono);
     font-size: var(--font-size-meta);
     line-height: var(--leading-meta);

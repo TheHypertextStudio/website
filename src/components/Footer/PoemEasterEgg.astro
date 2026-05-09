@@ -1,0 +1,40 @@
+---
+/**
+ * Footer poem — hidden, not rendered visibly. Lives in the page in two
+ * places where curious readers might still find it:
+ *
+ *   1. As an HTML comment in the footer source (for view-source readers)
+ *   2. As a styled console.info on page load (for dev-tools openers)
+ *
+ * The visible closing of the footer is just the wordmark + small-print
+ * row; this component reserves no layout space. The /api/poem worker
+ * (workers/poem/index.ts) can still rotate the line at the registrar
+ * without a rebuild — when the worker is silent or the fetch fails, the
+ * build-embedded fallback ships in both surfaces.
+ */
+import t from '@/i18n';
+
+const poem = t.footer.poem.fallback;
+---
+
+<Fragment
+  set:html={`<!--
+  ${poem}
+  — Hypertext Studio
+-->`}
+/>
+
+<script is:inline define:vars={{ fallback: poem }}>
+  // Single styled line in the console — small-press marginal note, not an
+  // alert. Falls through to the build-embedded text when the worker is
+  // silent so the easter egg is reliable offline and during cold starts.
+   
+  const css =
+    'font: italic 14px "Source Serif 4", Georgia, serif; color: #6b6358; background: #f5f1e8; padding: 6px 10px;';
+  // eslint-disable-next-line no-console
+  const log = (line) => console.info('%c%s', css, line);
+  fetch('/api/poem', { cache: 'default' })
+    .then((r) => (r.ok ? r.json() : null))
+    .then((data) => log((data && data.poem && data.poem.trim()) || fallback))
+    .catch(() => log(fallback));
+</script>

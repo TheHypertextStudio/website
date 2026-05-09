@@ -13,6 +13,7 @@ const lastUpdated = import.meta.env.PUBLIC_BUILD_TIME
   : isoDate(new Date());
 
 const sourceUrl = `https://github.com/TheHypertextStudio/website/blob/main/${sourcePath}`;
+const motto = t.footer.poem.fallback;
 ---
 
 <small class="small-print">
@@ -39,6 +40,16 @@ const sourceUrl = `https://github.com/TheHypertextStudio/website/blob/main/${sou
     aria-label="Open the command palette"
     title="Open the command palette">{t.footer.smallPrint.paletteLabel}</button
   >
+  <span class="sep" aria-hidden="true">·</span>
+  <button
+    type="button"
+    class="motto"
+    aria-label={`Studio motto: ${motto}`}
+    aria-describedby="footer-motto-tooltip"
+  >
+    <span class="motto__glyph" aria-hidden="true">❦</span>
+    <span id="footer-motto-tooltip" class="motto__tooltip" role="tooltip">{motto}</span>
+  </button>
 </small>
 
 <script>
@@ -85,5 +96,91 @@ const sourceUrl = `https://github.com/TheHypertextStudio/website/blob/main/${sou
   .small-print button:hover {
     color: var(--color-link);
     text-decoration-thickness: 2px;
+  }
+
+  /* ----- Studio motto easter egg -----------------------------------------
+   * A small typographic ornament (❦) at the right end of the small-print
+   * row. Hover, keyboard-focus, or tap reveals the studio motto in a
+   * styled tooltip above the glyph. The motto also lives as an HTML
+   * comment and a styled console.info via PoemEasterEgg.astro — three
+   * surfaces total (mouse, keyboard, view-source). It's a real <button>
+   * (not a span+tabindex) so screen readers and a11y linters recognise it
+   * as interactive. The aria-describedby links the trigger to the tooltip
+   * so the motto is announced after the button label.
+   * ---------------------------------------------------------------------- */
+  .small-print button.motto {
+    /* Reset .small-print button defaults so the trigger reads as a glyph,
+     * not an underlined call-to-action. */
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    text-decoration: none;
+    cursor: help;
+    color: var(--color-rule);
+
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    transition: color var(--t-fast) var(--ease);
+    border-radius: 2px;
+  }
+  .small-print button.motto:hover,
+  .small-print button.motto:focus-visible {
+    color: var(--color-secondary);
+    text-decoration: none;
+  }
+  .small-print button.motto:focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 2px;
+  }
+
+  .motto__tooltip {
+    position: absolute;
+    inset-block-end: calc(100% + var(--space-sm));
+    inset-inline-end: 0;
+    inline-size: max-content;
+    max-inline-size: min(22rem, calc(100vw - 2 * var(--layout-margin)));
+
+    font-family: var(--font-serif);
+    font-size: var(--font-size-body-sm);
+    font-style: italic;
+    font-weight: 400;
+    line-height: var(--leading-body);
+    letter-spacing: normal;
+    text-transform: none;
+    text-align: start;
+    color: var(--color-secondary);
+
+    background: var(--color-bg);
+    border: 1px solid var(--color-rule);
+    padding: var(--space-sm) var(--space-md);
+    box-shadow: 0 4px 12px rgba(26, 24, 20, 0.06);
+
+    opacity: 0;
+    transform: translateY(0.25rem);
+    pointer-events: none;
+    transition:
+      opacity var(--t-fast) var(--ease),
+      transform var(--t-fast) var(--ease);
+  }
+
+  .motto:hover .motto__tooltip,
+  .motto:focus-visible .motto__tooltip,
+  .motto:focus-within .motto__tooltip {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .motto__tooltip {
+      transform: none;
+      transition: opacity var(--t-fast) var(--ease);
+    }
+    .motto:hover .motto__tooltip,
+    .motto:focus-visible .motto__tooltip,
+    .motto:focus-within .motto__tooltip {
+      transform: none;
+    }
   }
 </style>

@@ -3,17 +3,19 @@ import t from '@/i18n';
 
 const principles = t.footer.principles;
 // Duplicate the list once in markup so the CSS animation can loop seamlessly
-// by translating -50%.
+// by translating -50%. For the loop to be truly seamless, both halves must
+// be byte-identical — emit a trailing `§` after every principle (including
+// the last) so the seam character is part of the unit, not skipped.
 const repeated = [...principles, ...principles];
 ---
 
 <section class="footer-marquee" aria-label={t.footer.marqueeLabel}>
   <div class="footer-marquee-track" aria-hidden="false">
     {
-      repeated.map((p, i) => (
+      repeated.map((p) => (
         <>
           <span>{p}</span>
-          {i < repeated.length - 1 && <span aria-hidden="true">§</span>}
+          <span aria-hidden="true">§</span>
         </>
       ))
     }
