@@ -17,6 +17,7 @@
 
 import { isoDate } from '@/i18n/format';
 import t from '@/i18n';
+import { SITE_URL, SITE_NAME, SITE_LOCALE } from '@/consts';
 
 export type FeedKind = 'study' | 'note';
 
@@ -254,3 +255,26 @@ export function serializeJsonFeed(items: FeedItem[], meta: FeedMeta): string {
 
 /** Exported for tests and for any caller that wants to know the cap. */
 export const FEED_ITEM_LIMIT = FEED_LIMIT;
+
+/**
+ * Construct the per-feed metadata block. Pulls site-wide constants and i18n
+ * once per route so the three feed endpoints don't re-derive identical setup.
+ *
+ * `feedPath` is the absolute path of the feed itself ('/feed.xml' etc.) and
+ * becomes `feedUrl` in the result, used by RSS's `<atom:link rel="self">`,
+ * Atom's `<link rel="self">`, and JSON Feed's `feed_url`.
+ *
+ * `buildDate` is the publishedAt of the newest item — never `new Date()`,
+ * which would make every static rebuild look like a content change to
+ * aggregators. Empty feed falls back to FEED_EPOCH.
+ */
+export function buildFeedMeta(feedPath: string, items: FeedItem[]): FeedMeta {
+  return {
+    siteName: SITE_NAME,
+    siteUrl: SITE_URL,
+    description: t.site.description,
+    feedUrl: new URL(feedPath, SITE_URL).toString(),
+    language: SITE_LOCALE,
+    buildDate: items[0]?.publishedAt ?? FEED_EPOCH,
+  };
+}
