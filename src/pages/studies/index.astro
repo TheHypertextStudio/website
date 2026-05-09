@@ -5,7 +5,6 @@ import type { CollectionEntry } from 'astro:content';
 import { getWebmentions } from '@/lib/webmentions';
 import { SITE_URL } from '@/consts';
 import t from '@/i18n';
-import products from '@/data/products.json';
 
 const allStudies = await getCollection('studies');
 const studies = allStudies
@@ -46,26 +45,6 @@ const studyRows = studies.map((s: CollectionEntry<'studies'>, i: number) => ({
       <h1>{t.studies.indexHeading}</h1>
       <p class="lede">{t.studies.lede}</p>
     </header>
-
-    <aside class="studies-filters" aria-label={t.studies.filtersLabel}>
-      <span class="label">{t.studies.byProductLabel}</span>
-      <ul role="list">
-        <li>
-          <a class="chip is-active" href="/studies" aria-current="page">
-            {t.studies.allLabel}
-          </a>
-        </li>
-        {
-          products.map((p) => (
-            <li>
-              <a class="chip" href={`/studies?product=${p.slug}`}>
-                {p.name}
-              </a>
-            </li>
-          ))
-        }
-      </ul>
-    </aside>
 
     {
       studies.length === 0 ? (
@@ -135,7 +114,9 @@ const studyRows = studies.map((s: CollectionEntry<'studies'>, i: number) => ({
     max-inline-size: 60rem;
     margin-inline: auto;
     padding-inline: var(--layout-margin);
-    padding-block: var(--space-xxl) var(--space-xl);
+    /* Tighter top than the project default so the first card lands above
+     * the fold — studies are the page's reason to exist, not the chrome. */
+    padding-block: var(--space-xl) var(--space-xl);
     display: flex;
     flex-direction: column;
     gap: var(--space-xl);
@@ -163,59 +144,6 @@ const studyRows = studies.map((s: CollectionEntry<'studies'>, i: number) => ({
     color: var(--color-secondary);
     text-wrap: pretty;
     margin: 0;
-  }
-
-  .studies-filters {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: var(--space-md);
-    padding-block: var(--space-sm);
-    border-block: var(--rule-thin);
-  }
-
-  .studies-filters .label {
-    font-family: var(--font-mono);
-    font-size: var(--font-size-label-sm);
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    color: var(--color-secondary);
-  }
-
-  .studies-filters ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-sm);
-  }
-
-  .chip {
-    display: inline-flex;
-    padding: 0.3em 0.75em;
-    font-family: var(--font-mono);
-    font-size: var(--font-size-label-sm);
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    color: var(--color-secondary);
-    border: 1px solid var(--color-rule);
-    border-radius: 999px;
-    text-decoration: none;
-    transition:
-      color var(--t-fast) var(--ease),
-      border-color var(--t-fast) var(--ease);
-  }
-
-  .chip:hover {
-    color: var(--color-link);
-    border-color: var(--color-link);
-  }
-
-  .chip.is-active {
-    color: var(--color-bg);
-    background: var(--color-text);
-    border-color: var(--color-text);
   }
 
   .studies-list ul {

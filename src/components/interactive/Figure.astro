@@ -1,0 +1,101 @@
+---
+/**
+ * Figure — diagrams, illustrations, schematic visuals embedded in
+ * studies. A typeset caption sits below; an optional small "Figure N"
+ * label sits above the caption in mono. The slot accepts inline SVG,
+ * <img>, or any markup the author wants to drop in — figures don't
+ * impose a style on their own contents.
+ *
+ * Default placement: main column, body width. With `bleed`, spans the
+ * main + aside columns for wider diagrams and capability matrices.
+ *
+ * Distill.pub uses the same affordance with the same default. See
+ * docs/mission.md §10 (reference register).
+ */
+interface Props {
+  /** Caption text. Rendered as the figcaption. Optional. */
+  caption?: string;
+  /** Reach across main + aside grid columns. Useful for wide diagrams. */
+  bleed?: boolean;
+  /**
+   * Numeric or symbolic figure label (e.g. 1, 2, "A"). Rendered in mono
+   * above the caption. Optional; figures without a label are still
+   * captioned.
+   */
+  number?: number | string;
+  /** Optional id for the figure (anchors deep-links). */
+  id?: string;
+}
+
+const { caption, bleed = false, number, id } = Astro.props;
+
+const dataAttr = bleed ? { 'data-bleed': '' } : {};
+---
+
+<figure class="figure" id={id} {...dataAttr}>
+  <div class="figure-body"><slot /></div>
+  {
+    (caption || number !== undefined) && (
+      <figcaption class="figure-caption">
+        {number !== undefined && <span class="figure-number">Figure {number}</span>}
+        {caption && <span class="figure-text">{caption}</span>}
+      </figcaption>
+    )
+  }
+</figure>
+
+<style>
+  .figure {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    padding-block: var(--space-md);
+  }
+
+  /* The body wraps the slotted content. SVGs and images stretch to the
+   * column they're in (capped by their own intrinsic size). */
+  .figure-body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .figure-body :global(svg),
+  .figure-body :global(img) {
+    max-width: 100%;
+    height: auto;
+  }
+
+  .figure-caption {
+    font-family: var(--font-serif);
+    font-size: var(--font-size-body-sm);
+    line-height: var(--leading-meta);
+    color: var(--color-secondary);
+    text-wrap: pretty;
+  }
+
+  .figure-number {
+    display: inline;
+    font-family: var(--font-mono);
+    font-size: var(--font-size-label-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--color-secondary);
+    margin-inline-end: 0.6em;
+  }
+
+  /* Print: figures must not break across pages (already enforced by the
+   * site-wide print stylesheet, which sets `figure { break-inside: avoid }`).
+   * Force them to a calmer color so light tints reproduce on B&W. */
+  @media print {
+    .figure {
+      page-break-inside: avoid;
+      break-inside: avoid;
+    }
+    .figure-caption {
+      color: #555;
+      font-size: 9.5pt;
+    }
+  }
+</style>

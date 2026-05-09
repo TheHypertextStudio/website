@@ -1,0 +1,44 @@
+---
+/**
+ * FullBleed — a generic break-out container that spans the main + aside
+ * grid columns. Used for wider visuals (capability matrices, comparison
+ * tables, full-width SVG diagrams) when an inline Figure is too narrow.
+ *
+ * Children style themselves; this component only carries the data-bleed
+ * marker the parent grid uses for placement. On narrow viewports the
+ * grid collapses to one column and bleed becomes the same width as the
+ * body.
+ *
+ * Use sparingly — bleed moments work because they're rare. A study
+ * with five FullBleeds reads as a slideshow, not a paper.
+ */
+interface Props {
+  /** Optional id for deep-linking. */
+  id?: string;
+  /** Optional accessible label for the bleed region. */
+  label?: string;
+}
+
+const { id, label } = Astro.props;
+---
+
+<div class="fullbleed" data-bleed id={id} role={label ? 'region' : undefined} aria-label={label}>
+  <slot />
+</div>
+
+<style>
+  .fullbleed {
+    margin: 0;
+    padding-block: var(--space-md);
+  }
+
+  /* The bleed container is non-stylistic by design — it's a layout
+   * primitive. Children assert their own visual treatment. */
+
+  @media print {
+    .fullbleed {
+      page-break-inside: avoid;
+      break-inside: avoid;
+    }
+  }
+</style>

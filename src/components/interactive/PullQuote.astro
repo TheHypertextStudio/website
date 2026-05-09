@@ -1,0 +1,77 @@
+---
+/**
+ * PullQuote — a typeset emphasis moment for a sentence the author wants
+ * the reader's eye to land on. Larger than body text, serif, no quote
+ * marks (this is typeset, not journalistic). Sits inline by default;
+ * with `aside`, places into the rail.
+ *
+ * The studio uses pullquotes for sentences that crystallize a section's
+ * argument. Style-guide rule: "Empty states: declarative" applies here
+ * too — pullquotes don't preview, they restate. Don't pull a quote that
+ * doesn't already do work in the body.
+ */
+interface Props {
+  /** Place in the margin rail instead of inline. */
+  aside?: boolean;
+  /** Optional small attribution, rendered in mono after the quote. */
+  cite?: string;
+}
+
+const { aside = false, cite } = Astro.props;
+
+const dataAttr = aside ? { 'data-aside': '' } : {};
+---
+
+<blockquote class={`pullquote${aside ? ' is-aside' : ''}`} {...dataAttr}>
+  <p class="pullquote-text"><slot /></p>
+  {cite && <footer class="pullquote-cite">— {cite}</footer>}
+</blockquote>
+
+<style>
+  .pullquote {
+    margin: 0;
+    padding-block: var(--space-md);
+    /* The default body-column variant doesn't carry a left rule — it's a
+     * typographic register shift, not a quotation in the journalism
+     * sense. The size and serif do the work. */
+    font-family: var(--font-serif);
+    color: var(--color-text);
+  }
+
+  .pullquote-text {
+    margin: 0;
+    font-size: var(--font-size-title);
+    line-height: var(--leading-title);
+    text-wrap: balance;
+    letter-spacing: -0.005em;
+  }
+
+  .pullquote-cite {
+    margin-block-start: var(--space-sm);
+    font-family: var(--font-mono);
+    font-size: var(--font-size-label-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--color-secondary);
+  }
+
+  /* Aside variant: fits into the side rail, smaller register, with a
+   * thin left rule so it reads as a margin block, not as a free-floating
+   * pull. */
+  .pullquote.is-aside .pullquote-text {
+    font-size: var(--font-size-body);
+    line-height: var(--leading-body);
+  }
+
+  .pullquote.is-aside {
+    padding-inline-start: var(--space-sm);
+    border-inline-start: var(--rule-thin);
+  }
+
+  @media print {
+    .pullquote-text {
+      font-size: 13pt;
+      line-height: 1.4;
+    }
+  }
+</style>

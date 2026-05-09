@@ -39,97 +39,145 @@ const citationsCount = mentions.citations.length;
   canonical={canonical}
   sourcePath={`src/content/studies/${study.id}.${study.filePath?.split('.').pop() ?? 'mdx'}`}
 >
-  <article class="study h-entry" lang="en">
-    {
-      data.inReplyTo && (
-        <link rel="in-reply-to" href={data.inReplyTo} class="u-in-reply-to" hidden />
-      )
-    }
-    <a class="u-url" href={canonical} hidden>{canonical}</a>
+  <div class="study-page">
+    <article class="study h-entry" lang="en">
+      {
+        data.inReplyTo && (
+          <link rel="in-reply-to" href={data.inReplyTo} class="u-in-reply-to" hidden />
+        )
+      }
+      <a class="u-url" href={canonical} hidden>{canonical}</a>
 
-    <header class="study-header">
-      <h1 class="p-name">{data.title}</h1>
-      <p class="study-summary p-summary">{data.summary}</p>
-      <p class="study-meta">
-        <span class="p-author h-card">
-          <a class="u-url p-name" href={SITE_URL} rel="author">{data.author ?? SITE_NAME}</a>
-        </span>
-        {
-          data.product && (
-            <>
-              <span aria-hidden="true">·</span>
-              <span>{data.product}</span>
-            </>
-          )
-        }
-        <span aria-hidden="true">·</span>
-        <time class="dt-published" datetime={data.publishedAt.toISOString()}>
-          {isoDate(data.publishedAt)}
-        </time>
-        {
-          data.timeRequired && (
-            <>
-              <span aria-hidden="true">·</span>
-              <span>{data.timeRequired}</span>
-            </>
-          )
-        }
-      </p>
-    </header>
+      <header class="study-header">
+        <h1 class="p-name">{data.title}</h1>
+        <p class="study-summary p-summary">{data.summary}</p>
+        <p class="study-meta">
+          <span class="p-author h-card">
+            <a class="u-url p-name" href={SITE_URL} rel="author">{data.author ?? SITE_NAME}</a>
+          </span>
+          {
+            data.product && (
+              <>
+                <span aria-hidden="true">·</span>
+                <span>{data.product}</span>
+              </>
+            )
+          }
+          <span aria-hidden="true">·</span>
+          <time class="dt-published" datetime={data.publishedAt.toISOString()}>
+            {isoDate(data.publishedAt)}
+          </time>
+          {
+            data.timeRequired && (
+              <>
+                <span aria-hidden="true">·</span>
+                <span>{data.timeRequired}</span>
+              </>
+            )
+          }
+        </p>
+      </header>
 
-    <div class="study-body e-content">
-      <Content />
-    </div>
+      <div class="study-body e-content">
+        <Content />
+      </div>
 
-    {
-      data.tags.length > 0 && (
-        <footer class="study-tags" aria-label={t.indieweb.post.tagsLabel}>
-          <ul role="list">
-            {data.tags.map((t: string) => (
-              <li>
-                <a class="p-category" href={`/studies?tag=${encodeURIComponent(t)}`}>
-                  {t}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </footer>
-      )
-    }
-  </article>
+      {
+        data.tags.length > 0 && (
+          <footer class="study-tags" aria-label={t.indieweb.post.tagsLabel}>
+            <ul role="list">
+              {data.tags.map((t: string) => (
+                <li>
+                  <a class="p-category" href={`/studies?tag=${encodeURIComponent(t)}`}>
+                    {t}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </footer>
+        )
+      }
+    </article>
 
-  <Citations groups={mentions} />
+    <Citations groups={mentions} />
 
-  <Colophon
-    publishedAt={data.publishedAt}
-    modifiedAt={data.modifiedAt}
-    syndicatedTo={data.syndicatedTo}
-    citationsCount={citationsCount}
-  />
+    <Colophon
+      publishedAt={data.publishedAt}
+      modifiedAt={data.modifiedAt}
+      syndicatedTo={data.syndicatedTo}
+      citationsCount={citationsCount}
+    />
+  </div>
 </Base>
 
 <style>
+  /* The article grid: 1fr · main · aside · 1fr. Body lives in `main`;
+   * components carrying [data-aside] flow into `aside`; components
+   * carrying [data-bleed] span main + aside. Same affordance distill.pub
+   * uses, named in docs/mission.md §10. The pattern mirrors the .page
+   * grid in src/styles/layout.css; that grid is for the homepage, this
+   * one is the article-specific variant with tighter row rhythm and the
+   * studies-only [hidden] handling. */
+  .study-page {
+    display: grid;
+    grid-template-columns:
+      1fr
+      min(var(--measure), calc(100% - 4rem))
+      min(var(--measure-aside), 1fr)
+      1fr;
+    grid-template-areas: '. main aside .';
+    grid-auto-flow: dense;
+    column-gap: var(--layout-gap);
+    row-gap: 0;
+    padding-block: var(--space-xl) var(--space-xl);
+  }
+
+  /* Default placement: everything goes into the body column. Specificity-0
+   * `:where()` lets the [data-aside] / [data-bleed] overrides below win
+   * by themselves on attribute specificity. */
+  .study-page :where(*) {
+    grid-column: main;
+  }
+
+  .study-page [data-aside] {
+    grid-column: aside;
+    align-self: start;
+  }
+
+  .study-page [data-bleed] {
+    grid-column: main / aside;
+  }
+
+  /* The article and body wrappers don't generate boxes — they're DOM
+   * carriers for the h-entry / e-content microformat classes. Their
+   * children become direct grid items of .study-page so MDX-emitted
+   * paragraphs, headings, figures, and authored components like
+   * <Marginalia> can each pick their own column. */
   .study {
-    max-inline-size: var(--measure);
-    margin-inline: auto;
-    padding-inline: var(--layout-margin);
-    padding-block: var(--space-xxl) var(--space-xl);
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-xl);
+    display: contents;
+  }
+
+  .study-body {
+    display: contents;
+    font-family: var(--font-serif);
+    font-size: var(--font-size-body);
+    line-height: var(--leading-body);
+    color: var(--color-text);
   }
 
   .study-header {
     display: flex;
     flex-direction: column;
     gap: var(--space-md);
+    padding-block-start: var(--space-md);
+    margin-block-end: var(--space-md);
   }
 
-  .study-product {
-    margin: 0;
-  }
-
-  .study .p-name {
+  /* Scoped to the heading specifically — the author link inside
+   * .study-meta also carries .p-name (h-card requirement), and a bare
+   * `.study .p-name` rule was hitting both and rendering the byline at
+   * headline size. */
+  .study-header > h1.p-name {
     font-family: var(--font-sans);
     font-size: var(--font-size-headline);
     line-height: var(--leading-headline);
@@ -167,27 +215,186 @@ const citationsCount = mentions.citations.length;
     text-decoration: underline;
   }
 
-  .study-body {
-    font-family: var(--font-serif);
-    font-size: var(--font-size-body);
-    line-height: var(--leading-body);
-    color: var(--color-text);
-  }
-
+  /* MDX body typography. The .study-body class is still on the DOM div
+   * (display: contents preserves DOM); descendant selectors continue to
+   * apply. */
   .study-body :global(p) {
     margin-block: var(--space-md);
+    text-wrap: pretty;
   }
 
   .study-body :global(h2),
-  .study-body :global(h3) {
+  .study-body :global(h3),
+  .study-body :global(h4) {
+    font-family: var(--font-sans);
+    font-weight: 700;
+    letter-spacing: -0.01em;
     margin-block-start: var(--space-xl);
+    margin-block-end: var(--space-sm);
+  }
+
+  .study-body :global(h2) {
+    font-size: var(--font-size-title-lg);
+    line-height: var(--leading-title);
+  }
+
+  .study-body :global(h3) {
+    font-size: var(--font-size-title);
+    line-height: var(--leading-title);
+  }
+
+  .study-body :global(h4) {
+    font-size: var(--font-size-title-sm);
+    line-height: var(--leading-title);
+  }
+
+  /* rehype-autolink-headings wraps each heading text in an <a>; suppress
+   * the default link styling so headings still read as headings, then
+   * surface the link affordance only on hover. */
+  .study-body :global(h2 a),
+  .study-body :global(h3 a),
+  .study-body :global(h4 a) {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .study-body :global(h2 a:hover),
+  .study-body :global(h3 a:hover),
+  .study-body :global(h4 a:hover) {
+    color: var(--color-link);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.2em;
   }
 
   .study-body :global(blockquote) {
-    margin-inline: 0;
+    margin: var(--space-md) 0;
     padding-inline-start: var(--space-md);
     border-inline-start: var(--rule-thin);
     color: var(--color-secondary);
+  }
+
+  .study-body :global(ul),
+  .study-body :global(ol) {
+    margin-block: var(--space-md);
+    padding-inline-start: var(--space-md);
+  }
+
+  .study-body :global(li) {
+    margin-block: var(--space-xs);
+  }
+
+  .study-body :global(li > p) {
+    margin-block: var(--space-xs);
+  }
+
+  /* GFM tables. Header rows in mono small-caps, body rows in body-sm
+   * serif. Border-collapse with hairline rules between rows. */
+  .study-body :global(table) {
+    border-collapse: collapse;
+    margin-block: var(--space-md);
+    font-size: var(--font-size-body-sm);
+    width: 100%;
+  }
+
+  .study-body :global(thead th) {
+    text-align: start;
+    font-family: var(--font-mono);
+    font-size: var(--font-size-label-sm);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--color-secondary);
+    border-block-end: var(--rule-thin);
+    padding: var(--space-xs) var(--space-sm);
+  }
+
+  .study-body :global(tbody td) {
+    padding: var(--space-xs) var(--space-sm);
+    border-block-end: var(--rule-thin);
+    vertical-align: baseline;
+  }
+
+  .study-body :global(pre) {
+    margin-block: var(--space-md);
+    padding: var(--space-sm) var(--space-md);
+    font-family: var(--font-mono);
+    font-size: var(--font-size-body-sm);
+    line-height: 1.5;
+    background: var(--color-rule);
+    overflow-x: auto;
+  }
+
+  .study-body :global(code) {
+    font-family: var(--font-mono);
+    font-size: 0.92em;
+    background: var(--color-rule);
+    padding: 0.1em 0.3em;
+    border-radius: 2px;
+  }
+
+  .study-body :global(pre code) {
+    background: transparent;
+    padding: 0;
+    font-size: inherit;
+  }
+
+  .study-body :global(hr) {
+    margin-block: var(--space-lg);
+    border: 0;
+    border-block-start: var(--rule-thin);
+  }
+
+  /* GFM footnotes: a labelled list at article foot. Compact, calm, with
+   * a thin top rule that separates them from body. The numbered
+   * superscript references in the body get a small register so they
+   * don't break paragraph rhythm. */
+  .study-body :global(.footnotes) {
+    margin-block-start: var(--space-xl);
+    padding-block-start: var(--space-md);
+    border-block-start: var(--rule-thin);
+    font-size: var(--font-size-body-sm);
+    color: var(--color-secondary);
+  }
+
+  .study-body :global(.footnotes h2) {
+    font-family: var(--font-mono);
+    font-size: var(--font-size-label-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-weight: 500;
+    margin-block: 0 var(--space-sm);
+    color: var(--color-secondary);
+  }
+
+  .study-body :global(.footnotes ol) {
+    padding-inline-start: var(--space-md);
+  }
+
+  .study-body :global(.footnotes li) {
+    margin-block: var(--space-sm);
+  }
+
+  .study-body :global(.footnotes li > p) {
+    display: inline;
+    margin: 0;
+  }
+
+  .study-body :global(sup a),
+  .study-body :global(.data-footnote-backref) {
+    font-size: 0.75em;
+    text-decoration: none;
+    color: var(--color-link);
+    margin-inline: 0.1em;
+  }
+
+  .study-body :global(sup a:hover),
+  .study-body :global(.data-footnote-backref:hover) {
+    text-decoration: underline;
+  }
+
+  .study-tags {
+    margin-block-start: var(--space-xl);
   }
 
   .study-tags ul {
@@ -219,5 +426,21 @@ const citationsCount = mentions.citations.length;
   /* Hidden microformat-only elements (u-url, u-in-reply-to). */
   .study [hidden] {
     display: none;
+  }
+
+  /* Narrow viewport: collapse to a single column. Aside and bleed
+   * elements rejoin the body flow; marginalia render as small
+   * left-ruled blocks via their own component CSS. */
+  @media (max-width: 56rem) {
+    .study-page {
+      grid-template-columns: 1fr;
+      grid-template-areas: 'main';
+      padding-inline: var(--layout-margin);
+    }
+    .study-page :where(*),
+    .study-page [data-aside],
+    .study-page [data-bleed] {
+      grid-column: main;
+    }
   }
 </style>

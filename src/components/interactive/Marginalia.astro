@@ -1,0 +1,97 @@
+---
+/**
+ * Marginalia — a side-rail annotation aligned with the running prose.
+ *
+ * The studies page (src/pages/studies/[slug].astro) uses a four-column
+ * grid (1fr · main · aside · 1fr). Anything carrying `data-aside` flows
+ * into the aside column at the row of its source position; anything
+ * carrying `data-bleed` spans main + aside. This component is the
+ * authoring affordance for the first kind.
+ *
+ * Authors place a Marginalia immediately after the paragraph it
+ * annotates. With the parent grid's `auto-flow: dense`, the note lands
+ * beside that paragraph at viewports ≥ 56rem; on narrower viewports the
+ * grid collapses to a single column and the note renders inline as a
+ * small left-ruled block, which prints correctly.
+ *
+ * Style guide: docs/content/style-guide.md.
+ * Vision: docs/mission.md §8 ("revives early-web affordances …
+ * marginalia, definition lists, browser-default tooltips").
+ */
+interface Props {
+  /**
+   * Optional id-suffix that anchors the note for hash deep-links
+   * (e.g. /studies/foo#note-clock-skew). The component renders
+   * `id="note-${for}"` on the wrapper.
+   */
+  for?: string;
+  /**
+   * Small label rendered above the note in the rail. Useful when the
+   * note is one of a numbered series ("§3", "1", "fn 4"). Optional;
+   * notes read fine without one.
+   */
+  label?: string | number;
+}
+
+const { for: anchor, label } = Astro.props;
+---
+
+<aside class="marginalia" data-aside id={anchor ? `note-${anchor}` : undefined}>
+  {label !== undefined && <span class="marginalia-label">{label}</span>}
+  <div class="marginalia-body"><slot /></div>
+</aside>
+
+<style>
+  .marginalia {
+    /* Aside-column placement is set by the parent grid; only the rail's
+     * internal typography is this component's job. */
+    font-family: var(--font-serif);
+    font-size: var(--font-size-body-sm);
+    line-height: 1.45;
+    color: var(--color-secondary);
+    text-wrap: pretty;
+    margin: 0;
+  }
+
+  .marginalia-label {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: var(--font-size-label-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--color-secondary);
+    margin-block-end: var(--space-xs);
+  }
+
+  .marginalia-body :global(p) {
+    margin: 0;
+  }
+
+  .marginalia-body :global(p + p) {
+    margin-block-start: var(--space-sm);
+  }
+
+  /* On narrow viewports the parent grid collapses; the note becomes an
+   * indented small block in the body flow. The thin rule keeps it
+   * visually distinct from the surrounding paragraph rhythm. */
+  @media (max-width: 56rem) {
+    .marginalia {
+      padding-inline-start: var(--space-md);
+      border-inline-start: var(--rule-thin);
+      margin-block: var(--space-sm);
+      max-inline-size: var(--measure);
+    }
+  }
+
+  /* Print: marginalia rejoins the body flow as a small set-off block.
+   * The hairline rule survives the printer. */
+  @media print {
+    .marginalia {
+      padding-inline-start: 0.5em;
+      border-inline-start: 1px solid #888;
+      margin-block: 0.5em;
+      font-size: 9.5pt;
+      color: #333;
+    }
+  }
+</style>

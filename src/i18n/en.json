@@ -55,16 +55,13 @@
   },
   "studies": {
     "indexHeading": "Studies",
-    "lede": "Design decisions and post-mortems published alongside each major release. The studies document what we built, what we learned, and what we'd do differently.",
+    "lede": "Long-form design essays — what we built, what we learned, and what we'd do differently.",
     "empty": {
       "heading": "No studies published yet",
       "body": "The first study will publish alongside the next release. Studies are written, not generated — they appear when there's something worth writing.",
       "subscribeLabel": "Subscribe to the feed when there is",
       "subscribeUrl": "/feed.xml"
     },
-    "filtersLabel": "Filters",
-    "allLabel": "All",
-    "byProductLabel": "By product",
     "citedSuffix": "cited"
   },
   "notes": {
@@ -127,45 +124,6 @@
     },
     "poem": {
       "fallback": "If this work is worth doing, it is worth doing right."
-    },
-    "signature": {
-      "salutation": "Faithfully,",
-      "name": "Hypertext Studio"
-    },
-    "colophon": {
-      "heading": "Colophon",
-      "rows": [
-        {
-          "key": "typefaces",
-          "items": [
-            { "label": "Source Serif 4", "href": "https://github.com/adobe-fonts/source-serif" },
-            { "label": "Inter", "href": "https://rsms.me/inter/" },
-            { "label": "IBM Plex Mono", "href": "https://www.ibm.com/plex/" }
-          ]
-        },
-        {
-          "key": "framework",
-          "items": [{ "label": "Astro", "href": "https://astro.build" }]
-        },
-        {
-          "key": "hosting",
-          "items": [
-            {
-              "label": "Cloudflare Pages + Workers + D1",
-              "href": "https://developers.cloudflare.com/pages/"
-            }
-          ]
-        },
-        {
-          "key": "source",
-          "items": [
-            {
-              "label": "github.com/TheHypertextStudio/website",
-              "href": "https://github.com/TheHypertextStudio/website"
-            }
-          ]
-        }
-      ]
     },
     "statusPanel": {
       "studioTime": "STUDIO TIME",
