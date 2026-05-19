@@ -5,3 +5,4 @@
 import './keyboard';
 import './permalinks';
 import './status-panel';
+import './hovercard';

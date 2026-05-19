@@ -13,151 +13,273 @@ syndicatedTo:
   - https://bsky.app/profile/hypertext.studio/post/3kpsamplecurfewdelay
 ---
 
+import Marginalia from "@/components/interactive/Marginalia.astro";
+import Figure from "@/components/interactive/Figure.astro";
+import PullQuote from "@/components/interactive/PullQuote.astro";
+import FullBleed from "@/components/interactive/FullBleed.astro";
+
+Curfew is software that lets a person, with their own consent, refuse themselves access to their own devices at times that future-them might not yet know they will want refused. The studio built it to find out whether such a refusal could be made binding — not in the legal sense, but in the practical sense, by software, on a phone, in the small minutes between an impulse and its acting-out. This is a study of the one design idea that turned out to do most of the work: the locked delay.
+
+The locked delay is small. Three lines of pseudocode large. It is also, by a comfortable margin, the design decision in Curfew that the studio has revisited the most often, defended the most carefully, and, on the days when the rest of the product feels uncertain, kept anyway.
+
 ## The primitive
 
-Curfew has one design idea that does the load-bearing work and several
-that hold up the edges. The load-bearing one is the locked delay. It
-works like this: a rule, once written, can be changed only after a
-delay the writer chose at the moment of writing. If the delay is
-fifteen minutes, the next edit takes fifteen minutes to apply. If the
-delay is twenty-four hours, edits take twenty-four hours.
+A rule in Curfew is a record. It says: at these times, with these conditions, this app does not open. The record is written in a calm minute. It applies in the minute that comes later, calm or otherwise. The locked delay is the part that says: once a rule is written, the rule cannot be changed faster than a delay the writer chose at the moment of writing. If the delay is fifteen minutes, the next edit takes fifteen minutes to apply. If the delay is twenty-four hours, edits take twenty-four hours.
 
-Read out, the rule says: _the version of the user that wrote the rule
-outvotes the version that would change it_. The locked delay is a way
-of letting the calmer self bind the less calm self, in writing, in
-advance, with the device as the impartial third party.
+<PullQuote>
+  The version of the user that wrote the rule outvotes the version that would change it.
+</PullQuote>
 
-This is not a metaphor. It is implemented exactly that way. Curfew
-stores rules with two timestamps — the time the rule was set, and the
-earliest time at which a pending edit may take effect. The runtime
-enforces the later of those two against any request to use a blocked
-app. Edits are queued; the queue is honored as soon as its delay
-expires; the rule applies until then.
+That sentence is the whole product, restated. The remainder of the document is what the studio means by the words in it, where the idea came from, what shipped to make the words true, and the cases where the words come up short.
+
+<Marginalia label="def">
+  *Locked delay.* A constraint on a rule that requires any change to that rule to take a
+  configurable amount of time before applying. The rule's writer specifies the delay at the time of
+  writing.
+</Marginalia>
+
+The locked delay is a self-binding contract. Curfew is, in that respect, not a new idea — it is a re-implementation of an old human technology in a place where the technology has not previously been available, which is the device through which most of the impulses that the technology tries to bind are now running. The history is part of the study; the studio writes it down here partly to honor the lineage and partly because the lineage is itself the argument that the design is sound.
+
+<Figure
+  number={1}
+  caption="A rule is set at t₀ with delay d. The rule binds immediately. An edit submitted during the live window is queued; it takes effect only at t₀ + (time-since-last-edit) + d, never sooner."
+>
+  <svg
+    viewBox="0 0 640 200"
+    xmlns="http://www.w3.org/2000/svg"
+    role="img"
+    aria-label="Timeline diagram of a Curfew rule with a locked delay"
+    style="width: 100%; max-width: 640px; color: var(--color-text);"
+  >
+    <line x1="40" y1="100" x2="600" y2="100" stroke="currentColor" stroke-width="1.5" />
+    <line x1="40" y1="92" x2="40" y2="108" stroke="currentColor" stroke-width="1.5" />
+    <line x1="200" y1="92" x2="200" y2="108" stroke="currentColor" stroke-width="1.5" />
+    <line x1="380" y1="92" x2="380" y2="108" stroke="currentColor" stroke-width="1.5" />
+    <line x1="560" y1="92" x2="560" y2="108" stroke="currentColor" stroke-width="1.5" />
+    <text
+      x="40"
+      y="80"
+      font-family="ui-monospace, SFMono-Regular, Menlo, monospace"
+      font-size="11"
+      fill="currentColor"
+      text-anchor="middle"
+    >
+      t₀ : rule set
+    </text>
+    <text
+      x="200"
+      y="80"
+      font-family="ui-monospace, SFMono-Regular, Menlo, monospace"
+      font-size="11"
+      fill="currentColor"
+      text-anchor="middle"
+    >
+      edit submitted
+    </text>
+    <text
+      x="380"
+      y="80"
+      font-family="ui-monospace, SFMono-Regular, Menlo, monospace"
+      font-size="11"
+      fill="currentColor"
+      text-anchor="middle"
+    >
+      earliest-effective
+    </text>
+    <text
+      x="560"
+      y="80"
+      font-family="ui-monospace, SFMono-Regular, Menlo, monospace"
+      font-size="11"
+      fill="currentColor"
+      text-anchor="middle"
+    >
+      edit applies
+    </text>
+    <line x1="40" y1="130" x2="380" y2="130" stroke="currentColor" stroke-width="2" />
+    <text
+      x="210"
+      y="148"
+      font-family="ui-serif, Georgia, serif"
+      font-size="13"
+      fill="currentColor"
+      text-anchor="middle"
+      font-style="italic"
+    >
+      original rule binds
+    </text>
+    <line
+      x1="200"
+      y1="160"
+      x2="380"
+      y2="160"
+      stroke="currentColor"
+      stroke-width="1"
+      stroke-dasharray="4 4"
+      opacity="0.6"
+    />
+    <text
+      x="290"
+      y="178"
+      font-family="ui-serif, Georgia, serif"
+      font-size="12"
+      fill="currentColor"
+      text-anchor="middle"
+      opacity="0.7"
+    >
+      edit queued (delay d)
+    </text>
+    <line
+      x1="380"
+      y1="130"
+      x2="560"
+      y2="130"
+      stroke="currentColor"
+      stroke-width="2"
+      opacity="0.5"
+    />
+  </svg>
+</Figure>
+
+The data shape is unglamorous. A rule is four fields: the conditions that trigger it (app identifiers, time windows, location guards), the action it takes when triggered (block, dim, prompt, quiet), the timestamp at which the rule was set, and the earliest timestamp at which any pending change to the rule may apply. The runtime that enforces rules is a foreground process that watches device state and gates app launches. When a rule fires, the launch is blocked and the user is shown a screen that says, in plain language, which rule is firing and when it can be changed.
+
+The screen contains no ten-second-skip, no per-app override, no trick by which the rule can be shortened from the surface that the rule itself is acting on. Any shortening must come from the rule editor — and the rule editor is where the locked delay is enforced. The block screen and the rule editor are two surfaces, joined only by the lock. The lock is the load-bearing invariant.
 
 ## A short history of the self-binding contract
 
-The locked delay is not new. It is a small re-implementation of an
-old human technology, and naming the precedents is part of taking the
-feature seriously.
+The locked delay is small. The history behind it is not. The studio considers naming the precedents part of taking the design seriously: the lineage is the argument that the studio is implementing a long-running human technology in software, not inventing one in a vacuum.
 
-Odysseus and the mast is the canonical case. Odysseus, planning to
-sail past the Sirens, asks his crew to bind him to the mast and to
-refuse his orders to be released, no matter what he says when the
-singing begins. He delegates judgment to a future version of his crew
-that is operating under instructions he gave when his judgment was
-sound. The software equivalent is a rule he could not change for the
-duration of the passage.
+### Odysseus and the mast
 
-In psychiatric ethics, the term _Ulysses pact_ is used for advance
-directives written by people during periods of mental health to
-govern their care during periods of crisis — for instance, a person
-with bipolar disorder authorizing involuntary admission during a
-manic episode, in writing, while euthymic. The legal apparatus is
-heavy and the ethics are difficult; the underlying mechanism is the
-same as Odysseus's. A self that knows what it will face commits a
-future self that will not be able to refuse coherently.
+Odysseus, planning to sail past the Sirens, asks his crew to bind him to the mast and to refuse his orders to be released, no matter what he says when the singing begins. He delegates judgment to a future version of his crew that operates under instructions he gave when his judgment was sound[^homer]. The instructions are stronger than the will of the bound self because the crew's loyalty to past-Odysseus's writing outranks the bound self's pleas.
 
-The Christmas-club bank account belongs to a different register
-entirely, but the structural shape is identical. A small amount of
-money is deposited weekly into an account that pays no meaningful
-interest and cannot be withdrawn until December. The account exists
-for one reason: to remove from the depositor's reach the option of
-spending the money before it has accumulated. The locked delay is a
-Christmas-club account for time of attention.
+<Marginalia label="ref">
+  Homer, *Odyssey* Book XII, lines 153-200 (Fagles trans.). The key passage: *"You must bind me hard
+  and fast, so I cannot move a muscle, bound to the spot, erect at the mast-block, lashed by ropes
+  to the mast."*
+</Marginalia>
 
-The alarm clock placed across the room is the smallest version. The
-sleeper of last night judged that the sleeper of this morning would
-be better off standing up to silence the alarm, and arranged the
-room so that the morning self has no available shortcut. Curfew's
-locked delay is the same gesture, generalized to a wider class of
-impulses.
+The software equivalent is a rule the bound self could not change for the duration of the passage. Curfew's locked delay is, in this register, the rope. The crew is the runtime. Past-self's writing — the rule, with its delay — is the binding. The Sirens' song is the impulse that the system was set up to refuse.
 
-These are named to make the lineage explicit. The studio is not
-inventing a primitive; it is implementing one that has been useful
-to people for a long time, in a place where it has not previously
-been available — the device through which the impulse most often
-runs.
+It is worth saying: the metaphor is not Odysseus's. Odysseus had a problem the locked delay does not solve and is not trying to solve. He was about to die, and he wanted to live. The user who sets a phone rule against scrolling is not about to die. But the structural shape of the contract is the same — a self that knows what it is about to face commits a future self that will not, in the moment, be able to refuse coherently. Curfew shrinks the form factor and trades the rope for a timestamp.
+
+### The Ulysses pact in psychiatric ethics
+
+In psychiatric ethics, the term _Ulysses pact_ is used for an advance directive written by a person during a period of mental health to govern their care during a period of crisis. A person living with bipolar disorder, while euthymic, may authorize involuntary admission during a future manic episode. The directive is in writing. It binds the future self because the future self, the literature argues, is not the same self under the same conditions of sound judgment[^ulysses-pact].
+
+<Marginalia label="ref">
+  See Spellecy, R. (2003). *Reviving Ulysses contracts*. Kennedy Institute of Ethics Journal, 13(4),
+  373–392. The term is contested in the literature; the studio uses it loosely, in the sense in
+  which the structure (advance directive binding a less-competent later self) is shared with the
+  locked delay.
+</Marginalia>
+
+The studio is not implementing psychiatric ethics. The studio is implementing a phone setting. But the underlying structure is shared, and the shared structure carries shared design constraints. Both contracts only work if the future self cannot, at the moment of binding, undo the binding faster than the contract specifies. Both contracts only work if the moment of writing was a moment of meaningful judgment. Both contracts fail in the same shape — a contract that can be revised in the moment of impulse is no contract at all.
+
+### The Christmas-club account
+
+The Christmas-club account is a small commercial precedent worth naming because it is the closest formal analogue at retail scale. A small amount of money is deposited weekly into an account that pays no meaningful interest and cannot be withdrawn until December[^christmas-club]. The account exists for one reason: to remove from the depositor's reach the option of spending the money before it has accumulated. The mechanism is contractual — the bank holds the line — but the design intent is identical to the locked delay. The locked delay is a Christmas-club account for time of attention.
+
+The studio mentions the Christmas-club account because it is a piece of evidence that ordinary people, given the option, sometimes pay (in foregone interest) to be bound. The design space is not exotic. The instrument is well-known. It just hadn't been ported to the surface where the impulses now live.
+
+### The alarm clock across the room
+
+The smallest version is the alarm clock placed across the room. The sleeper of last night judged that the sleeper of this morning would be better off standing up to silence the alarm, and arranged the room so that the morning self has no available shortcut. Curfew's locked delay is the same gesture, generalized to a wider class of impulses: arrange the world so that the bound self has no shortcut available.
+
+<FullBleed label="A comparative table of self-binding contracts">
+
+| Mechanism                   | Bound self         | Mechanism that holds     | Failure mode                            |
+| --------------------------- | ------------------ | ------------------------ | --------------------------------------- |
+| Odysseus and the mast       | Odysseus, hearing  | The crew, under orders   | Crew disobeys orders                    |
+| Ulysses pact (psych.)       | Future, in crisis  | Clinicians + court order | Directive contested in court            |
+| Christmas-club account      | Future spender     | Bank's withdrawal lock   | Bank changes terms                      |
+| Alarm clock across the room | Morning self       | Distance from bed        | Bedside-clock workaround                |
+| Curfew locked delay         | Future, distracted | Device runtime + delay   | Delay-shortening attack on device clock |
+
+</FullBleed>
+
+The studio's contribution to this lineage is small. Curfew implements a locked delay on a personal device, with the device's own runtime as the enforcer, and writes the contract in the user's hand without involving a third party. The third party is — for once in this category of software — not necessary. The user binds themselves. The device holds the line.
 
 ## What a delay-lock does in code
 
-The implementation is small, which is intentional. Complexity in the
-mechanism would invite complexity in the failure modes, and the
-failure modes of an attention instrument matter in a way that the
-failure modes of, say, a feed reader do not.
+The implementation is small, which is intentional. Complexity in the mechanism would invite complexity in the failure modes, and the failure modes of an attention instrument matter in a way that the failure modes of, for instance, a feed reader do not. A bug in a feed reader serves stale content. A bug in an attention instrument breaks a contract the user wrote against themselves and cannot easily renegotiate. The studio writes the smallest correct implementation it can and then leaves it alone.
 
-A rule is a record with four fields: the conditions that trigger it
-(app identifiers, time windows, location guards), the action it
-takes when triggered (block, dim, prompt, quiet), the timestamp at
-which the rule was set, and the earliest timestamp at which any
-pending change to the rule may apply. Edits to a rule are not edits
-in place. They are new versions queued behind a delay; the live
-rule is whichever version has crossed its earliest-effective
-timestamp.
+The core type, in shape, is roughly:
 
-The runtime that enforces rules is a foreground process that
-watches device state and gates app launches. When a rule fires, the
-launch is blocked and the user is shown a screen that says, in
-plain language, which rule is firing and when it can be changed.
-The screen contains no ten-second-skip, no per-app override, no
-trick by which the rule can be shortened from the surface that the
-rule itself is acting on. Any shortening must come from the rule
-editor, which is where the locked delay is enforced.
+```ts
+interface Rule {
+  conditions: TriggerCondition[]; // app id, time window, location, etc.
+  action: Action; // block | dim | prompt | quiet
+  setAt: MonotonicTimestamp; // when this rule version was authored
+  earliestEffectiveAt: MonotonicTimestamp; // setAt + delay
+  pendingEdit?: Rule; // queued, applied when its earliest passes
+}
+```
 
-Clock manipulation is the obvious attack on a delay-based mechanism.
-Curfew handles it by anchoring delays to a monotonic clock that
-does not rewind across reboots, and by independently reading time
-from a trusted network source on every rule edit. A device whose
-clock has been moved forward will simply not see its rules unlock
-until the real time has caught up. This is unglamorous and
-necessary; without it the locked delay would be a suggestion.
+A rule edit is not an edit in place. It is a new version of the rule, queued behind a delay; the live rule is whichever version has crossed its earliest-effective timestamp. The runtime, on every relevant launch event, asks the rule store: _what version of this rule is live right now?_ — and the store answers by returning the most recent version whose `earliestEffectiveAt` is in the past relative to a trusted clock.
+
+<Marginalia label="impl">
+  The pendingEdit field is a single slot, not a queue. A second edit during the delay supersedes the
+  first, but its delay starts from the time of the second edit, not the first. Editing during the
+  delay is allowed; editing your way out of the delay is not.
+</Marginalia>
+
+Clock manipulation is the obvious attack on a delay-based mechanism. A device whose clock has been moved forward could otherwise short-circuit the lock. Curfew handles this by anchoring delays to a monotonic clock that does not rewind across reboots, and by independently reading time from a trusted network source on every rule edit. A device whose wall clock has been moved forward will simply not see its rules unlock until the real time has caught up. This is unglamorous and necessary. Without it the locked delay would be a suggestion[^monotonic].
+
+The studio considered, and rejected, several alternatives. A passcode held by another person would work but would import a second human into the contract — and Curfew is, by design, a contract a person makes with themselves, not with a partner or a clinician. A hardware-key approach would also work but require either dedicated hardware (a yubikey kept across the apartment) or a trust relationship with the device manufacturer's secure element that the studio is not, at this point, willing to take on as a dependency. The locked delay survived because it is the smallest mechanism that holds the line without bringing in another party.
 
 ## The cases where a delay is not enough
 
-Three honest cases where the primitive is wrong on its own, named
-with what the studio shipped instead.
+The studio has been honest, internally and now publicly, that the locked delay is not a complete answer. There are three failure cases the studio has identified in usage, each of which the studio considered while shipping. None of them killed the primitive. All of them required additional design.
 
-A rule someone wrote during a calm hour can turn out to be wrong in
-a different way. A blocked app may need to be reached during an
-emergency; a parent locked out of a messaging app at 11 p.m. may
-need to receive an emergency call from a child at 11:30. Curfew's
-response is a small, named exception list that the user maintains
-_outside_ the locked-delay system: a short list of apps and contacts
-that are never blocked, edited under no delay. The exception list
-is itself reviewed in the rule editor, and adding to it is a
-deliberate, separately journaled action. The point is that
-emergency-handling is its own contract, not a hole in the main one.
+### Emergencies
 
-A rule strict enough to matter can be circumvented by leaving the
-device. The studio has no answer to this and does not pretend to.
-The person who is willing to put down the phone and read a book is
-doing the right thing; the locked delay was not built to stop that.
-It was built to stop the smaller move, the half-impulse to pick up
-the device that the user did not want to pick up. Anything beyond
-that is not software's job.
+A rule someone wrote during a calm hour can turn out to be wrong in a different way. A blocked app may need to be reached during an emergency. A parent locked out of a messaging app at 11 p.m. may need to receive an emergency call from a child at 11:30. The locked delay, on its own, has no answer for this. Twenty-four hours, at 11:30 p.m. on a particular Tuesday, is too long.
 
-A rule can name the wrong app. The user wanted to block a different
-app and chose this one by mistake; the rule is now locked behind a
-twenty-four-hour delay; the wrong app is unrestricted and the right
-app is unaffected. Curfew's response here is the dullest one
-imaginable: a confirmation step before a rule locks, with a printed
-summary of what the rule will do, and a five-second pause before
-the lock takes effect. Five seconds is not a meaningful delay
-against impulse, but it is a meaningful delay against typo.
+<Marginalia label="design">
+  The studio explicitly does not want emergencies to "break" the rule. The rule, broken once, is a
+  rule the user no longer trusts. The exception list lives outside the rule system and is reviewed
+  in its own slow loop.
+</Marginalia>
 
-## What we think we are building
+Curfew's response is a small, named exception list that the user maintains _outside_ the locked-delay system: a short list of apps and contacts that are never blocked, edited under no delay. The exception list is itself reviewed in the rule editor, and adding to it is a deliberate, separately journaled action. The point is that emergency-handling is its own contract, not a hole in the main one. A user who keeps adding to the exception list in the moment of a block is doing something the system can show them in the next calm review, but the system does not stop them in the moment.
 
-Curfew is not a behavior-change tool. It does not promise that
-anyone will spend less time on their phone, that anyone will read
-more, that anyone will sleep better. Behavior-change products in
-the attention space have a long history of overpromising on
-outcomes and underdelivering on the underlying primitive. The
-studio's approach is the reverse: deliver one well-built primitive,
-name what it does and what it does not do, and let the outcomes
-accrue or not on their own terms.
+### Leaving the device
 
-What Curfew is, instead, is a consent instrument. It allows a
-person to consent in advance to constraints they cannot yet feel
-the need for, and to commit to those constraints in a form the
-device can hold. Whether a person uses the instrument well is a
-different question and not one software can settle. Whether the
-instrument exists at all has been, until now, the missing piece.
+A rule strict enough to matter can be circumvented by leaving the device. A user with a curfew on social apps on their phone can borrow a friend's laptop. The studio has no answer to this and does not pretend to. The person who is willing to put down the phone and read a book is doing the right thing; the locked delay was not built to stop that. It was built to stop the smaller move, the half-impulse to pick up the device that the user did not want to pick up. Anything beyond that is not software's job.
+
+<PullQuote>Curfew is not a behavior-change tool. It is a consent instrument.</PullQuote>
+
+Naming the limit honestly is part of the design. A product that promised to stop the determined workaround would either be lying or be implementing a prison. The studio is not interested in either.
+
+### Naming the wrong app
+
+A rule can name the wrong app. The user wanted to block a different app and chose this one by mistake; the rule is now locked behind a twenty-four-hour delay; the wrong app is unrestricted and the right app is unaffected. Curfew's response here is the dullest one imaginable: a confirmation step before a rule locks, with a printed summary of what the rule will do, and a five-second pause before the lock takes effect. Five seconds is not a meaningful delay against impulse, but it is a meaningful delay against typo.
+
+The studio considered, briefly, whether to allow a "grace period" in which a freshly-written rule could be revised without delay. It rejected that. A grace period is a backdoor, and a backdoor is — under sustained impulse — exactly the surface the impulse will route through. The five-second confirmation is not a grace period. It is a re-read.
+
+## What the experiment so far has taught
+
+The studio runs a small qualitative review once per release. Three findings from the first six months of usage, written here as observations, not conclusions.
+
+The first: **specificity is part of consent.** Users who wrote rules of the form _"no social apps after 10 p.m."_ described the rules as less useful than rules of the form _"no Twitter after 10 p.m. on weekdays, no shopping apps any time."_ Vague rules, the studio came to believe, are a way of not actually deciding. The vague rule defers the decision to the moment of the impulse — and that is exactly the moment the locked delay is meant to relieve. The next release will quietly nudge users toward more specific rule shapes at the editor level.
+
+The second: **the delay was the relief.** Users described the locked-delay mechanism — the part the studio worried would feel paternalistic — as the part that gave them peace of mind. Several of them used the same phrase: _"I knew I couldn't talk myself out of it."_ The studio takes that seriously. The locking, it turns out, is not the price of the rule. It is the rule's value.
+
+The third: **users do not, in practice, set delays they have to revise often.** The most common delay, by a comfortable margin, is twenty-four hours. The next is one week. The third is one hour, set on rules with narrow time windows where one hour is, structurally, a one-shot. Almost no one sets shorter delays after the first few weeks. The pattern that emerges is: short delays in the first month while the user is finding the rule shape, lengthening once the rule has settled. The studio considers this a sign that the primitive is doing the right kind of work — small and exploratory at first, then load-bearing.
+
+## What we think we are building, and what we know we are not
+
+Curfew is not a behavior-change tool. It does not promise that anyone will spend less time on their phone, that anyone will read more, or that anyone will sleep better. Behavior-change products in the attention space have a long history of overpromising on outcomes and underdelivering on the underlying primitive. The studio's approach is the reverse: deliver one well-built primitive, name what it does and what it does not do, and let the outcomes accrue or not on their own terms.
+
+What Curfew is, instead, is a **consent instrument.** It allows a person to consent in advance to constraints they cannot yet feel the need for, and to commit to those constraints in a form the device can hold. Whether a person uses the instrument well is a different question and not one the studio's software can settle. The studio is comfortable with that boundary. The locked delay is the part the studio knows how to build. Everything else — the texture of an evening reclaimed, the hour of sleep that would otherwise have gone to a feed — is the user's, and it is theirs because they wrote the rule, not because the studio sold them on a promise.
+
+The next release adds a second feature alongside the locked delay: shared rules between two devices in the same household, with the same delay-lock semantics applied at the boundary. The design question there is consent at the seam between two people who already trust each other, which is a structurally different problem from the single-user case. The studio does not yet know how to answer it well. That is what the next study is for.
+
+[^homer]: The reference is to _Odyssey_ Book XII (Fagles, R., trans., 1996, Penguin). Odysseus had had the prophecy from Circe; he chose to hear the Sirens because he knew he could be physically prevented from acting on the desire they would create. The structure of the contract — pre-binding by a calmer self against a future un-calmer self — is what makes the episode the canonical case in the literature. See also Elster, J. (2000), _Ulysses Unbound_, Cambridge University Press, for the modern rational-choice treatment.
+
+[^ulysses-pact]: The ethics of Ulysses pacts in psychiatry is unsettled. Proponents argue they preserve the autonomy of the unmedicated self against the disordered self; opponents argue that the conditions under which a pact is valid (e.g., capacity, lack of coercion) are exactly the conditions in which the pact is also least needed. The studio takes no position on the clinical debate; it cites the literature only to show that the structural form (advance directive binding a future, less-competent self) is well-explored and that the locked delay inherits the same constraints.
+
+[^christmas-club]: Christmas-club accounts originated in Pennsylvania in 1909 and were ubiquitous in U.S. retail banking through the 1970s. They paid below-market interest in exchange for a contractual lock on withdrawal until late November. Their decline coincides with the rise of credit-card-based "buy now, pay later" instruments — which solve the opposite problem (smoothing consumption forward in time rather than holding it back). The contrast is itself diagnostic of the design space.
+
+[^monotonic]: A monotonic clock is one whose value never decreases between reads on the same boot. POSIX `CLOCK_MONOTONIC` and Apple's `mach_continuous_time` are the relevant primitives. The trusted-network reading on every edit is the second line of defense — even if a determined user has rooted their device and synthesized a fake monotonic clock, the network reading anchors against an external source. The studio considers this enough; a determined enough user could simply not run the software, and that is a contract Curfew is not trying to enforce.

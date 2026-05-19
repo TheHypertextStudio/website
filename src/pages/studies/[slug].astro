@@ -132,19 +132,18 @@ const citationsCount = mentions.citations.length;
     padding-block: var(--space-xl) var(--space-xl);
   }
 
-  /* Default placement: everything goes into the body column. Specificity-0
-   * `:where()` lets the [data-aside] / [data-bleed] overrides below win
-   * by themselves on attribute specificity. */
-  .study-page :where(*) {
+  /* :global() because MDX descendants don't carry this component's
+   * astro-cid; without it the rule wouldn't reach the article body. */
+  .study-page :global(*) {
     grid-column: main;
   }
 
-  .study-page [data-aside] {
+  .study-page :global([data-aside]) {
     grid-column: aside;
     align-self: start;
   }
 
-  .study-page [data-bleed] {
+  .study-page :global([data-bleed]) {
     grid-column: main / aside;
   }
 
@@ -233,9 +232,16 @@ const citationsCount = mentions.citations.length;
     margin-block-end: var(--space-sm);
   }
 
+  /* Only h2 sticks. h3/h4 sharing the same `top` would stack and read as
+   * flicker rather than "current section." */
   .study-body :global(h2) {
     font-size: var(--font-size-title-lg);
     line-height: var(--leading-title);
+    position: sticky;
+    top: var(--space-xl);
+    background: var(--color-bg);
+    z-index: 2;
+    padding-block-end: var(--space-xs);
   }
 
   .study-body :global(h3) {

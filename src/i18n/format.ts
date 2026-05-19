@@ -33,3 +33,16 @@ export function isoDate(value: Date | string): string {
   const date = typeof value === 'string' ? new Date(value) : value;
   return date.toISOString().slice(0, 10);
 }
+
+const RELATIVE_FORMAT = new Intl.RelativeTimeFormat(SITE_LOCALE, { numeric: 'auto' });
+
+export function formatRelative(value: Date | string, now: Date = new Date()): string {
+  const then = typeof value === 'string' ? new Date(value) : value;
+  const diffMs = then.getTime() - now.getTime();
+  const days = Math.round(diffMs / 86_400_000);
+  if (Number.isNaN(days)) return '';
+  const abs = Math.abs(days);
+  if (abs < 30) return RELATIVE_FORMAT.format(days, 'day');
+  if (abs < 365) return RELATIVE_FORMAT.format(Math.round(days / 30), 'month');
+  return RELATIVE_FORMAT.format(Math.round(days / 365), 'year');
+}

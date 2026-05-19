@@ -1,5 +1,4 @@
 ---
-import Marquee from './Marquee.astro';
 import Wordmark from './Wordmark.astro';
 import Studio from './Studio.astro';
 import SiteMap from './SiteMap.astro';
@@ -16,7 +15,6 @@ const { sourcePath } = Astro.props;
 ---
 
 <footer class="studio-footer" aria-label="Closing">
-  <Marquee />
   <div class="studio-footer__core">
     <Studio />
     <SiteMap />
@@ -35,11 +33,7 @@ const { sourcePath } = Astro.props;
     block-size: 100dvh;
     max-block-size: 100dvh;
     display: grid;
-    /* Marquee + core hold their natural height; the anchor row absorbs the
-     * rest of the viewport so the wordmark never floats with empty space
-     * above or below it. Small print closes the band. */
     grid-template-rows:
-      auto /* marquee */
       auto /* operational core */
       minmax(0, 1fr) /* wordmark anchor — fills remaining space */
       auto; /* small print */
@@ -61,9 +55,12 @@ const { sourcePath } = Astro.props;
   }
 
   .studio-footer__anchor {
-    display: flex;
+    /* Grid (not flex) so the wordmark child stretches to the row's full
+     * inline-size — required because the wordmark establishes a container
+     * query, which implies `contain: inline-size` and would otherwise
+     * collapse a content-sized flex child to its padding. */
+    display: grid;
     align-items: end;
-    justify-content: start;
     min-block-size: 0;
     overflow: hidden;
   }
@@ -83,8 +80,14 @@ const { sourcePath } = Astro.props;
     .studio-footer {
       block-size: auto;
       max-block-size: none;
-      min-block-size: 100dvh;
+      min-block-size: 0;
       overflow: visible;
+    }
+    /* The wordmark is a desktop-only closing signature — at mobile widths
+     * it would clip against the inline gutter and read as a squeezed
+     * orphan strip between the column stack and the small print. */
+    .studio-footer__anchor {
+      display: none;
     }
   }
 </style>

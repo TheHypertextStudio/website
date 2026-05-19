@@ -9,138 +9,111 @@ tags:
 draft: true
 ---
 
+import Marginalia from "@/components/interactive/Marginalia.astro";
+import Figure from "@/components/interactive/Figure.astro";
+import PullQuote from "@/components/interactive/PullQuote.astro";
+import FullBleed from "@/components/interactive/FullBleed.astro";
+
+LogDate, Curfew, and Termsly hold three different kinds of data. LogDate holds journal entries — text and audio, intimately personal. Curfew holds rules and small records of which apps were attempted under those rules. Termsly holds a reader's annotations on legal documents, a writer's edit history, and the documents themselves. The three products do not share a codebase, and they do not share a backend. They share one decision, taken once, applied identically. That decision is the subject of this study.
+
+The decision is about leverage: what kind of leverage the studio is willing to have over a person who uses any of its software. The answer the studio has converged on, applied identically across the three products, is _the minimum that lets the software work, and not a byte more._ This is the studio's privacy stance. The remainder of the document is the architecture that follows from it, the features that architecture rules out, and the operational cost of the position.
+
 ## The shared question
 
-LogDate, Curfew, and Termsly handle different kinds of data. LogDate
-holds journal entries, mostly text and audio, intimately personal.
-Curfew holds rules and small records of what was attempted under
-those rules. Termsly holds a reader's annotations, a writer's edit
-history, and the documents under review. The three products do not
-share a codebase, and they do not share a backend. They share one
-decision.
+The studio writes three products, each with a different design question, sold to three different sets of users. The temptation in this configuration is to let each product solve privacy on its own terms — to let LogDate optimize for the journaling user's threat model, Curfew for the attention user's, Termsly for the consumer-rights user's. That would be the conventional answer. It is not the answer the studio has chosen.
 
-The decision is about leverage. Specifically: what kind of leverage
-the studio is willing to have over a person who uses any of its
-software. The answer the studio has converged on, applied identically
-across the three products, is _the minimum that lets the software
-work, and not a byte more_.
+The studio chose, early, to treat privacy as a property of the studio rather than a property of the product. The reasoning is that the user does not, in practice, evaluate three separate threat models when they install three apps from the same studio. They form a single trust relationship with the studio, which then attaches to each product. If one product trades user data for a feature and another does not, the inconsistency creates exactly the trust ambiguity the studio is trying to remove. So the privacy posture is centralized — one stance, written down, applied identically.
 
-This is the shared privacy stance. The rest of the study is the
-architecture that follows from it, what that architecture rules out,
-and what the position costs the studio.
+<Marginalia label="def">
+  *Privacy stance.* The studio's commitments about what it can and cannot know about a user.
+  Distinct from a privacy policy, which describes what the company *will* do with data; the stance
+  describes what the company *can* do, structurally. The stance is the harder commitment; the policy
+  is its public face.
+</Marginalia>
+
+The stance is also the harder of the two commitments to make and the easier to verify. A privacy policy can be rewritten. An architecture cannot, without a release that specifically undoes it — and a release that specifically undoes it is a release that has to ship past every developer, every reviewer, every user who notices the changelog. The architectural commitment is durable in a way the policy commitment cannot be.
 
 ## The architectural answer
 
-Three rules, applied identically across the three products, hold the
-position up.
+Three rules, applied identically across the three products, hold the position up.
 
-The first is local-first state. The canonical copy of a user's data
-lives on their device. The cloud, when there is one, exists for
-synchronization between devices belonging to the same user; it does
-not exist as the source of truth. A user who deletes the
-application and reinstalls it from a fresh device pulls down a copy
-from the cloud and proceeds from there; a user who deletes the
-application and also revokes the cloud has erased the data and the
-studio cannot recover it. The studio is comfortable with this; the
-inability to recover other people's data is part of what the studio
-means by _not being able to read it_.
+The first is **local-first state.** The canonical copy of a user's data lives on their device. The cloud, when there is one, exists for synchronization between devices belonging to the same user; it does not exist as the source of truth. A user who deletes the application and reinstalls it from a fresh device pulls down a copy from the cloud and proceeds from there; a user who deletes the application and also revokes the cloud has erased the data, and the studio cannot recover it. The studio is comfortable with this: the inability to recover other people's data is part of what the studio means by _not being able to read it_.
 
-The second is end-to-end encryption on sync. When data leaves a
-device it is encrypted with a key that lives only on the user's
-devices and never reaches the studio's servers. The server stores
-opaque blobs and metadata sufficient to route those blobs to the
-user's other devices. The server cannot decrypt them. The
-encryption is built on standard primitives, not bespoke ones, and
-the implementation is open source for each product so that any
-reader who wants to verify can do so against running code.
+The second is **end-to-end encryption on sync.** When data leaves a device it is encrypted with a key that lives only on the user's devices and never reaches the studio's servers. The server stores opaque blobs and metadata sufficient to route those blobs to the user's other devices. The server cannot decrypt them. The encryption is built on standard primitives, not bespoke ones[^primitives], and the implementation is open source for each product so that any reader who wants to verify can do so against running code.
 
-The third is zero-knowledge servers. The phrase is precise. The
-studio's servers do not contain a representation of user data that
-the studio could read if asked, even with full access to the
-hardware. There is no internal admin tool by which a member of the
-studio can pull up a particular user's journal entries, rule
-history, or annotation set. There is no analytics pipeline that
-ingests user data into the studio's data warehouse, because there
-is no studio data warehouse for user content. The studio cannot
-read what it does not have access to. This is not a self-imposed
-policy that could be relaxed in a future quarter. It is an
-architectural property of the deployment.
+The third is **zero-knowledge servers.** The phrase is precise: the studio's servers do not contain a representation of user data that the studio could read if asked, even with full access to the hardware. There is no internal admin tool by which a member of the studio can pull up a particular user's journal entries, rule history, or annotation set. There is no analytics pipeline that ingests user data into the studio's data warehouse, because there is no studio data warehouse for user content. The studio cannot read what it does not have access to. This is not a self-imposed policy that could be relaxed in a future quarter. It is an architectural property of the deployment.
+
+<PullQuote>The studio cannot read what it does not have access to.</PullQuote>
+
+These three rules compose. Local-first protects the user against studio-level breach (the studio cannot leak what it does not have); end-to-end encryption protects the user against transit-level interception (the cloud carries blobs, not content); zero-knowledge servers protect against the studio's own future curiosity (the server isn't structurally able to look). Each rule on its own would be insufficient. Together they make a posture the studio considers worth defending.
 
 ## What this rules out, on purpose
 
-A privacy stance described in the abstract is a press release. The
-useful version is a list of features the studio has said no to,
-because those features depend on a posture the studio has decided
-not to take.
+A privacy stance described in the abstract is a press release. The useful version is a list of features the studio has said no to, because those features depend on a posture the studio has decided not to take. The studio says no often. It says no to features that several of the studio's members would actually like to use. The pattern, sustained, is what makes the position credible.
 
-Usage analytics on entry content is the first. The studio does not
-track what a person writes about. There are no automated topic
-classifications, no sentiment analyses, no per-entry telemetry. The
-studio knows how often a product is opened and how long sessions
-are, in aggregated form, because those signals matter for the
-basic question of whether the product works at all. What is written
-_into_ the product is not measured.
+<FullBleed label="Capability matrix across the three products">
 
-Personalization of memory surfacing is the second. LogDate, in
-particular, would be more useful in a narrow sense if it could
-choose, on the user's behalf, which past entry to surface today. It
-does not, because personalization of that kind requires the system
-to know what is in each entry, and the system does not know that.
-Date-based surfacing — the same date last year — is what is
-available when content is opaque, and the studio considers that
-trade acceptable.
+| Capability                                           | LogDate | Curfew | Termsly |
+| ---------------------------------------------------- | :-----: | :----: | :-----: |
+| The studio can read a user's content                 |    ✗    |   ✗    |    ✗    |
+| The studio can derive insights from a user's content |    ✗    |   ✗    |    ✗    |
+| The studio knows how often the app is opened         |    ✓    |   ✓    |    ✓    |
+| The studio knows session duration, in aggregate      |    ✓    |   ✓    |    ✓    |
+| The studio knows which features were used, by user   |    ✗    |   ✗    |    ✗    |
+| The studio holds an encrypted sync blob              |    ✓    |   ✓    |    ✓    |
+| The studio holds the key to decrypt the blob         |    ✗    |   ✗    |    ✗    |
+| Search runs on the device                            |    ✓    |   ✓    |    ✓    |
+| Personalization runs on the device                   |    ✓    |   ✓    |    ✓    |
+| Crash reports include user content                   |    ✗    |   ✗    |    ✗    |
+| Crash reports include stack traces and device class  |    ✓    |   ✓    |    ✓    |
 
-Cross-device search-as-a-service is the third. A search that runs
-on the server is faster and supports richer queries than a search
-that runs on the device. The price is a server that can read the
-documents being searched. The studio runs search on the device. It
-is slower in some cases. It is, by construction, search the studio
-cannot watch.
+</FullBleed>
 
-Each of these is a feature a competing product offers. Each of
-them, the studio has chosen to do without, because the cost of
-having them is a kind of leverage the studio has decided not to
-have.
+The matrix above is the same in every column. That uniformity is the point. The studio's products are different products, but they all sit in the same relationship to the user.
+
+**Usage analytics on entry content.** The studio does not track what a person writes about, sets rules against, or annotates. There are no automated topic classifications, no sentiment analyses, no per-entry telemetry. The studio knows how often a product is opened and how long sessions are, in aggregated form, because those signals matter for the basic question of whether the product works at all. What is written _into_ the product is not measured.
+
+**Personalization of memory surfacing.** LogDate, in particular, would be more useful in a narrow sense if it could choose, on the user's behalf, which past entry to surface today. It does not, because personalization of that kind requires the system to know what is in each entry, and the system does not know that. Date-based surfacing — the same date last year — is what is available when content is opaque, and the studio considers that trade acceptable.
+
+<Marginalia label="trade">
+  An on-device personalization model could in principle do content-aware surfacing without the
+  studio learning anything. The studio is investigating this carefully. The bar is high: the model
+  has to be auditable, and "the studio cannot read user content" has to remain operationally true
+  even if the model is imperfect.
+</Marginalia>
+
+**Cross-device search-as-a-service.** A search that runs on the server is faster and supports richer queries than a search that runs on the device. The price is a server that can read the documents being searched. The studio runs search on the device. It is slower in some cases. It is, by construction, search the studio cannot watch.
+
+**Recovery from a forgotten password.** A studio that holds the key can recover a user's data when the user forgets their password. The studio has chosen to not hold the key. A user who forgets their password and has no backup of the recovery phrase loses access to their data. The studio considers this the correct trade-off. Recovery from password loss is a feature whose existence implies the operator can read the user's content; the studio has decided that the cost of that implication is too high.
+
+Each of these is a feature a competing product offers. Each of them, the studio has chosen to do without, because the cost of having them is a kind of leverage the studio has decided not to have.
 
 ## What it costs the studio
 
 Worth naming honestly. The position is not free.
 
-The studio's products ship features more slowly than products that
-treat their own backend as a place to think. A feature that depends
-on having a clear-text view of the data has to be either redesigned
-to run on the device or not built at all. The redesign work is
-real; it is sometimes the larger share of a release.
+The studio's products ship features more slowly than products that treat their own backend as a place to think. A feature that depends on having a clear-text view of the data has to be either redesigned to run on the device or not built at all. The redesign work is real; it is sometimes the larger share of a release. A feature that would be a one-week build in a conventional architecture is a four-week build in a local-first one, because the local-first version requires careful conflict resolution, cross-device key management, and a UI that gracefully handles the cases where the user's devices are out of sync.
 
-Support is harder. A user whose sync has stopped working cannot be
-diagnosed by reading their data, because there is no data on the
-studio's side that can be read. The diagnostic flow runs on the
-device, with the user's permission, in the user's view, and that
-is all that is available. The studio considers this a feature for
-the person using the software and a tax on the studio. Both
-descriptions are accurate.
+**Support is harder.** A user whose sync has stopped working cannot be diagnosed by reading their data, because there is no data on the studio's side that can be read. The diagnostic flow runs on the device, with the user's permission, in the user's view, and that is all that is available. The studio considers this a feature for the person using the software and a tax on the studio. Both descriptions are accurate.
 
-There is no telemetry-driven product loop on user content. The
-studio cannot run an experiment that says _users who write longer
-entries return more often_; the studio cannot see how long entries
-are. Some design decisions that other companies make from data,
-the studio makes from interviews and from its own use of the
-products.
+**There is no telemetry-driven product loop on user content.** The studio cannot run an experiment that says _users who write longer entries return more often;_ the studio cannot see how long entries are. Some design decisions that other companies make from data, the studio makes from interviews and from its own use of the products. This is slower. It is also, as far as the studio can tell, less prone to the optimization-target drift that befalls products that measure what is measurable instead of what matters.
 
-These costs are paid in exchange for a position the studio
-considers load-bearing for the kind of software it wants to make.
-The exchange rate is not always favorable on a per-feature basis.
-It is favorable in the aggregate, by the studio's lights.
+**The studio is structurally less able to comply with broad legal requests.** A subpoena for a user's content is one the studio answers honestly: _the studio does not have the user's content in a form it can produce._ This is, depending on the legal system, an answer that elicits more questions, not fewer. The studio retains counsel for this[^subpoena]. The position, however, holds: you cannot be compelled to produce what you cannot produce. The architectural commitment is, in this respect, also a legal one.
+
+These costs are paid in exchange for a position the studio considers load-bearing for the kind of software it wants to make. The exchange rate is not always favorable on a per-feature basis. It is favorable in the aggregate, by the studio's lights.
 
 ## A note for readers who want to verify
 
-Verification is part of the promise. The privacy page documents
-the stance in plain language. The storage and sync layer of each
-product is open source; the source is linked from the colophon of
-each product's site. A reader who wants to confirm that the studio
-does not see what the studio says it does not see can read the
-code.
+Verification is part of the promise. The studio does not ask its users to take its word for any of this. The privacy page documents the stance in plain language. The storage and sync layer of each product is open source; the source is linked from the colophon of each product's site. A reader who wants to confirm that the studio does not see what the studio says it does not see can read the code.
 
-The studio considers that one of the more important sentences on
-the site, and it is at the bottom of this study because it is the
-answer to the rest.
+<Marginalia label="ref">
+  The product source repositories are at github.com/TheHypertextStudio/{logdate,curfew,termsly}. The storage and sync layer in each is in `src/storage/`. Independent audit reports, when they exist, are linked from `/colophon` on each product's site.
+</Marginalia>
+
+The studio considers the verifiability of the claim more important than the claim itself. A privacy stance that the user has to take on faith is barely worth more than the privacy policy it replaces. A privacy stance the user can confirm against running code is the kind of commitment a studio can sign honestly. The studio prefers the second kind.
+
+This is, in the end, the studio's proposition: that a small set of products, sold to a small set of users who care about this trade, can be sustained on a position of structural restraint. The position is not for everyone. It is also not new. The studio is, on this question as on the question of locked delays and voice without transcription, doing one of the things software has been able to do for a long time and chooses, mostly, not to.
+
+[^primitives]: The encryption stack is XChaCha20-Poly1305 for symmetric authenticated encryption, X25519 for key agreement during initial device pairing, and Argon2id for password-derived keys. Standard primitives mean the security argument reduces to the well-studied properties of the primitives themselves; the studio is not in the business of inventing cryptography. See _The Joy of Cryptography_ (Rosulek, 2021, free) for the textbook treatment of these constructions, or RFC 8439 for XChaCha20-Poly1305 directly.
+
+[^subpoena]: A studio that holds end-to-end-encrypted blobs but cannot decrypt them can still be compelled to produce metadata: which user logged in from which IP, when sync occurred, which device pairing exchanges happened. The studio retains the minimum metadata necessary for the service to function and publishes a transparency report annually noting the volume and nature of such requests received. The report is at `/colophon/transparency`.

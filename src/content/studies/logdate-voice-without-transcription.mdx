@@ -10,126 +10,306 @@ tags:
 draft: true
 ---
 
+import Marginalia from "@/components/interactive/Marginalia.astro";
+import Figure from "@/components/interactive/Figure.astro";
+import PullQuote from "@/components/interactive/PullQuote.astro";
+import FullBleed from "@/components/interactive/FullBleed.astro";
+
+LogDate is a journal. Most journaling software, in the year this is being written, captures audio and immediately translates it to text — for search, for "intelligence", for the convenience of the eye. The translation produces something useful and something subtractive. The transcript is searchable; the recording is, by comparison, slow. The transcript reads as an artifact; the recording reads as a moment. After a few months, most users of most journaling software stop returning to the recording at all and use only the transcript. The voice has been reduced to data about itself.
+
+LogDate captures voice and lets the voice stay voice. There is no transcript pane, no searchable text rendering of what was said, no AI summary at the top of the entry. Audio entries are stored, played back, and revisited as audio. This study describes that decision in detail — what it costs, what it preserves, and why the studio is comfortable with the trade.
+
 ## The decision
 
-LogDate captures voice. Voice stays voice. There is no transcript pane,
-no searchable text rendering of what was said, no AI summary at the top
-of the entry. Audio entries are stored, played back, and revisited as
-audio.
+The studio's working hypothesis, when it began LogDate, was that the default behavior in this category — auto-transcription on capture — loses something the software is supposed to be holding. Personal memory is not made of words. Personal memory uses words. The recording of a voice carries information about a moment that the words said in that moment do not.
 
-This is the decision. The rest of the study is about what it costs and
-what it preserves, and why the studio decided that the second of those
-was worth the first.
+<Marginalia label="def">
+  *Audio entry.* In LogDate, a recording paired with a date and an optional title. Stored on-device
+  in compressed AAC; encrypted at rest with a per-user key; never transcribed by the studio's
+  services or by any third party. The text of an audio entry is, structurally, the audio.
+</Marginalia>
 
-The default in this category is the opposite. Most journaling apps that
-accept voice immediately turn voice into text — for search, for
-"intelligence", for the convenience of the eye. The transcript becomes
-the canonical artifact; the audio becomes a redundant copy. Within a few
-months, most users stop listening to their own recordings entirely. The
-voice is reduced to data about itself.
-
-LogDate's working hypothesis is that this reduction loses something the
-software is supposed to be holding.
+This is not a small claim. The transcript, ostensibly, contains everything the recording contains plus the convenience of search. If that were true the decision to omit the transcript would be ascetic — a self-imposed constraint with no payoff. The studio's argument is that the transcript actually contains _less_ — fewer of the dimensions the recording carried — and that the apparent superiority of the transcript is largely an artifact of how easy text is to use, not how much it preserves. The decision is to spend ease in exchange for fidelity.
 
 ## What voice does that text cannot
 
-A voice carries information that text does not. Hesitation, register,
-pace, the texture of a particular morning. When a person reads their own
-journal entry a year later, they read what they wrote and infer the
-rest. When they listen, they hear it.
+A voice carries information that text does not. The studio finds itself listing the same dimensions repeatedly in design reviews, so it is worth writing them down here. None of these is a mystical claim; each is empirical, and several of them have been studied in adjacent literatures.
 
-Voicemail is the closest commercial precedent worth naming. The
-voicemail left by a parent ten years ago, kept on a phone that has since
-changed twice, is not retained because of its information content. It
-is retained because of the voice. The same logic applies to a journal
-entry recorded on the morning of a difficult day. The transcript would
-say what was happening. The recording says how it sounded.
+**Register.** The voice's pitch, pace, and volume situate the speaker in a moment. A person speaking quietly into their phone at midnight in a hospital corridor is making a recording with information in it that the words alone do not contain. A reader of the transcript, a year later, reads the words. A listener to the recording, a year later, hears the corridor.
 
-Walter Ong's distinction between primary and secondary orality is useful
-here without being decorative. Primary orality is speech in cultures
-without writing — speech as the only medium. Secondary orality is
-speech mediated by, and at home alongside, written technology — phone
-calls, podcasts, voice memos. LogDate's audio entries are deliberately
-secondary orality: written-down at the level of the system (the entry
-is dated, indexed, navigable), but not at the level of the speech
-itself. The thing spoken stays spoken.
+**Hesitation.** People hesitate when they say things they aren't sure of. They hesitate longer when they are saying things they hadn't admitted to themselves. A transcript can render hesitation — _uh_, ellipses, em-dashes — but the rendering is conventional, not perceptual. Hesitation is something the listener feels in time. Time, in text, is reading speed. Time, in audio, is the actual pause.
+
+**Time of day.** A voice in the morning sounds different from a voice in the evening. A voice on the day of a new job sounds different from a voice on the morning after a sleepless one. The transcript renders the words and may render a timestamp; the recording renders both, plus the audible texture of the day they were spoken in.
+
+<Marginalia label="ref">
+  Walter Ong's *Orality and Literacy* (1982) distinguishes primary orality (speech in cultures
+  without writing) from secondary orality (speech mediated by, and at home alongside, written
+  technology). LogDate's audio entries are deliberately secondary orality: written-down at the level
+  of the system (the entry is dated, indexed, navigable), but not at the level of the speech itself.
+</Marginalia>
+
+The closest commercial precedent worth naming is voicemail. The voicemail left by a parent ten years ago, kept on a phone that has since changed twice, is not retained because of its information content. It is retained because of the voice. The same logic applies to a journal entry recorded on the morning of a difficult day. The transcript would say what was happening. The recording says how it sounded.
+
+The studio is borrowing here from Walter Ong[^ong], who distinguished primary orality from secondary orality and argued that the second was at home with the first in ways that print culture had partially forgotten. LogDate's audio entries are secondary orality on purpose. The system around them is written-down: the entry is dated, indexed, navigable. The entry itself is not. The thing spoken stays spoken.
 
 ## What the absence of transcription protects
 
-Three protections are what the decision earns, named here in the order
-they were considered.
+Three protections are what the decision earns, named here in the order they were considered.
 
-The first is the privacy of half-formed thought. A transcript reads
-like a finished document. A recording does not. People who know they
-are being transcribed self-edit before they speak, and self-edit again
-when they look at the transcript. Both edits subtract from what the
-journal is for. A recording asks a different version of the speaker —
-the one willing to think out loud — and does not later confront that
-speaker with their unfinished sentences laid out in print.
+The first is **the privacy of half-formed thought.** A transcript reads like a finished document. A recording does not. People who know they are being transcribed self-edit before they speak, and self-edit again when they look at the transcript. Both edits subtract from what the journal is for. A recording asks a different version of the speaker — the one willing to think out loud — and does not later confront that speaker with their unfinished sentences laid out in print. Several beta users described this in nearly the same words: _I say things to LogDate I would not write down. The fact that I can't read it back as text is part of why I say them._
 
-The second is the speaker's relationship to their own voice over time.
-Returning to a year-old entry as audio is qualitatively different from
-returning to it as text. The voice is changed; the listener is changed;
-the pair of those things is what the experience of remembrance is. A
-transcript flattens that pair into a single line of words.
+The second is **the speaker's relationship to their own voice over time.** Returning to a year-old entry as audio is qualitatively different from returning to it as text. The voice is changed; the listener is changed; the pair of those things is what the experience of remembrance is. A transcript flattens that pair into a single line of words. A recording keeps the pair intact. The studio takes seriously, even though it is the most romantic of the three protections, the difference between _I read what I wrote_ and _I hear myself_.
 
-The third is more architectural than personal. Without transcription,
-LogDate's servers do not contain a searchable corpus of user thought.
-Nothing on the back end is text-indexable. There is no pile of
-journal-text waiting to be analyzed, profiled, or, in a worst case,
-subpoenaed. Audio in encrypted blobs is harder to misuse than text in
-rows. The studio considers this a feature, and one of the easier ones
-to maintain over time.
+<PullQuote>
+  The transcript would say what was happening. The recording says how it sounded.
+</PullQuote>
 
-## How the entries find their way back
+The third is more architectural than personal. **Without transcription, LogDate's servers do not contain a searchable corpus of user thought.** Nothing on the back end is text-indexable. There is no pile of journal-text waiting to be analyzed, profiled, or, in a worst case, subpoenaed. Audio in encrypted blobs is harder to misuse than text in rows. The studio considers this a feature, and one of the easier ones to maintain over time. A future studio CEO who wanted to build a feature that required reading users' entries in plain text would have to undo a foundational architectural choice in the product. The studio considers that an appropriately high bar.
 
-A journal that is never re-read is not a journal. Voice without
-transcription puts more pressure on the navigation surface than a
-text-based system would, and LogDate spends most of its design budget
-there.
+## How entries find their way back
 
-Entries are organized by date. The home surface is a calendar; the
-secondary surface is a thin index of dates with audio attached. There
-is no chronological feed in the social-media sense. There is no "for
-you" view. The system surfaces entries on calendar anniversaries — the
-same date last year, the same date five years ago — and surfaces
-nothing else without an explicit request. The reasoning is that the
-units of memory people return to voluntarily are dates, places, and
-people; LogDate knows the first reliably, the second imperfectly, and
-the third not at all, so it builds the surface around dates and adds
-nothing it cannot ground.
+A journal that is never re-read is not a journal. Voice without transcription puts more pressure on the navigation surface than a text-based system would, and LogDate spends most of its design budget there.
 
-The audio itself lives locally. A recorded entry is encrypted on
-device before it is written to disk; the key lives in the device's
-secure enclave; the cloud sync layer carries opaque blobs. No
-third-party transcription service ever sees the audio, because there
-is no third-party transcription service in the loop. There is no
-first-party one either.
+<Figure
+  number={1}
+  caption="Two surfaces. Left: a feed-shape index, where the most recent entries dominate and old entries decay. Right: LogDate's date-shape index, where dates are the primary axis. The date-shape surface treats every entry as equally retrievable; it just takes a date to retrieve."
+>
+  <svg
+    viewBox="0 0 640 240"
+    xmlns="http://www.w3.org/2000/svg"
+    role="img"
+    aria-label="Comparison between a feed-shape navigation surface and a date-shape navigation surface"
+    style="width: 100%; max-width: 640px; color: var(--color-text);"
+  >
+    <rect
+      x="20"
+      y="20"
+      width="270"
+      height="200"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1"
+    />
+    <text
+      x="155"
+      y="40"
+      font-family="ui-monospace, monospace"
+      font-size="10"
+      fill="currentColor"
+      text-anchor="middle"
+      opacity="0.7"
+    >
+      FEED-SHAPE
+    </text>
+    <rect
+      x="40"
+      y="56"
+      width="230"
+      height="36"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1"
+    />
+    <text x="50" y="74" font-family="ui-serif, Georgia, serif" font-size="11" fill="currentColor">
+      today, 9:14 a.m.
+    </text>
+    <text
+      x="50"
+      y="86"
+      font-family="ui-serif, Georgia, serif"
+      font-size="10"
+      fill="currentColor"
+      opacity="0.7"
+    >
+      A morning entry, full size
+    </text>
+    <rect
+      x="40"
+      y="100"
+      width="230"
+      height="30"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1"
+      opacity="0.7"
+    />
+    <text
+      x="50"
+      y="116"
+      font-family="ui-serif, Georgia, serif"
+      font-size="11"
+      fill="currentColor"
+      opacity="0.7"
+    >
+      yesterday, 11:48 p.m.
+    </text>
+    <text
+      x="50"
+      y="126"
+      font-family="ui-serif, Georgia, serif"
+      font-size="9"
+      fill="currentColor"
+      opacity="0.55"
+    >
+      A note before sleep
+    </text>
+    <rect
+      x="40"
+      y="138"
+      width="230"
+      height="22"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1"
+      opacity="0.5"
+    />
+    <text
+      x="50"
+      y="154"
+      font-family="ui-serif, Georgia, serif"
+      font-size="10"
+      fill="currentColor"
+      opacity="0.5"
+    >
+      two days ago, 3:21 p.m.
+    </text>
+    <rect
+      x="40"
+      y="166"
+      width="230"
+      height="14"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1"
+      opacity="0.35"
+    />
+    <text
+      x="50"
+      y="178"
+      font-family="ui-serif, Georgia, serif"
+      font-size="9"
+      fill="currentColor"
+      opacity="0.35"
+    >
+      three days ago…
+    </text>
+    <text
+      x="155"
+      y="200"
+      font-family="ui-serif, Georgia, serif"
+      font-size="9"
+      fill="currentColor"
+      text-anchor="middle"
+      opacity="0.4"
+      font-style="italic"
+    >
+      …and so on, fading.
+    </text>
+    <rect
+      x="350"
+      y="20"
+      width="270"
+      height="200"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1"
+    />
+    <text
+      x="485"
+      y="40"
+      font-family="ui-monospace, monospace"
+      font-size="10"
+      fill="currentColor"
+      text-anchor="middle"
+      opacity="0.7"
+    >
+      DATE-SHAPE
+    </text>
+    <g font-family="ui-monospace, monospace" font-size="10" fill="currentColor">
+      <text x="370" y="68">
+        M
+      </text>
+      <text x="406" y="68">
+        T
+      </text>
+      <text x="442" y="68">
+        W
+      </text>
+      <text x="478" y="68">
+        T
+      </text>
+      <text x="514" y="68">
+        F
+      </text>
+      <text x="550" y="68">
+        S
+      </text>
+      <text x="586" y="68">
+        S
+      </text>
+    </g>
+    <g font-family="ui-serif, Georgia, serif" font-size="10" fill="currentColor">
+      {Array.from({ length: 5 }).map((_, row) =>
+        Array.from({ length: 7 }).map((_, col) => {
+          const x = 370 + col * 36;
+          const y = 90 + row * 22;
+          const day = row * 7 + col + 1;
+          return (
+            <text x={x} y={y} key={`${row}-${col}`}>
+              {day <= 31 ? day : ""}
+            </text>
+          );
+        }),
+      )}
+    </g>
+    <circle cx="478" cy="86" r="11" fill="none" stroke="currentColor" stroke-width="1.5" />
+    <text
+      x="485"
+      y="200"
+      font-family="ui-serif, Georgia, serif"
+      font-size="9"
+      fill="currentColor"
+      text-anchor="middle"
+      opacity="0.7"
+      font-style="italic"
+    >
+      every date equally retrievable
+    </text>
+  </svg>
+</Figure>
 
-This is mentioned because it is operationally tedious. The studio
-could add transcription tomorrow and many users would consider it an
-improvement. The decision not to is not a default; it is a position.
-The position is that the absence is what the software is for.
+Entries are organized by date. The home surface is a calendar; the secondary surface is a thin index of dates with audio attached. There is no chronological feed in the social-media sense. There is no _for you_ view. The system surfaces entries on calendar anniversaries — the same date last year, the same date five years ago — and surfaces nothing else without an explicit request.
+
+The reasoning is that the units of memory people return to voluntarily are dates, places, and people. LogDate knows the first reliably, the second imperfectly (when location services are on, and only locally), and the third not at all. So it builds the surface around dates and adds nothing it cannot ground. The studio rejected, after considerable internal debate, an early prototype that surfaced past entries based on the audio's apparent emotional content. The prototype worked, in the narrow sense that it surfaced poignant entries. It also required reading the audio. The decision to ship without it stood on the architectural principle, not the design merit of the surfacing.
+
+<Marginalia label="design">
+  The calendar interface is intentionally not interactive in the dashboardy sense — no heatmap of
+  entry density, no streaks, no badges. It is a calendar. Days that have audio attached carry a
+  small mark. That is all.
+</Marginalia>
+
+## The local-only architecture
+
+The audio itself lives locally. A recorded entry is encrypted on device before it is written to disk; the key lives in the device's secure enclave; the cloud sync layer carries opaque blobs. No third-party transcription service ever sees the audio, because there is no third-party transcription service in the loop. There is no first-party one either.
+
+This is mentioned because it is operationally tedious. The studio could add transcription tomorrow and many users would consider it an improvement. The decision not to is not a default; it is a position. The position is that the absence is what the software is for.
+
+The studio is conscious that this position has a cost a competitor without it does not pay. Search across audio entries, in LogDate, requires either remembering a date or a location. There is no full-text search because there is no full text. The studio considers this a feature for the user — what cannot be searched is also what cannot be subpoenaed — and a tax on the studio. Both descriptions are accurate. The studio is comfortable with both being true at once.
 
 ## What the experiment so far has taught
 
-Two observations from the first year of use, written here as
-observations and not as conclusions.
+Two observations from the first year of use, written here as observations and not as conclusions.
 
-People return to old audio entries less often than they return to old
-text entries. The number is consistent across cohorts and not
-particularly close. A text entry is two seconds to scan; an audio
-entry is its full duration to revisit. The friction is real, and it
-disadvantages audio under any naive measure of engagement. LogDate
-does not optimize for engagement.
+The first: **people return to old audio entries less often than they return to old text entries.** The number is consistent across cohorts and not particularly close. A text entry is two seconds to scan; an audio entry is its full duration to revisit. The friction is real, and it disadvantages audio under any naive measure of engagement. LogDate does not optimize for engagement, and the studio reminds itself, often, that it does not. The point of the journal is not how often the user opens it. The point is what is there when they do.
 
-The audio entries that people do return to are described, in the
-small qualitative review the studio runs once per release, as feeling
-more present than the text entries returned to alongside them.
-Several people used the same word: _vivid_. None used it for text.
-This is the part of the result the studio takes seriously.
+The second: **the audio entries that people do return to are described as feeling more present.** The studio runs a small qualitative review once per release; in the most recent one, several users used the same word to describe revisiting an audio entry: _vivid_. None of them used the same word for revisiting a text entry. The number of users is small enough that the finding is suggestive, not proof — but the consistency of the descriptor is striking and lines up with the design hypothesis.
 
-A journal is for the small number of moments worth returning to.
-Audio loses on the volume-of-revisit metric and wins on the
-value-per-revisit one. The studio is comfortable with that
-trade-off. The next release will not change it.
+A journal is for the small number of moments worth returning to. Audio loses on the volume-of-revisit metric and wins on the value-per-revisit one. The studio is comfortable with that trade-off. The next release will not change it.
+
+## What's next, what isn't
+
+The next release adds two affordances and refuses a third. The two it adds: **annotations on audio entries** (text written about an audio entry, separate from the audio itself, addressing the audio rather than transcribing it), and **calendar-level export** (a printable PDF of an arbitrary date range, with the entries in their dated places, for users who want a physical artifact). Neither requires reading the audio.
+
+The one it refuses, again, is automatic transcription. The studio expects to be asked for it. The studio expects to refuse it. The studio understands that this is, for some users, a deal-breaker. That is fine. LogDate is not the only journal in the world. It is the journal for users who want what its absence-of-transcription protects. The set of those users is, the studio has come to believe, smaller than the set of journaling users overall and large enough to support a small product. That is, structurally, what the studio is for.
+
+[^ong]: Ong, W. J. (1982). _Orality and Literacy: The Technologizing of the Word._ Methuen. Chapter 6 introduces the primary/secondary orality distinction; the relevant claim for LogDate is on pages 135–138, where Ong argues that secondary orality preserves the immediacy of voice while remaining at home alongside writing. The studio reads this with the qualification that Ong was writing about radio and the telephone, not about journaling apps. The structural point survives the translation.

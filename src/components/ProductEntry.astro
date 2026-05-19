@@ -66,6 +66,11 @@ const moreLabel = ready ? `Read about ${name}` : `Read about ${name}, in design`
     padding-block: var(--space-xl) var(--space-lg);
     border-block-start: var(--rule-thin);
     grid-template-columns: 1fr;
+    /* Each product entry is a snap target on the document scroll. The
+     * snap container is `html`; proximity means we only nudge when the
+     * scroll lands near a boundary, so reading inside an entry is calm. */
+    scroll-snap-align: start;
+    scroll-snap-stop: normal;
   }
 
   .entry:first-of-type {

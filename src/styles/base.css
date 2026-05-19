@@ -2,6 +2,15 @@
  * Base element styles: links, focus, lists, defs, dialogs.
  * ============================================================================= */
 
+/* Scroll snap is scoped via :has() so only pages with snap targets (home
+ * page .entry rows) pay the snap-aware scroll dampening. `scroll-behavior:
+ * auto` overrides any inherited smoothing — snap should land, not glide. */
+html:has(.entry[id]) {
+  scroll-snap-type: y proximity;
+  scroll-padding-block-start: var(--space-md);
+  scroll-behavior: auto;
+}
+
 a {
   color: var(--color-link);
   text-decoration: underline;

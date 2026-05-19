@@ -2,8 +2,7 @@
 import { STUDIO_LOCATION } from '@/consts';
 ---
 
-<section class="footer-studio" aria-labelledby="footer-studio-heading">
-  <h2 id="footer-studio-heading" class="footer-section__heading">Studio</h2>
+<div class="footer-studio">
   <p class="lede">A small design lab building sustainable, human-centered software.</p>
   <address class="addr">
     Hypertext Studio<br />
@@ -11,23 +10,13 @@ import { STUDIO_LOCATION } from '@/consts';
     {STUDIO_LOCATION.locality}, {STUDIO_LOCATION.region}
     {STUDIO_LOCATION.postalCode}
   </address>
-</section>
+</div>
 
 <style>
   .footer-studio {
     display: flex;
     flex-direction: column;
     gap: var(--space-sm);
-  }
-
-  .footer-section__heading {
-    font-family: var(--font-mono);
-    font-size: var(--font-size-meta);
-    color: var(--color-secondary);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    font-weight: 400;
-    margin: 0;
   }
 
   .footer-studio .lede {
