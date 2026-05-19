@@ -41,9 +41,9 @@
     "doctor": "bash scripts/doctor.sh"
   },
   "dependencies": {
-    "@astrojs/mdx": "^5.0.4",
+    "@astrojs/mdx": "^5.0.6",
     "@astrojs/sitemap": "^3.7.2",
-    "astro": "^6.2.2",
+    "astro": "^6.3.5",
     "microformats-parser": "^2.0.4"
   },
   "devDependencies": {
