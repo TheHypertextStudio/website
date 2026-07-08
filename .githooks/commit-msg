@@ -6,6 +6,16 @@
 set -euo pipefail
 
 msg_file="$1"
+repo_root="$(git rev-parse --show-toplevel)"
+formatter="$repo_root/scripts/validation/format-commit-message.sh"
+
+if [[ -x "$formatter" ]]; then
+  formatter_output="$("$formatter" "$msg_file" 2>&1)"
+  if [[ -n "$formatter_output" ]]; then
+    echo "$formatter_output"
+  fi
+fi
+
 first_line="$(head -n1 "$msg_file")"
 
 # Allow merge / revert / fixup commits unchanged.
@@ -27,5 +37,52 @@ Examples:  feat: add command palette
            fix(footer): poem fallback when worker down
            chore(deps): bump astro to 6.3
 EOF
+  exit 1
+fi
+
+is_footer_line() {
+  local line="$1"
+  [[ "$line" =~ ^(BREAKING[[:space:]]CHANGE:|[A-Za-z][A-Za-z-]*:|Fixes[[:space:]]#|Closes[[:space:]]#|Related[[:space:]]to[[:space:]]#|Refs:|Co-Authored-By:|Co-authored-by:|Signed-off-by:|Reviewed-by:|Acked-by:) ]]
+}
+
+is_fence_line() {
+  local line="$1"
+  local trimmed="${line#"${line%%[![:space:]]*}"}"
+  [[ "$trimmed" == '```'* || "$trimmed" == '~~~'* ]]
+}
+
+line_number=0
+in_fence=0
+failed=0
+while IFS= read -r line || [[ -n "$line" ]]; do
+  line_number=$((line_number + 1))
+  if [[ $line_number -eq 1 ]]; then
+    continue
+  fi
+  if is_fence_line "$line"; then
+    if [[ $in_fence -eq 0 ]]; then
+      in_fence=1
+    else
+      in_fence=0
+    fi
+    continue
+  fi
+  if [[ $in_fence -eq 1 || -z "$line" || "$line" == \#* ]]; then
+    continue
+  fi
+  if is_footer_line "$line"; then
+    continue
+  fi
+  if [[ ${#line} -gt 72 ]]; then
+    if [[ $failed -eq 0 ]]; then
+      echo ""
+      echo "Commit body lines must be 72 characters or fewer."
+    fi
+    echo "  Line $line_number is ${#line} characters: $line"
+    failed=1
+  fi
+done < "$msg_file"
+
+if [[ $failed -ne 0 ]]; then
   exit 1
 fi
