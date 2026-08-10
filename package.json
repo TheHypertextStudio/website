@@ -49,7 +49,7 @@
   "devDependencies": {
     "@astrojs/check": "^0.9.9",
     "@cloudflare/workers-types": "^4.20260505.1",
-    "@playwright/test": "^1.49.0",
+    "@playwright/test": "^1.62.1",
     "@types/node": "^24.0.0",
     "@typescript-eslint/parser": "^8.59.2",
     "axe-playwright": "^2.2.2",
@@ -58,7 +58,7 @@
     "eslint-plugin-jsx-a11y": "^6.10.2",
     "lint-staged": "^15.5.0",
     "portless": "^0.12.0",
-    "prettier": "^3.6.0",
+    "prettier": "^3.9.6",
     "prettier-plugin-astro": "^0.14.1",
     "rehype-autolink-headings": "^7.1.0",
     "rehype-slug": "^6.0.0",
