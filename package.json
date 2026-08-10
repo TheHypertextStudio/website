@@ -42,12 +42,12 @@
   },
   "dependencies": {
     "@astrojs/mdx": "^5.0.4",
-    "@astrojs/sitemap": "^3.7.2",
-    "astro": "^6.2.2",
+    "@astrojs/sitemap": "^3.7.3",
+    "astro": "^6.4.8",
     "microformats-parser": "^2.0.4"
   },
   "devDependencies": {
-    "@astrojs/check": "^0.9.9",
+    "@astrojs/check": "^0.9.10",
     "@cloudflare/workers-types": "^4.20260505.1",
     "@playwright/test": "^1.49.0",
     "@types/node": "^24.0.0",
