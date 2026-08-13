@@ -1,5 +1,4 @@
 import { expect, test } from '@playwright/test';
-import { FOOTER_PRINCIPLES } from '../fixtures/site';
 
 test.describe('Footer (closing scene)', () => {
   test.beforeEach(async ({ page }) => {
@@ -13,15 +12,6 @@ test.describe('Footer (closing scene)', () => {
       vh: window.innerHeight,
     }));
     expect(dims.h).toBeLessThanOrEqual(dims.vh + 1); // tolerate sub-pixel rounding
-  });
-
-  test('marquee announces the studio principles', async ({ page }) => {
-    const m = page.locator('section.footer-marquee');
-    await expect(m).toBeVisible();
-    for (const principle of FOOTER_PRINCIPLES) {
-      // Each principle is duplicated for the seamless loop; locator returns ≥1.
-      await expect(m.getByText(principle).first()).toBeAttached();
-    }
   });
 
   test('wordmark anchor is present', async ({ page }) => {

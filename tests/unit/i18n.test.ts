@@ -17,8 +17,4 @@ describe('i18n', () => {
       'Hypertext Studio explores how to create sustainable human-centered software.',
     );
   });
-
-  it('has eight footer principles', () => {
-    expect(t.footer.principles).toHaveLength(8);
-  });
 });

@@ -1,8 +1,15 @@
 import eslintPluginAstro from 'eslint-plugin-astro';
+import tsParser from '@typescript-eslint/parser';
 
 export default [
   ...eslintPluginAstro.configs.recommended,
   ...eslintPluginAstro.configs['jsx-a11y-recommended'],
+  {
+    files: ['*.astro/*.ts', '**/*.astro/*.ts'],
+    languageOptions: {
+      parser: tsParser,
+    },
+  },
   {
     ignores: ['dist/**', '.astro/**', '.wrangler/**', 'node_modules/**', 'pnpm-lock.yaml'],
   },

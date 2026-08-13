@@ -245,7 +245,6 @@ async function captureComponents(browser) {
     );
   }
 
-  await captureLocator(page.locator('aside.footer-marquee'), 'components/footer-marquee.png');
   await captureLocator(page.locator('section.colophon'), 'components/footer-colophon.png');
   await captureLocator(page.locator('section.status-panel'), 'components/footer-status-panel.png');
   await captureLocator(page.locator('.footer-wordmark'), 'components/footer-wordmark.png');

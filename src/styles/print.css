@@ -39,14 +39,13 @@
 
   /* Hide all chrome that doesn't belong on paper. The page-margin boxes
    * above carry the attribution; the screen footer's apparatus (colophon as
-   * faux source, status panel, marquee, wordmark, small print) is on-screen
+   * faux source, status panel, wordmark, small print) is on-screen
    * craft, not print content. */
   .status-bar,
   .skip-link,
   dialog,
   nav.skip-links,
   .entry__more,
-  .footer-marquee,
   footer.studio-footer {
     display: none !important;
   }

@@ -1,17 +1,6 @@
 import { expect, test } from '@playwright/test';
 
 test.describe('prefers-reduced-motion', () => {
-  test('disables marquee animation', async ({ browser }) => {
-    const ctx = await browser.newContext({ reducedMotion: 'reduce' });
-    const page = await ctx.newPage();
-    await page.goto('/');
-    const animName = await page
-      .locator('.footer-marquee-track')
-      .evaluate((el) => getComputedStyle(el).animationName);
-    expect(animName).toBe('none');
-    await ctx.close();
-  });
-
   test('disables dialog open transition', async ({ browser }) => {
     const ctx = await browser.newContext({ reducedMotion: 'reduce' });
     const page = await ctx.newPage();

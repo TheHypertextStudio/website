@@ -53,14 +53,3 @@ export const STATIC_FILES = [
   { path: '/atom.xml', contentType: /(application\/atom\+xml|application\/xml)/ },
   { path: '/feed.json', contentType: /(application\/feed\+json|application\/json)/ },
 ] as const;
-
-export const FOOTER_PRINCIPLES = [
-  'The page is a document, not an app',
-  'Native primitives over libraries',
-  'Take notes from the past to inform the future',
-  'Reward close attention',
-  'Calm before clever',
-  'Honor the platform',
-  'Minimalism in service of experience',
-  'Accessibility and internationalization are first-class',
-] as const;

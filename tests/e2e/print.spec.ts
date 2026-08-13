@@ -13,13 +13,6 @@ test.describe('Print stylesheet', () => {
     expect(display).toBe('none');
   });
 
-  test('hides the marquee', async ({ page }) => {
-    const display = await page
-      .locator('section.footer-marquee')
-      .evaluate((el) => getComputedStyle(el).display);
-    expect(display).toBe('none');
-  });
-
   test("hides each product entry's Read more button", async ({ page }) => {
     // The dialog the button opens is itself hidden under @media print
     // (it's a `<dialog>`); hiding its trigger removes a dead control from
