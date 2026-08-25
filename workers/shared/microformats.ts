@@ -7,7 +7,9 @@
  * See docs/indieweb.md for the conceptual frame.
  */
 
-import { mf2, type MicroformatRoot } from 'microformats-parser';
+import { mf2 } from 'microformats-parser';
+
+type MicroformatRoot = ReturnType<typeof mf2>['items'][number];
 
 export type MentionType = 'reply' | 'like' | 'repost' | 'bookmark' | 'mention';
 
