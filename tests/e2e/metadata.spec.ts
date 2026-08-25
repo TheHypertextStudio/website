@@ -57,8 +57,7 @@ test.describe('Schema.org JSON-LD', () => {
     await page.goto('/');
     const graph = await readJsonLd(page);
     const org = graph.find((n) => (n as { '@type'?: string })['@type'] === 'Organization') as
-      | Record<string, unknown>
-      | undefined;
+      Record<string, unknown> | undefined;
     expect(org).toBeTruthy();
     expect(org?.url).toBe('https://hypertext.studio');
     const address = org?.address as Record<string, unknown> | undefined;

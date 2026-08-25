@@ -23,8 +23,7 @@ setInterval(tick, 60_000);
 const renderEl = document.querySelector<HTMLElement>('[data-status="render"]');
 if (renderEl) {
   const nav = performance.getEntriesByType('navigation')[0] as
-    | PerformanceNavigationTiming
-    | undefined;
+    PerformanceNavigationTiming | undefined;
   if (nav) {
     const ms = Math.max(0, Math.round(nav.responseEnd - nav.requestStart));
     renderEl.textContent = `${ms} ms`;
