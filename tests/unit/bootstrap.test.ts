@@ -202,6 +202,7 @@ describe('bootstrap', () => {
         PATH: `${join(root, 'fake-bin')}:${process.env.PATH}`,
         BOOTSTRAP_CALL_LOG: callLog,
         BOOTSTRAP_ACTION_SECRET: actionSecret,
+        GITHUB_REPOSITORY: '',
         NO_COLOR: '1',
       },
     });
@@ -248,6 +249,7 @@ describe('bootstrap', () => {
           PATH: `${join(root, 'fake-bin')}:${process.env.PATH}`,
           BOOTSTRAP_CALL_LOG: callLog,
           BOOTSTRAP_ACTION_SECRET: actionSecret,
+          GITHUB_REPOSITORY: '',
           TMPDIR: temp,
           NO_COLOR: '1',
         },
@@ -267,6 +269,7 @@ describe('bootstrap', () => {
         PATH: `${join(root, 'fake-bin')}:${process.env.PATH}`,
         BOOTSTRAP_CALL_LOG: callLog,
         BOOTSTRAP_ACTION_SECRET: actionSecret,
+        GITHUB_REPOSITORY: '',
         NO_COLOR: '1',
       },
     });
@@ -284,6 +287,7 @@ describe('bootstrap', () => {
         PATH: `${join(root, 'fake-bin')}:${process.env.PATH}`,
         BOOTSTRAP_CALL_LOG: callLog,
         BOOTSTRAP_ACTION_SECRET: actionSecret,
+        GITHUB_REPOSITORY: '',
         NO_COLOR: '1',
       },
     });
@@ -309,6 +313,7 @@ describe('bootstrap', () => {
         PATH: `${join(root, 'fake-bin')}:${process.env.PATH}`,
         BOOTSTRAP_CALL_LOG: callLog,
         BOOTSTRAP_ACTION_SECRET: actionSecret,
+        GITHUB_REPOSITORY: '',
         NO_COLOR: '1',
       },
     });
@@ -334,6 +339,7 @@ describe('bootstrap', () => {
         PATH: `${join(root, 'fake-bin')}:${process.env.PATH}`,
         BOOTSTRAP_CALL_LOG: callLog,
         BOOTSTRAP_ACTION_SECRET: actionSecret,
+        GITHUB_REPOSITORY: '',
         NO_COLOR: '1',
       },
     });
