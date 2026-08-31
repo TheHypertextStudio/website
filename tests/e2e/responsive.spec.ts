@@ -58,6 +58,7 @@ test.describe('Responsive layout', () => {
     for (const width of [390, 768, 1440]) {
       await page.setViewportSize({ width, height: 1024 });
       await page.goto('/');
+      await page.evaluate(() => document.fonts.ready);
 
       const proportions = await page
         .locator('article.product-card')

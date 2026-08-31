@@ -75,6 +75,7 @@ const studioLinks = [
 
   .site-footer__inner {
     max-inline-size: var(--layout-max);
+    min-inline-size: 0;
     min-block-size: clamp(24rem, 50vh, 34rem);
     margin-inline: auto;
     padding: clamp(2.25rem, 5vw, 4rem) var(--layout-margin) clamp(1.5rem, 3vw, 2.5rem);
@@ -84,6 +85,9 @@ const studioLinks = [
   }
 
   .closing-tag {
+    min-inline-size: 0;
+    max-inline-size: 100%;
+    overflow: hidden;
     block-size: clamp(1.4rem, 8cqi, 3.75rem);
     font-family: var(--font-mono);
     font-size: clamp(1.4rem, 8cqi, 3.75rem);

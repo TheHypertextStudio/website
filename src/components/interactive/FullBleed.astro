@@ -28,8 +28,11 @@ const { id, label } = Astro.props;
 
 <style>
   .fullbleed {
+    min-inline-size: 0;
+    max-inline-size: 100%;
     margin: 0;
     padding-block: var(--space-md);
+    overflow-x: auto;
   }
 
   /* The bleed container is non-stylistic by design — it's a layout
