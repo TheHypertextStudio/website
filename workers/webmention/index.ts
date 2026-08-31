@@ -11,13 +11,15 @@ import type { WebmentionBindings } from '../shared/types';
 import { analyzeSource, MENTION_TYPES, type MentionType } from '../shared/microformats';
 
 const SITE_ORIGIN = 'https://hypertext.studio';
+const MAX_SOURCE_BYTES = 1024 * 1024;
+const VERIFY_TIMEOUT_MS = 10_000;
 
 export default {
-  async fetch(req: Request, env: WebmentionBindings): Promise<Response> {
+  async fetch(req: Request, env: WebmentionBindings, ctx: ExecutionContext): Promise<Response> {
     const url = new URL(req.url);
 
     if (req.method === 'POST' && url.pathname === '/webmention') {
-      return receive(req, env);
+      return receive(req, env, ctx);
     }
     if (req.method === 'GET' && url.pathname === '/webmentions') {
       const target = url.searchParams.get('target');
@@ -28,7 +30,11 @@ export default {
   },
 };
 
-async function receive(req: Request, env: WebmentionBindings): Promise<Response> {
+async function receive(
+  req: Request,
+  env: WebmentionBindings,
+  ctx: ExecutionContext,
+): Promise<Response> {
   let source: string, target: string;
   try {
     const form = await req.formData();
@@ -53,8 +59,7 @@ async function receive(req: Request, env: WebmentionBindings): Promise<Response>
     .bind(source, target)
     .run();
 
-  // Inline verify (best effort; D1 row updated on success).
-  void verify(source, target, env).catch(() => undefined);
+  ctx.waitUntil(verify(source, target, env));
 
   return new Response(JSON.stringify({ status: 'accepted' }), {
     status: 202,
@@ -63,10 +68,18 @@ async function receive(req: Request, env: WebmentionBindings): Promise<Response>
 }
 
 async function verify(source: string, target: string, env: WebmentionBindings): Promise<void> {
-  const res = await fetch(source, { redirect: 'follow' });
-  if (!res.ok) return reject(source, target, env);
-  const html = await res.text();
-  if (!html.includes(target)) return reject(source, target, env);
+  let html: string;
+  try {
+    const res = await fetch(source, {
+      redirect: 'follow',
+      signal: AbortSignal.timeout(VERIFY_TIMEOUT_MS),
+    });
+    if (!res.ok) return reject(source, target, env);
+    html = await readLimitedText(res, MAX_SOURCE_BYTES);
+    if (!html.includes(target)) return reject(source, target, env);
+  } catch {
+    return reject(source, target, env);
+  }
 
   const { type: mentionType, entry: meta } = analyzeSource(html, target, source);
 
@@ -95,6 +108,32 @@ async function verify(source: string, target: string, env: WebmentionBindings): 
       meta.published,
     )
     .run();
+}
+
+async function readLimitedText(response: Response, limit: number): Promise<string> {
+  const declaredLength = Number(response.headers.get('Content-Length'));
+  if (Number.isFinite(declaredLength) && declaredLength > limit) {
+    throw new Error('source response exceeds verification limit');
+  }
+  if (!response.body) return '';
+
+  const reader = response.body.getReader();
+  const decoder = new TextDecoder();
+  let total = 0;
+  let text = '';
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    total += value.byteLength;
+    if (total > limit) {
+      await reader.cancel();
+      throw new Error('source response exceeds verification limit');
+    }
+    text += decoder.decode(value, { stream: true });
+  }
+
+  return text + decoder.decode();
 }
 
 async function reject(source: string, target: string, env: WebmentionBindings): Promise<void> {

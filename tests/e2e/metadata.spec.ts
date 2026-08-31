@@ -39,6 +39,14 @@ test.describe('<head> metadata', () => {
       await page.goto(p.path);
       await expect(page.locator('link[rel="webmention"]')).toHaveAttribute('href', '/webmention');
       await expect(page.locator('link[rel="micropub"]')).toHaveAttribute('href', '/micropub');
+      await expect(page.locator('link[rel="authorization_endpoint"]')).toHaveAttribute(
+        'href',
+        'https://indieauth.com/auth',
+      );
+      await expect(page.locator('link[rel="token_endpoint"]')).toHaveAttribute(
+        'href',
+        'https://tokens.indieauth.com/token',
+      );
     });
   }
 });

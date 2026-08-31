@@ -1,6 +1,16 @@
 import { expect, test } from '@playwright/test';
 import { PAGES } from '../fixtures/site';
 
+const STUDY_PAGES = [
+  { path: '/studies/curfew-the-locked-delay', title: 'The locked delay' },
+  { path: '/studies/logdate-voice-without-transcription', title: 'Voice without transcription' },
+  { path: '/studies/termsly-diffing-the-eula', title: 'Diffing the EULA' },
+  {
+    path: '/studies/three-products-one-privacy-stance',
+    title: 'Three products, one privacy stance',
+  },
+] as const;
+
 test.describe('Every page', () => {
   for (const p of PAGES) {
     test(`${p.path} renders 200 with expected title`, async ({ page }) => {
@@ -68,4 +78,26 @@ test.describe('Every page', () => {
       expect(desc!.length).toBeGreaterThan(20);
     }
   });
+
+  test('about page introduces the founder and his transit work', async ({ page }) => {
+    await page.goto('/about');
+    await expect(page.getByRole('link', { name: 'Willie Chalmers III' })).toHaveAttribute(
+      'href',
+      'https://williecubed.me',
+    );
+    await expect(page.getByRole('link', { name: 'Las Vegans for Better Transit' })).toHaveAttribute(
+      'href',
+      'https://lasvegasfortransit.org',
+    );
+  });
+
+  for (const study of STUDY_PAGES) {
+    test(`${study.path} renders its study instead of the development error page`, async ({
+      page,
+    }) => {
+      const response = await page.goto(study.path);
+      expect(response?.status()).toBe(200);
+      await expect(page.getByRole('heading', { level: 1, name: study.title })).toBeVisible();
+    });
+  }
 });

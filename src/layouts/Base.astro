@@ -2,40 +2,8 @@
 import Head from '@/components/Head.astro';
 import Header from '@/components/Header.astro';
 import Footer from '@/components/Footer/index.astro';
-import StatusBar from '@/components/StatusBar.astro';
-import CommandPalette from '@/components/CommandPalette.astro';
-import ShortcutSheet from '@/components/ShortcutSheet.astro';
-import HoverCard from '@/components/HoverCard.astro';
 import type { Schema } from '@/components/JsonLd.astro';
-import { getCollection } from 'astro:content';
-import products from '@/data/products.json';
 import '@/styles/global.css';
-
-// Metadata payload for the hovercard layer (src/scripts/hovercard.ts reads
-// it from the inlined JSON below). Sent on every page so internal links —
-// study refs in MDX, product mentions in prose — can hover without a fetch.
-const hovercardData = {
-  studies: (await getCollection('studies'))
-    .filter((s) => !s.data.draft || import.meta.env.DEV)
-    .map((s) => ({
-      slug: s.id,
-      title: s.data.title,
-      summary: s.data.summary,
-      publishedAt: s.data.publishedAt.toISOString(),
-      product: s.data.product,
-      tags: s.data.tags,
-      timeRequired: s.data.timeRequired,
-    })),
-  products: products.map((p) => ({
-    slug: p.slug,
-    name: p.name,
-    tagline: p.tagline,
-    stage: p.metadata.stage,
-    platforms: p.metadata.platforms,
-    question: p.modal.question,
-    screenshot: p.screenshot,
-  })),
-};
 
 interface Props {
   title?: string;
@@ -81,30 +49,22 @@ const {
       Notes on construction live in the colophon.
     -->
     <a class="skip-link" href="#main">Skip to main content</a>
-    <Header />
-    <main id="main">
-      <slot />
-    </main>
-    <StatusBar />
-    <Footer sourcePath={sourcePath} />
-    <CommandPalette />
-    <ShortcutSheet />
-    <HoverCard />
-    <script
-      type="application/json"
-      id="hypertext-hovercard-data"
-      is:inline
-      set:html={JSON.stringify(hovercardData)}
-    />
+    <hypertext-studio>
+      <Header />
+      <main id="main">
+        <slot />
+      </main>
+      <Footer />
+    </hypertext-studio>
     <script>
-      import '@/scripts/main';
+      import '@/scripts/permalinks';
     </script>
     <script>
       // Greet the curious. Intentional view-source easter egg
       // (see docs/content/style-guide.md §"two exceptions") — must stay
       // console.log so it reads as a friendly note, not a warning.
       /* eslint-disable no-console */
-      console.log('%cHypertext Studio', 'font: 600 14px Inter, sans-serif; color: #0033CC;');
+      console.log('%cHypertext Studio', 'font: 600 14px Inter, sans-serif; color: #25231f;');
       console.log('Source: https://github.com/TheHypertextStudio/website');
       /* eslint-enable no-console */
     </script>

@@ -1,5 +1,11 @@
 ---
 import t from '@/i18n';
+import { SOCIAL } from '@/consts';
+import { resolveSocialLinks } from '@/lib/social';
+
+const identityLinks = resolveSocialLinks(t.footer.identity.items, {
+  bluesky: SOCIAL.bluesky,
+});
 ---
 
 <section class="footer-section" aria-labelledby="footer-identity-heading">
@@ -8,7 +14,7 @@ import t from '@/i18n';
   </h2>
   <ul class="footer-section__list">
     {
-      t.footer.identity.items.map((item) => (
+      identityLinks.map((item) => (
         <li>
           <a href={item.href} rel={item.rel} title={item.label}>
             {item.label}

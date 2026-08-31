@@ -34,8 +34,9 @@ const fullOgImage = new URL(ogImage, SITE_URL).toString();
 <meta name="description" content={description} />
 <meta name="author" content={SITE_NAME} />
 <meta name="generator" content={Astro.generator} />
-<meta name="theme-color" content="#F5F1E8" />
-<meta name="color-scheme" content="light" />
+<meta name="theme-color" content="#FBFBFA" media="(prefers-color-scheme: light)" />
+<meta name="theme-color" content="#181713" media="(prefers-color-scheme: dark)" />
+<meta name="color-scheme" content="light dark" />
 <meta name="referrer" content="strict-origin-when-cross-origin" />
 {
   noIndex ? (
@@ -78,14 +79,7 @@ const fullOgImage = new URL(ogImage, SITE_URL).toString();
 <meta name="apple-mobile-web-app-status-bar-style" content="default" />
 <link rel="manifest" href="/site.webmanifest" type="application/manifest+json" />
 
-<!-- Performance hints: preload variable fonts visible above the fold. -->
-<link
-  rel="preload"
-  href="/fonts/SourceSerif4Variable-Roman.woff2"
-  as="font"
-  type="font/woff2"
-  crossorigin="anonymous"
-/>
+<!-- Performance hints: preload the variable font visible above the fold. -->
 <link
   rel="preload"
   href="/fonts/InterVariable.woff2"
@@ -96,8 +90,8 @@ const fullOgImage = new URL(ogImage, SITE_URL).toString();
 
 <!-- Outbound product domains: speculative DNS prefetch. -->
 <link rel="dns-prefetch" href="https://logdate.app" />
+<link rel="dns-prefetch" href="https://docket.hypertext.studio" />
 <link rel="dns-prefetch" href="https://curfew.hypertext.studio" />
-<link rel="dns-prefetch" href="https://termsly.hypertext.studio" />
 
 <!-- i18n alternates -->
 <link rel="alternate" hreflang="en" href={SITE_URL} />
@@ -115,6 +109,8 @@ const fullOgImage = new URL(ogImage, SITE_URL).toString();
 />
 <link rel="webmention" href="/webmention" />
 <link rel="micropub" href="/micropub" />
+<link rel="authorization_endpoint" href="https://indieauth.com/auth" />
+<link rel="token_endpoint" href="https://tokens.indieauth.com/token" />
 
 <!-- Structured data -->
 <JsonLd schemas={schemas} />

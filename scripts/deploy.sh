@@ -23,7 +23,7 @@ deploy_pages() {
 }
 
 deploy_workers() {
-  for w in poem webmention micropub oembed; do
+  for w in www poem webmention micropub oembed; do
     log::step "deploying worker: $w"
     $WRANGLER deploy --env "$w"
   done

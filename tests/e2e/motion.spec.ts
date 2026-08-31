@@ -1,14 +1,16 @@
 import { expect, test } from '@playwright/test';
 
 test.describe('prefers-reduced-motion', () => {
-  test('disables dialog open transition', async ({ browser }) => {
+  test('disables transitions', async ({ browser }) => {
     const ctx = await browser.newContext({ reducedMotion: 'reduce' });
     const page = await ctx.newPage();
     await page.goto('/');
-    await page.locator('button[data-dialog-target="logdate-detail"]').click();
     const dur = await page
-      .locator('dialog#logdate-detail')
-      .evaluate((el) => getComputedStyle(el).animationDuration);
+      .locator('.product-card__media')
+      .first()
+      .evaluate((el) => {
+        return getComputedStyle(el).transitionDuration;
+      });
     // Either disabled (0s) or set to ~0 by the @media block.
     const ms = parseFloat(dur) * (dur.endsWith('ms') ? 1 : 1000);
     expect(ms).toBeLessThan(20);

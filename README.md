@@ -2,7 +2,7 @@
 
 The studio's public face. A small design lab building sustainable, human-centered software.
 
-This is a static [Astro](https://astro.build) site that ships to Cloudflare Pages, with four small Cloudflare Workers handling the indie-web edges (DNS-poem fetch, webmentions, Micropub, oEmbed).
+This is a static [Astro](https://astro.build) site that ships to Cloudflare Pages, with five small Cloudflare Workers handling the indie-web edges (canonical `www` redirects, DNS-poem fetch, webmentions, Micropub, and oEmbed).
 
 ---
 
@@ -13,7 +13,9 @@ make bootstrap   # one-shot setup: prereqs, deps, env, optional cloud + github
 make dev         # boot the local dev server (http://localhost:4321)
 ```
 
-That's it. Run `make help` for the full list of tasks.
+Bootstrap binds the `hypertext-studio` Wrangler profile to the checkout, discovers the repository from `origin`, reads the Pages project, D1 database, and canonical domain from project configuration, updates `wrangler.toml`, applies the database schema, and configures GitHub Actions. It prompts only when the Cloudflare CI token or Micropub GitHub token is missing; before either secure prompt, it prints the exact creation URL, resource scope, permissions, and storage destination.
+
+That's it. Run `make help` for the full list of tasks. Every discovered project value has an environment override: `GITHUB_REPOSITORY`, `CLOUDFLARE_PAGES_PROJECT`, `CLOUDFLARE_D1_DATABASE`, and `SITE_URL`. `CLOUDFLARE_PROFILE` and `CLOUDFLARE_ACCOUNT_NAME` select a differently named account or Wrangler profile.
 
 ---
 
@@ -42,7 +44,7 @@ website/
 │   ├── pages/               routes (index, privacy, 404, studies/[slug], notes/[slug], …)
 │   ├── scripts/             client-side TS (≤200 LOC total)
 │   └── styles/              tokens, base, typography, motifs, print, components
-├── workers/                 four Cloudflare Workers (poem, webmention, micropub, oembed)
+├── workers/                 five Cloudflare Workers (www, poem, webmention, micropub, oembed)
 ├── scripts/                 bash dev tooling (bootstrap, doctor, build, deploy, …)
 ├── docs/                    architecture, deployment, content, operations, indieweb
 ├── tests/                   vitest unit + Playwright e2e + axe a11y + content fixtures
@@ -53,30 +55,30 @@ website/
 
 ## Day-to-day commands
 
-| Command            | What it does                                              |
-| ------------------ | --------------------------------------------------------- |
-| `make dev`         | Site via Portless (`https://hypertext.localhost`)         |
-| `make dev-astro`   | Raw Astro dev on `http://localhost:4321` (no Portless)    |
-| `make dev-all`     | Site + all four workers under `*.localhost` subdomains    |
-| `make build`       | Production build (Astro + content-id + word count)        |
-| `make preview`     | Build, then serve locally                                 |
-| `make typecheck`   | `astro check` + `tsc --noEmit`                            |
-| `make lint`        | Prettier check + ESLint + `astro check`                   |
-| `make lint-fix`    | Auto-fix Prettier + ESLint                                |
-| `make test`        | Vitest unit                                               |
-| `make test-e2e`    | Playwright e2e (palette, dialogs, print, …)               |
-| `make quality`     | `format-check + lint + typecheck + test` (CI gate)        |
-| `make audit`       | Lighthouse + axe + W3C HTML + Schema.org validators       |
-| `make embeds`      | Print embed validator URLs (FB, X, LinkedIn, Discord, …)  |
-| `make verify-rels` | Confirm `rel=me` reciprocity (GitHub, Bluesky, fediverse) |
-| `make new-study`   | Scaffold a new MDX study: `make new-study TITLE="…"`      |
-| `make icons`       | Regenerate the `§` favicon set                            |
-| `make og`          | Regenerate templated OG images                            |
-| `make deploy`      | Preview deployment to Cloudflare Pages                    |
-| `make deploy-prod` | Production deployment (Pages + workers)                   |
-| `make doctor`      | Non-mutating health check                                 |
-| `make clean`       | Remove `dist`, `.astro`, `.wrangler`                      |
-| `make nuke`        | Clean + remove `node_modules`                             |
+| Command            | What it does                                             |
+| ------------------ | -------------------------------------------------------- |
+| `make dev`         | Site via Portless (`https://hypertext.localhost`)        |
+| `make dev-astro`   | Raw Astro dev on `http://localhost:4321` (no Portless)   |
+| `make dev-all`     | Site + all five workers under `*.localhost` subdomains   |
+| `make build`       | Production build (Astro + content-id + word count)       |
+| `make preview`     | Build, then serve locally                                |
+| `make typecheck`   | `astro check` + `tsc --noEmit`                           |
+| `make lint`        | Prettier check + ESLint + `astro check`                  |
+| `make lint-fix`    | Auto-fix Prettier + ESLint                               |
+| `make test`        | Vitest unit                                              |
+| `make test-e2e`    | Playwright e2e (palette, dialogs, print, …)              |
+| `make quality`     | `format-check + lint + typecheck + test` (CI gate)       |
+| `make audit`       | Lighthouse + axe + W3C HTML + Schema.org validators      |
+| `make embeds`      | Print embed validator URLs (FB, X, LinkedIn, Discord, …) |
+| `make verify-rels` | Confirm `rel=me` reciprocity for configured identities   |
+| `make new-study`   | Scaffold a new MDX study: `make new-study TITLE="…"`     |
+| `make icons`       | Regenerate the `§` favicon set                           |
+| `make og`          | Regenerate templated OG images                           |
+| `make deploy`      | Preview deployment to Cloudflare Pages                   |
+| `make deploy-prod` | Production deployment (Pages + workers)                  |
+| `make doctor`      | Non-mutating health check                                |
+| `make clean`       | Remove `dist`, `.astro`, `.wrangler`                     |
+| `make nuke`        | Clean + remove `node_modules`                            |
 
 Run `make help` for the categorised version.
 

@@ -51,9 +51,13 @@ hr.section-delim::after {
   opacity: 1;
 }
 
-.anchor:hover,
-.anchor:focus-visible {
+.anchor:hover {
   color: var(--color-secondary);
+  text-decoration: none;
+}
+
+.anchor:focus-visible {
+  color: var(--interaction-focus-ink);
   text-decoration: none;
 }
 

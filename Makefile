@@ -60,7 +60,7 @@ dev: ## start the site only via Portless (https://hypertext.localhost)
 dev-astro: ## raw astro dev (no Portless) on http://localhost:4321
 	@$(PNPM) run dev:astro
 
-dev-all: ## site + all four workers via Portless (subdomains on .localhost)
+dev-all: ## site + all five workers via Portless (subdomains on .localhost)
 	@bash scripts/dev.sh
 
 build: ## production build (astro + content-id stamp + word count)
@@ -144,7 +144,7 @@ audit-schema: ## schema.org validator on JSON-LD blocks
 embeds: ## print embed validator URLs (FB, X, LinkedIn, Discord, Slack)
 	@bash scripts/embeds.sh
 
-verify-rels: ## confirm rel=me reciprocity (GitHub, Bluesky, fediverse)
+verify-rels: ## confirm rel=me reciprocity for configured identities
 	@bash scripts/verify-rels.sh
 
 # ----------------------------------------------------------------------------

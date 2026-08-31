@@ -1,93 +1,232 @@
 ---
-import Wordmark from './Wordmark.astro';
-import Studio from './Studio.astro';
-import SiteMap from './SiteMap.astro';
-import Identity from './Identity.astro';
-import StatusPanel from './StatusPanel.astro';
-import SmallPrint from './SmallPrint.astro';
-import PoemEasterEgg from './PoemEasterEgg.astro';
+import products from '@/data/products.json';
 
-interface Props {
-  sourcePath?: string;
-}
-
-const { sourcePath } = Astro.props;
+const studioLinks = [
+  { label: 'About', href: '/about', address: '/about' },
+  { label: 'Support', href: '/contact', address: '/contact' },
+  { label: 'Privacy', href: '/privacy', address: '/privacy' },
+  {
+    label: 'GitHub',
+    href: 'https://github.com/TheHypertextStudio',
+    address: 'github.com/TheHypertextStudio',
+    external: true,
+  },
+];
 ---
 
-<footer class="studio-footer" aria-label="Closing">
-  <div class="studio-footer__core">
-    <Studio />
-    <SiteMap />
-    <Identity />
-    <StatusPanel />
+<footer class="site-footer">
+  <div class="site-footer__inner">
+    <div class="closing-tag" aria-hidden="true" translate="no">&lt;/hypertext-studio&gt;</div>
+    <div class="footer-directory">
+      <section class="footer-group">
+        <h2 aria-label="Products">products/</h2>
+        <nav aria-label="Products">
+          <ul>
+            {
+              products.map((product) => (
+                <li>
+                  <a
+                    class={`footer-link footer-link--${product.slug}`}
+                    href={product.url}
+                    rel="external noopener"
+                  >
+                    <span class="footer-link__label">{product.name}</span>
+                    <span class="footer-link__address" aria-hidden="true">
+                      {new URL(product.url).host}
+                    </span>
+                  </a>
+                </li>
+              ))
+            }
+          </ul>
+        </nav>
+      </section>
+      <section class="footer-group">
+        <h2 aria-label="Studio">studio/</h2>
+        <nav aria-label="Studio">
+          <ul>
+            {
+              studioLinks.map((link) => (
+                <li>
+                  <a
+                    class="footer-link"
+                    href={link.href}
+                    rel={link.external ? 'external noopener' : undefined}
+                  >
+                    <span class="footer-link__label">{link.label}</span>
+                    <span class="footer-link__address" aria-hidden="true">
+                      {link.address}
+                    </span>
+                  </a>
+                </li>
+              ))
+            }
+          </ul>
+        </nav>
+      </section>
+    </div>
   </div>
-  <div class="studio-footer__anchor">
-    <Wordmark />
-  </div>
-  <SmallPrint sourcePath={sourcePath} />
-  <PoemEasterEgg />
 </footer>
 
 <style>
-  .studio-footer {
-    block-size: 100dvh;
-    max-block-size: 100dvh;
+  .site-footer {
+    background: var(--color-footer-bg);
+  }
+
+  .site-footer__inner {
+    max-inline-size: var(--layout-max);
+    min-block-size: clamp(24rem, 50vh, 34rem);
+    margin-inline: auto;
+    padding: clamp(2.25rem, 5vw, 4rem) var(--layout-margin) clamp(1.5rem, 3vw, 2.5rem);
     display: grid;
-    grid-template-rows:
-      auto /* operational core */
-      minmax(0, 1fr) /* wordmark anchor — fills remaining space */
-      auto; /* small print */
-    background: var(--color-bg);
-    border-block-start: var(--rule-thin);
-    overflow: hidden;
+    grid-template-rows: auto minmax(2rem, 1fr) auto;
+    container-type: inline-size;
   }
 
-  .studio-footer__core {
+  .closing-tag {
+    block-size: clamp(1.4rem, 8cqi, 3.75rem);
+    font-family: var(--font-mono);
+    font-size: clamp(1.4rem, 8cqi, 3.75rem);
+    line-height: 1;
+    letter-spacing: -0.03em;
+    white-space: nowrap;
+  }
+
+  .footer-directory {
+    grid-row: 3;
     display: grid;
-    grid-template-columns: 1.4fr 1fr 1fr 1.2fr;
-    gap: var(--space-lg);
-    padding-inline: var(--layout-margin);
-    padding-block: var(--space-xl) var(--space-lg);
-    align-content: start;
-    min-block-size: 0;
-    overflow: hidden;
-    border-block-end: var(--rule-thin);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(2rem, 5vw, 6rem);
   }
 
-  .studio-footer__anchor {
-    /* Grid (not flex) so the wordmark child stretches to the row's full
-     * inline-size — required because the wordmark establishes a container
-     * query, which implies `contain: inline-size` and would otherwise
-     * collapse a content-sized flex child to its padding. */
+  .footer-group h2 {
+    margin-block-end: 0.625rem;
+    color: var(--color-secondary);
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    font-weight: 400;
+    line-height: 1.4;
+    letter-spacing: 0;
+    text-transform: lowercase;
+  }
+
+  ul {
+    list-style: none;
+  }
+
+  .footer-link {
+    --footer-accent: var(--color-text);
+    --footer-accent-ink: var(--color-bg);
+    --interaction-hover-bg: color-mix(in srgb, var(--footer-accent) 10%, var(--color-footer-bg));
+    --interaction-focus-bg: var(--footer-accent);
+    --interaction-focus-ink: var(--footer-accent-ink);
+    --interaction-focus-canvas: var(--color-footer-bg);
+
+    min-block-size: 2.75rem;
+    margin-inline: -0.625rem;
+    padding: 0.5rem 0.625rem;
     display: grid;
-    align-items: end;
-    min-block-size: 0;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    gap: 1rem;
+    color: var(--color-text);
+    text-decoration: none;
+  }
+
+  .footer-link:visited {
+    color: var(--color-text);
+  }
+
+  .footer-link::after {
+    content: none;
+  }
+
+  .footer-link__label {
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.16em;
+  }
+
+  .footer-link__address {
+    min-inline-size: 0;
     overflow: hidden;
+    color: var(--color-secondary);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    text-align: end;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
-  @media (max-width: 64rem) {
-    .studio-footer__core {
-      grid-template-columns: 1fr 1fr;
-    }
+  .footer-link:hover {
+    background: var(--interaction-hover-bg);
+    color: var(--color-text);
+    text-decoration: none;
   }
 
-  @media (max-width: 48rem) {
-    .studio-footer__core {
+  .footer-link:hover .footer-link__label {
+    text-decoration-thickness: 2px;
+  }
+
+  .footer-link:focus-visible {
+    background: var(--interaction-focus-bg);
+    color: var(--interaction-focus-ink);
+    text-decoration: none;
+    outline: none;
+    box-shadow: none;
+  }
+
+  .footer-link:focus-visible .footer-link__label {
+    text-decoration: none;
+  }
+
+  .footer-link:focus-visible .footer-link__address {
+    color: inherit;
+  }
+
+  .footer-link--docket {
+    --footer-accent: var(--color-docket);
+    --footer-accent-ink: var(--color-docket-ink);
+  }
+
+  .footer-link--logdate {
+    --footer-accent: var(--color-logdate);
+    --footer-accent-ink: var(--color-logdate-ink);
+  }
+
+  .footer-link--curfew {
+    --footer-accent: var(--color-curfew);
+    --footer-accent-ink: var(--color-curfew-ink);
+  }
+
+  @media (max-width: 44rem) {
+    .footer-directory {
       grid-template-columns: 1fr;
-      gap: var(--space-md);
-      padding-block: var(--space-lg);
+      gap: 1.5rem;
     }
-    .studio-footer {
-      block-size: auto;
-      max-block-size: none;
-      min-block-size: 0;
-      overflow: visible;
+  }
+
+  @supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+      .site-footer {
+        view-timeline: --footer-reveal block;
+      }
+
+      .closing-tag {
+        animation: closing-tag-expand linear both;
+        animation-timeline: --footer-reveal;
+        animation-range: entry 0% entry 100%;
+      }
     }
-    /* The wordmark is a desktop-only closing signature — at mobile widths
-     * it would clip against the inline gutter and read as a squeezed
-     * orphan strip between the column stack and the small print. */
-    .studio-footer__anchor {
-      display: none;
+  }
+
+  @keyframes closing-tag-expand {
+    from {
+      font-size: 0.75rem;
+    }
+
+    to {
+      font-size: clamp(1.4rem, 8cqi, 3.75rem);
     }
   }
 </style>

@@ -1,11 +1,11 @@
 {
   "site": {
     "name": "Hypertext Studio",
-    "tagline": "design lab building sustainable, human-centered software",
-    "description": "Hypertext Studio is a design lab. We build software that tests design assumptions about how digital tools can serve human attention, memory, and judgment, and we publish what we learn alongside each release.",
+    "tagline": "builds software for humans",
+    "description": "Hypertext Studio builds software for humans, including Docket, LogDate, and Curfew.",
     "wordmark": "Hypertext Studio",
     "wordmarkAlt": "<hypertext.studio>",
-    "ogAlt": "Hypertext Studio wordmark on a cream background, typeset in Inter"
+    "ogAlt": "Hypertext Studio builds software for humans."
   },
   "thesis": {
     "body": "Hypertext Studio explores how to create sustainable human-centered software."
@@ -95,7 +95,7 @@
       "heading": "Identity",
       "items": [
         { "label": "GitHub", "href": "https://github.com/TheHypertextStudio", "rel": "me" },
-        { "label": "Bluesky", "href": "https://bsky.app/profile/hypertext.studio", "rel": "me" },
+        { "label": "Bluesky", "network": "bluesky", "rel": "me" },
         {
           "label": "Fediverse",
           "href": "https://fed.brid.gy/r/https://hypertext.studio/",
@@ -172,7 +172,7 @@
       {
         "heading": "How we publish",
         "id": "publish",
-        "body": "Each product produces studies — design research write-ups tied to major feature releases. Not portfolio shots. Real research papers. Each describes a design question, the bets we made, what users taught us, what worked, what didn't, and what the experiment ultimately said about the question.\n\nThe studies live on hypertext.studio. Copies appear on Bluesky and the fediverse — POSSE: publish on own site, syndicate elsewhere."
+        "body": "Each product produces studies — design research write-ups tied to major feature releases. Not portfolio shots. Real research papers. Each describes a design question, the bets we made, what users taught us, what worked, what didn't, and what the experiment ultimately said about the question.\n\nThe studies live on hypertext.studio. Copies may appear elsewhere — POSSE: publish on own site, syndicate elsewhere."
       },
       {
         "heading": "What we are not",
@@ -197,7 +197,7 @@
     },
     "channels": [
       { "label": "GitHub", "href": "https://github.com/TheHypertextStudio", "rel": "me" },
-      { "label": "Bluesky", "href": "https://bsky.app/profile/hypertext.studio", "rel": "me" },
+      { "label": "Bluesky", "network": "bluesky", "rel": "me" },
       {
         "label": "Fediverse",
         "href": "https://fed.brid.gy/r/https://hypertext.studio/",
@@ -275,7 +275,8 @@
       "alsoAt": "Also at",
       "lastRevised": "Last revised",
       "citedBy": "Cited by",
-      "respondNote": "To respond, write on your own site and link to this page. Replies via Bluesky or the fediverse find their way back here."
+      "respondNote": "To respond, write on your own site and link to this page. Replies via the fediverse find their way back here.",
+      "respondNoteWithBluesky": "To respond, write on your own site and link to this page. Replies via Bluesky or the fediverse find their way back here."
     },
     "post": {
       "tagsLabel": "Tags",

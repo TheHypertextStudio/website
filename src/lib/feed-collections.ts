@@ -9,7 +9,8 @@
 import { getCollection } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
 import { FEED_ITEM_LIMIT, noteSummary, noteTitle, type FeedItem } from '@/lib/feed';
-import { SITE_URL, SITE_NAME } from '@/consts';
+import { filterSyndicationUrls } from '@/lib/social';
+import { SITE_URL, SITE_NAME, SOCIAL } from '@/consts';
 
 export async function buildFeedItems(): Promise<FeedItem[]> {
   // Defensive: a missing or empty collection shouldn't crash the route.
@@ -31,7 +32,7 @@ export async function buildFeedItems(): Promise<FeedItem[]> {
       modifiedAt: s.data.modifiedAt,
       tags: s.data.tags,
       inReplyTo: s.data.inReplyTo,
-      syndicatedTo: s.data.syndicatedTo,
+      syndicatedTo: filterSyndicationUrls(s.data.syndicatedTo, SOCIAL.bluesky),
       author: s.data.author,
     }));
 
@@ -44,7 +45,7 @@ export async function buildFeedItems(): Promise<FeedItem[]> {
     publishedAt: n.data.publishedAt,
     tags: n.data.tags,
     inReplyTo: n.data.inReplyTo,
-    syndicatedTo: n.data.syndicatedTo,
+    syndicatedTo: filterSyndicationUrls(n.data.syndicatedTo, SOCIAL.bluesky),
     author: SITE_NAME,
   }));
 

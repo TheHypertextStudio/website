@@ -12,18 +12,13 @@ test.describe('@a11y Forced colors', () => {
     await ctx.close();
   });
 
-  test('product entry figures keep visible borders in forced-colors mode', async ({ browser }) => {
+  test('product media keeps a visible border in forced-colors mode', async ({ browser }) => {
     const ctx = await browser.newContext({ forcedColors: 'active' });
     const page = await ctx.newPage();
     await page.goto('/');
-    const border = await page
-      .locator('.entry__figure')
-      .first()
-      .evaluate((el) => getComputedStyle(el).borderTopWidth);
-    // Either the rule survives or forced-colors substitutes a CanvasText
-    // border. Either way, a visible edge frames the screenshot on paper-
-    // and high-contrast renderings.
-    expect(parseFloat(border)).toBeGreaterThanOrEqual(0.5);
+    // The locator assertion re-resolves after a dev-server HMR refresh,
+    // unlike a one-shot evaluate call whose execution context can disappear.
+    await expect(page.locator('.product-card__media').first()).toHaveCSS('border-top-width', '1px');
     await ctx.close();
   });
 });

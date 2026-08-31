@@ -56,15 +56,14 @@ const dataAttr = bleed ? { 'data-bleed': '' } : {};
   /* The body wraps the slotted content. SVGs and images stretch to the
    * column they're in (capped by their own intrinsic size). */
   .figure-body {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    min-inline-size: 0;
   }
 
   .figure-body :global(svg),
   .figure-body :global(img) {
-    max-width: 100%;
-    height: auto;
+    inline-size: 100%;
+    max-inline-size: 100%;
+    block-size: auto;
   }
 
   .figure-caption {

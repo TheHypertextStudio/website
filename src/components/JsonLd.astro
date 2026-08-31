@@ -15,7 +15,7 @@ const organization: Schema = {
   name: SITE_NAME,
   url: SITE_URL,
   logo: `${SITE_URL}/favicon.svg`,
-  description: 'A small design lab building sustainable, human-centered software.',
+  description: 'Hypertext Studio builds software for humans.',
   email: STUDIO_EMAIL,
   address: {
     '@type': 'PostalAddress',
@@ -31,7 +31,7 @@ const organization: Schema = {
     email: STUDIO_EMAIL,
     availableLanguage: ['English'],
   },
-  sameAs: [SOCIAL.github, SOCIAL.bluesky, SOCIAL.twitter],
+  sameAs: [SOCIAL.github, SOCIAL.bluesky, SOCIAL.twitter].filter(Boolean),
 };
 
 const website: Schema = {

@@ -5,11 +5,23 @@
 # Apply schema once with: wrangler d1 execute hypertext-studio --file workers/shared/d1-schema.sql
 
 name = "hypertext-studio"
+account_id = "2500680a3b2b0fe6a011c1c25fed5008"
 compatibility_date = "2026-01-15"
 compatibility_flags = ["nodejs_compat"]
 
 # Default placeholder so plain `wrangler dev` errors clearly.
 main = "workers/poem/index.ts"
+
+# ----------------------------------------------------------------------------
+# www — keep every legacy or typed www URL on the canonical apex origin.
+# ----------------------------------------------------------------------------
+
+[env.www]
+name = "hypertext-studio-www"
+main = "workers/www/index.ts"
+routes = [
+  { pattern = "www.hypertext.studio/*", zone_name = "hypertext.studio" }
+]
 
 # ----------------------------------------------------------------------------
 # poem — DNS TXT lookup for the footer's rotating quotation.
@@ -20,7 +32,7 @@ main = "workers/poem/index.ts"
 name = "hypertext-studio-poem"
 main = "workers/poem/index.ts"
 routes = [
-  { pattern = "hypertext.studio/api/poem", zone_name = "hypertext.studio" }
+  { pattern = "hypertext.studio/api/poem*", zone_name = "hypertext.studio" }
 ]
 
 # ----------------------------------------------------------------------------
@@ -33,35 +45,35 @@ routes = [
 name = "hypertext-studio-webmention"
 main = "workers/webmention/index.ts"
 routes = [
-  { pattern = "hypertext.studio/webmention",  zone_name = "hypertext.studio" },
-  { pattern = "hypertext.studio/webmentions", zone_name = "hypertext.studio" }
+  { pattern = "hypertext.studio/webmention*", zone_name = "hypertext.studio" }
 ]
 
 [[env.webmention.d1_databases]]
 binding = "DB"
 database_name = "hypertext-studio"
-database_id = "REPLACE_WITH_REAL_D1_ID"
+database_id = "b1ea6c3b-1315-4bbc-ac9b-5751c4253883"
 
 # ----------------------------------------------------------------------------
 # micropub — IndieAuth-protected publishing endpoint.
 # Routes:   POST https://hypertext.studio/micropub   (create note)
 #           GET  https://hypertext.studio/micropub   (capability discovery)
 # Secrets (set via `wrangler secret put`):
-#   GITHUB_TOKEN         — fine-grained PAT with contents:write to the repo
-#   INDIEAUTH_ENDPOINT   — e.g. https://indielogin.com/auth
+#   GITHUB_TOKEN         — fine-grained PAT with repository Contents set to
+#                          Read and write
 # ----------------------------------------------------------------------------
 
 [env.micropub]
 name = "hypertext-studio-micropub"
 main = "workers/micropub/index.ts"
 routes = [
-  { pattern = "hypertext.studio/micropub", zone_name = "hypertext.studio" }
+  { pattern = "hypertext.studio/micropub*", zone_name = "hypertext.studio" }
 ]
 
 [env.micropub.vars]
 GITHUB_REPO = "TheHypertextStudio/website"
 NOTES_PATH = "src/content/notes"
 DEFAULT_BRANCH = "main"
+INDIEAUTH_ENDPOINT = "https://tokens.indieauth.com/token"
 
 # ----------------------------------------------------------------------------
 # oembed — return rich JSON payload for embed-aware platforms.
@@ -72,19 +84,9 @@ DEFAULT_BRANCH = "main"
 name = "hypertext-studio-oembed"
 main = "workers/oembed/index.ts"
 routes = [
-  { pattern = "hypertext.studio/oembed", zone_name = "hypertext.studio" }
+  { pattern = "hypertext.studio/oembed*", zone_name = "hypertext.studio" }
 ]
 
 [env.oembed.vars]
 SITE_URL = "https://hypertext.studio"
 SITE_NAME = "Hypertext Studio"
-
-# ----------------------------------------------------------------------------
-# Shared D1 binding for read-only access from any environment that needs it.
-# ----------------------------------------------------------------------------
-
-[[d1_databases]]
-binding = "DB"
-database_name = "hypertext-studio"
-database_id = "REPLACE_WITH_REAL_D1_ID"
-preview_database_id = "REPLACE_WITH_PREVIEW_D1_ID"

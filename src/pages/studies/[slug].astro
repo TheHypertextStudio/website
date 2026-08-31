@@ -439,13 +439,12 @@ const citationsCount = mentions.citations.length;
    * left-ruled blocks via their own component CSS. */
   @media (max-width: 56rem) {
     .study-page {
-      grid-template-columns: 1fr;
+      grid-template-columns: minmax(0, 1fr);
       grid-template-areas: 'main';
       padding-inline: var(--layout-margin);
     }
-    .study-page :where(*),
-    .study-page [data-aside],
-    .study-page [data-bleed] {
+    .study-page :global([data-aside]),
+    .study-page :global([data-bleed]) {
       grid-column: main;
     }
   }

@@ -1,41 +1,35 @@
 ---
 import Base from '@/layouts/Base.astro';
-import t from '@/i18n';
-
-interface AboutSection {
-  heading: string;
-  id: string;
-  body: string;
-}
-
-const sections = t.about.sections as ReadonlyArray<AboutSection>;
 ---
 
 <Base
   title="About"
-  description="Hypertext Studio is a small design lab building sustainable, human-centered software."
+  description="About Hypertext Studio and its founder, Willie Chalmers III."
   sourcePath="src/pages/about.astro"
 >
   <article class="prose-layout">
-    <header>
-      <h1>{t.about.title}</h1>
-      <p class="lede">{t.about.lede}</p>
-    </header>
-
-    {
-      sections.map((s) => (
-        <section>
-          <h2 id={s.id}>
-            <a class="anchor" href={`#${s.id}`} aria-label={`Permalink to ${s.heading}`}>
-              #
-            </a>
-            {s.heading}
-          </h2>
-          {s.body.split('\n\n').map((para: string) => (
-            <p>{para}</p>
-          ))}
-        </section>
-      ))
-    }
+    <h1>About</h1>
+    <div class="about-copy">
+      <p>
+        <a href="https://williecubed.me" rel="me external noopener">Willie Chalmers III</a>{' '}
+        started Hypertext Studio as a home for his apps that didn’t really fit anywhere else.
+      </p>
+      <p>
+        In his free time, he advocates for world-class public transportation in Las Vegas through
+        his nonprofit, <a href="https://lasvegasfortransit.org" rel="external noopener"
+          >Las Vegans for Better Transit</a
+        >.
+      </p>
+    </div>
   </article>
 </Base>
+
+<style>
+  .about-copy {
+    display: grid;
+    gap: 1.25rem;
+    font-size: clamp(1.25rem, 2.3vw, 1.75rem);
+    line-height: 1.45;
+    letter-spacing: -0.025em;
+  }
+</style>

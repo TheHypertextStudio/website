@@ -2,43 +2,42 @@
  * Base element styles: links, focus, lists, defs, dialogs.
  * ============================================================================= */
 
-/* Scroll snap is scoped via :has() so only pages with snap targets (home
- * page .entry rows) pay the snap-aware scroll dampening. `scroll-behavior:
- * auto` overrides any inherited smoothing — snap should land, not glide. */
-html:has(.entry[id]) {
-  scroll-snap-type: y proximity;
-  scroll-padding-block-start: var(--space-md);
-  scroll-behavior: auto;
-}
-
 a {
   color: var(--color-link);
+  margin: -0.125rem -0.25rem;
+  padding: 0.125rem 0.25rem;
   text-decoration: underline;
   text-decoration-thickness: 1px;
   text-underline-offset: 0.15em;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
   transition: text-decoration-thickness var(--t-fast) var(--ease);
 }
 
 a:hover {
+  background: var(--interaction-hover-bg);
   text-decoration-thickness: 2px;
 }
 
-a:visited {
-  color: var(--color-visited);
-}
-
 a:focus-visible {
-  outline: 2px solid var(--color-focus);
-  outline-offset: 2px;
-  border-radius: 2px;
+  position: relative;
+  z-index: 1;
+  color: var(--interaction-focus-ink);
+  -webkit-text-fill-color: var(--interaction-focus-ink);
+  background: var(--interaction-focus-bg);
+  text-decoration: none;
+  outline: none;
+  border-radius: 0;
+  box-shadow: none;
 }
 
 a[rel~='external']::after {
-  content: ' ↗';
-  font-family: var(--font-sans);
+  content: '↗' / '';
+  font-family: var(--font-mono);
   font-size: 0.85em;
   text-decoration: none;
   display: inline-block;
+  margin-inline: 0.2em 0.12em;
   transform: translateY(-0.05em);
   color: inherit;
 }
@@ -46,8 +45,70 @@ a[rel~='external']::after {
 button:focus-visible,
 [role='button']:focus-visible,
 summary:focus-visible {
-  outline: 2px solid var(--color-focus);
-  outline-offset: 2px;
+  position: relative;
+  z-index: 1;
+  color: var(--interaction-focus-ink);
+  -webkit-text-fill-color: var(--interaction-focus-ink);
+  background: var(--interaction-focus-bg);
+  outline: none;
+  box-shadow: none;
+}
+
+button,
+[role='button'],
+summary {
+  padding: 0.125rem 0.25rem;
+}
+
+button:hover,
+[role='button']:hover,
+summary:hover {
+  background: var(--interaction-hover-bg);
+}
+
+/* Some links need a large touch target without turning their visible focus
+ * treatment into a large button. The target keeps its geometry while this
+ * inner label carries the hover/focus paint. */
+a.interaction-target {
+  margin: 0;
+  padding: 0;
+  text-decoration: none;
+}
+
+a.interaction-target > .interaction-label {
+  display: inline-block;
+  margin: -0.125rem -0.25rem;
+  padding: 0.125rem 0.25rem;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.15em;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+  transition: text-decoration-thickness var(--t-fast) var(--ease);
+}
+
+a.interaction-target:hover,
+a.interaction-target:focus-visible {
+  background: transparent;
+}
+
+a.interaction-target:hover > .interaction-label {
+  background: var(--interaction-hover-bg);
+  text-decoration-thickness: 2px;
+}
+
+a.interaction-target:focus-visible {
+  box-shadow: none;
+}
+
+a.interaction-target:focus-visible > .interaction-label {
+  position: relative;
+  z-index: 1;
+  color: var(--interaction-focus-ink);
+  -webkit-text-fill-color: var(--interaction-focus-ink);
+  background: var(--interaction-focus-bg);
+  text-decoration: none;
+  box-shadow: none;
 }
 
 dl {
@@ -123,9 +184,10 @@ dialog[open] {
   position: fixed;
   inset-block-start: var(--space-sm);
   inset-inline-start: var(--space-sm);
+  margin: 0;
   padding: var(--space-sm) var(--space-md);
   background: var(--color-bg);
-  border: 2px solid var(--color-focus);
+  border: 0;
   z-index: 999;
   transform: translateY(-200%);
   transition: transform var(--t-fast) var(--ease);
@@ -133,6 +195,29 @@ dialog[open] {
 
 .skip-link:focus-visible {
   transform: none;
+}
+
+@media (forced-colors: active) {
+  a:focus-visible,
+  button:focus-visible,
+  [role='button']:focus-visible,
+  summary:focus-visible {
+    color: HighlightText;
+    -webkit-text-fill-color: HighlightText;
+    background: Highlight;
+    outline: 2px solid Highlight;
+    outline-offset: 2px;
+    box-shadow: none;
+  }
+
+  a.interaction-target:focus-visible > .interaction-label {
+    color: HighlightText;
+    -webkit-text-fill-color: HighlightText;
+    background: Highlight;
+    outline: 2px solid Highlight;
+    outline-offset: 2px;
+    box-shadow: none;
+  }
 }
 
 .sr-only {

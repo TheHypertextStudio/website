@@ -27,11 +27,9 @@ CREATE INDEX IF NOT EXISTS idx_webmentions_target ON webmentions(target);
 CREATE INDEX IF NOT EXISTS idx_webmentions_status ON webmentions(status);
 CREATE INDEX IF NOT EXISTS idx_webmentions_type ON webmentions(mention_type);
 
--- Migration for existing databases that pre-date mention_type. Safe to run on
--- a fresh db (will fail with "duplicate column"; ignore that single error).
--- For the hypertext-studio dev D1, run once:
---   wrangler d1 execute hypertext-studio --command \
---     "ALTER TABLE webmentions ADD COLUMN mention_type TEXT NOT NULL DEFAULT 'mention'"
+-- Bootstrap inspects an existing webmentions table and adds mention_type before
+-- applying this file. Keeping the migration in bootstrap prevents CREATE INDEX
+-- from running against an older table that does not yet have the column.
 
 -- Notes published via Micropub (mirrored to repo via GitHub API; this row is
 -- a small audit trail so the worker can dedupe and report back).

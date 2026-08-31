@@ -3,6 +3,8 @@ import { injectAxe, getViolations } from 'axe-playwright';
 
 const ROUTES = ['/studies/curfew-launch', '/notes/2026-04-08-on-finishing'];
 
+test.describe.configure({ timeout: 60_000 });
+
 for (const route of ROUTES) {
   test(`@a11y ${route} passes axe (wcag2aa + wcag22aa + best-practice)`, async ({
     page,

@@ -8,8 +8,10 @@
  * See docs/indieweb.md for the conceptual frame.
  */
 import { displaySource } from '@/lib/webmentions';
+import { filterSyndicationUrls } from '@/lib/social';
 import { isoDate } from '@/i18n/format';
 import t from '@/i18n';
+import { SOCIAL } from '@/consts';
 
 interface Props {
   /** First-publication date for this document (frontmatter publishedAt). */
@@ -25,6 +27,8 @@ interface Props {
 const { publishedAt, modifiedAt, syndicatedTo = [], citationsCount = 0 } = Astro.props;
 
 const labels = t.indieweb.colophon;
+const publicSyndicationUrls = filterSyndicationUrls(syndicatedTo, SOCIAL.bluesky);
+const respondNote = SOCIAL.bluesky ? labels.respondNoteWithBluesky : labels.respondNote;
 ---
 
 <aside class="post-colophon" aria-labelledby="post-colophon-heading">
@@ -41,12 +45,12 @@ const labels = t.indieweb.colophon;
     </dd>
 
     {
-      syndicatedTo.length > 0 && (
+      publicSyndicationUrls.length > 0 && (
         <>
           <dt>{labels.alsoAt}</dt>
           <dd>
             <ul class="post-colophon-syndication" role="list">
-              {syndicatedTo.map((url) => (
+              {publicSyndicationUrls.map((url) => (
                 <li>
                   <a class="u-syndication" href={url} rel="syndication external">
                     {displaySource(url)}
@@ -84,7 +88,7 @@ const labels = t.indieweb.colophon;
     }
   </dl>
 
-  <p class="post-colophon-respond">{labels.respondNote}</p>
+  <p class="post-colophon-respond">{respondNote}</p>
 </aside>
 
 <style>
@@ -151,6 +155,9 @@ const labels = t.indieweb.colophon;
   }
 
   .post-colophon-syndication a {
+    display: inline-flex;
+    align-items: center;
+    min-block-size: 24px;
     word-break: break-all;
   }
 

@@ -5,32 +5,32 @@
 
 export const PAGES = [
   { path: '/', name: 'Home', titleIncludes: 'Hypertext Studio' },
+  { path: '/about', name: 'About', titleIncludes: 'About' },
   { path: '/privacy', name: 'Privacy', titleIncludes: 'Privacy' },
   { path: '/colophon', name: 'Colophon', titleIncludes: 'Colophon' },
   { path: '/studies', name: 'Studies', titleIncludes: 'Studies' },
   { path: '/contact', name: 'Contact', titleIncludes: 'Contact' },
 ] as const;
 
-// Source of truth: src/data/products.json (`url` only set when shipped) and
-// docs/mission.md §4 (locked taglines). Keep this fixture in sync with both.
+// Source of truth: src/data/products.json. Keep this fixture in sync with it.
 export const PRODUCTS = [
+  {
+    slug: 'docket',
+    name: 'Docket',
+    tagline: 'One tool for planning, scheduling, and tracking every kind of work.',
+    url: 'https://docket.hypertext.studio',
+  },
   {
     slug: 'logdate',
     name: 'LogDate',
-    tagline: 'A better home to document and store your memories.',
+    tagline: 'A lifelog and social journal.',
     url: 'https://logdate.app',
   },
   {
     slug: 'curfew',
     name: 'Curfew',
-    tagline: 'Software for the version of you that planned ahead.',
-    url: '',
-  },
-  {
-    slug: 'termsly',
-    name: 'Termsly',
-    tagline: "Know what you're agreeing to.",
-    url: '',
+    tagline: 'A hard stop for your workday.',
+    url: 'https://curfew.hypertext.studio',
   },
 ] as const;
 

@@ -131,8 +131,10 @@ const motto = t.footer.poem.fallback;
     text-decoration: none;
   }
   .small-print button.motto:focus-visible {
-    outline: 2px solid var(--color-focus);
-    outline-offset: 2px;
+    color: var(--interaction-focus-ink);
+    background: var(--interaction-focus-bg);
+    outline: none;
+    box-shadow: none;
   }
 
   .motto__tooltip {

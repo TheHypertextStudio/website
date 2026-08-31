@@ -1,11 +1,8 @@
 ---
 import Base from '@/layouts/Base.astro';
-import Thesis from '@/components/Thesis.astro';
-import ProductEntry from '@/components/ProductEntry.astro';
-import ProductDialog from '@/components/ProductDialog.astro';
 import HCard from '@/components/HCard.astro';
 import products from '@/data/products.json';
-import t from '@/i18n';
+import { productArt, toneForCharacter } from '@/data/productArt';
 import { SITE_URL } from '@/consts';
 
 // Emit Schema.org SoftwareApplication for every product the studio claims as
@@ -18,10 +15,10 @@ const softwareSchemas = products.map((p) => {
     name: p.name,
     description: p.tagline,
     applicationCategory: 'Productivity',
-    operatingSystem: p.metadata.platforms.join(', '),
+    operatingSystem: p.platforms,
     creator: { '@id': `${SITE_URL}/#organization` },
   };
-  if (p.ready && p.url) schema.url = p.url;
+  schema.url = p.url;
   return schema;
 });
 
@@ -31,7 +28,7 @@ const itemListItems = products.map((p, i) => {
     position: i + 1,
     name: p.name,
   };
-  if (p.ready && p.url) item.url = p.url;
+  item.url = p.url;
   return item;
 });
 
@@ -41,79 +38,264 @@ const itemListSchema = {
   name: 'Hypertext Studio products',
   itemListElement: itemListItems,
 };
+
+const productArtMarkup = Object.fromEntries(
+  Object.entries(productArt).map(([slug, art]) => [
+    slug,
+    Array.from(art.trim())
+      .map((character) =>
+        character === '\n'
+          ? character
+          : `<span data-tone="${toneForCharacter(character)}">${character}</span>`,
+      )
+      .join(''),
+  ]),
+);
 ---
 
 <Base sourcePath="src/pages/index.astro" schemas={[itemListSchema, ...softwareSchemas]}>
   <HCard />
-  <article class="page">
-    <Thesis />
+  <div class="home">
+    <header class="home-hero">
+      <h1>Hypertext Studio builds software for humans.</h1>
+    </header>
 
-    <section class="mission" id={t.mission.headingId} aria-labelledby="mission-heading">
-      <h2 id="mission-heading">
-        <a class="anchor" href={`#${t.mission.headingId}`} aria-label="Permalink to Mission">#</a>
-        {t.mission.heading}
-      </h2>
-      {t.mission.body.map((paragraph: string) => <p>{paragraph}</p>)}
-    </section>
-
-    <section id={t.work.headingId} aria-labelledby="work-heading">
-      <h2 id="work-heading">
-        <a class="anchor" href={`#${t.work.headingId}`} aria-label="Permalink to Work">#</a>
-        {t.work.heading}
-      </h2>
+    <section class="products-grid" id="products" aria-labelledby="products-heading">
+      <h2 class="sr-only" id="products-heading">Products</h2>
       {
-        products.map((p) => (
-          <ProductEntry
-            slug={p.slug}
-            name={p.name}
-            ready={p.ready}
-            question={p.modal.question}
-            metadata={p.metadata}
-            screenshot={p.screenshot}
-            screenshotAlt={p.screenshotAlt}
-          />
+        products.map((product) => (
+          <article class={`product-card product-card--${product.slug}`} id={product.slug}>
+            <div class="product-card__media" aria-hidden="true">
+              <pre
+                class="product-card__ascii"
+                aria-hidden="true"
+                set:html={productArtMarkup[product.slug]}
+              />
+            </div>
+            <div class="product-card__copy">
+              <h3>{product.name}</h3>
+              <p>{product.tagline}</p>
+              {product.detail && <p class="product-card__detail">{product.detail}</p>}
+            </div>
+            <div class="product-card__footer">
+              <span>{product.platforms}</span>
+              <a class="product-link interaction-target" href={product.url} rel="external noopener">
+                <span class="interaction-label">
+                  {product.linkLabel}
+                  <span class="product-link__external" aria-hidden="true">
+                    ↗
+                  </span>
+                </span>
+              </a>
+            </div>
+          </article>
         ))
       }
     </section>
-  </article>
-
-  {
-    /* Dialogs render at the end of the document so the native <dialog>
-       backdrop and focus trap behave correctly. Each one is the studio's
-       first-party recontextualization of a piece of work that lives on
-       its own separately deployed product site. */
-  }
-  {
-    products.map((p) => (
-      <ProductDialog
-        slug={p.slug}
-        name={p.name}
-        url={p.url}
-        ready={p.ready}
-        hero={p.modal.hero}
-        heroAlt={p.modal.heroAlt}
-        question={p.modal.question}
-        investigation={p.modal.investigation}
-        metadata={p.metadata}
-      />
-    ))
-  }
+  </div>
 </Base>
 
 <style>
-  .mission {
-    max-inline-size: var(--measure);
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-md);
+  .home {
+    max-inline-size: var(--layout-max);
+    margin-inline: auto;
+    padding-inline: clamp(1.25rem, 2.5vw, 2rem);
   }
 
-  .mission p {
-    font-family: var(--font-serif);
-    font-size: var(--font-size-body);
-    line-height: var(--leading-body);
-    color: var(--color-text);
+  .home-hero {
+    padding-block: clamp(4rem, 8vw, 6rem);
+  }
+
+  .home-hero h1 {
+    max-inline-size: 13ch;
+    font-size: clamp(3rem, 7vw, 7.5rem);
+    font-weight: 560;
+    line-height: 0.96;
+    letter-spacing: -0.065em;
+  }
+
+  .products-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(1.5rem, 2.5vw, 2.5rem) clamp(1rem, 2vw, 1.5rem);
+    padding-block-end: clamp(3rem, 5vw, 4rem);
+  }
+
+  .product-card {
+    min-inline-size: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .product-card__media {
+    overflow: hidden;
+    border-radius: 0;
+    background: var(--ascii-background);
+    display: grid;
+    place-items: center;
+    padding: 0.5rem;
+    border: 1px solid var(--color-rule);
+    text-decoration: none;
+    container-type: inline-size;
+  }
+
+  .product-card__ascii {
+    inline-size: max-content;
     margin: 0;
-    text-wrap: pretty;
+    font-family: var(--font-mono);
+    font-size: calc(100cqi / 24);
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: 0;
+    white-space: pre;
+    -webkit-user-select: none;
+    user-select: none;
+    pointer-events: none;
+  }
+
+  .product-card__ascii :global([data-tone='1']) {
+    color: color-mix(in srgb, var(--ascii-1) 88%, var(--ascii-background));
+  }
+
+  .product-card__ascii :global([data-tone='2']) {
+    color: color-mix(in srgb, var(--ascii-2) 88%, var(--ascii-background));
+  }
+
+  .product-card__ascii :global([data-tone='3']) {
+    color: color-mix(in srgb, var(--ascii-3) 88%, var(--ascii-background));
+  }
+
+  .product-card__ascii :global([data-tone='4']) {
+    color: color-mix(in srgb, var(--ascii-4) 88%, var(--ascii-background));
+  }
+
+  .product-card--docket {
+    --interaction-hover-bg: color-mix(in srgb, var(--color-docket) 12%, var(--color-bg));
+    --interaction-focus-bg: var(--color-docket);
+    --interaction-focus-ink: var(--color-docket-ink);
+    --ascii-background: #edf1ff;
+    --ascii-1: #9fb4ff;
+    --ascii-2: #365fff;
+    --ascii-3: #ff643d;
+    --ascii-4: #172252;
+  }
+
+  .product-card--logdate {
+    --interaction-hover-bg: color-mix(in srgb, var(--color-logdate) 12%, var(--color-bg));
+    --interaction-focus-bg: var(--color-logdate);
+    --interaction-focus-ink: var(--color-logdate-ink);
+    --ascii-background: #fff0f5;
+    --ascii-1: #ffc0d2;
+    --ascii-2: #ff5f91;
+    --ascii-3: #814cff;
+    --ascii-4: #3c2266;
+  }
+
+  .product-card--curfew {
+    --interaction-hover-bg: color-mix(in srgb, var(--color-curfew) 12%, var(--color-bg));
+    --interaction-focus-bg: var(--color-curfew);
+    --interaction-focus-ink: var(--color-curfew-ink);
+    --ascii-background: #121322;
+    --ascii-1: #373951;
+    --ascii-2: #786b9c;
+    --ascii-3: #ff6a35;
+    --ascii-4: #ffd45a;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .product-card--docket {
+      --ascii-background: #151b31;
+      --ascii-1: #556aa8;
+      --ascii-2: #8ea6ff;
+      --ascii-3: #ff8367;
+      --ascii-4: #e7ecff;
+    }
+
+    .product-card--logdate {
+      --ascii-background: #2a1720;
+      --ascii-1: #744052;
+      --ascii-2: #ff78a5;
+      --ascii-3: #ad8cff;
+      --ascii-4: #ffe3ed;
+    }
+
+    .product-card--curfew {
+      --ascii-background: #0d0f1a;
+      --ascii-1: #34374f;
+      --ascii-2: #897dab;
+      --ascii-3: #ff7948;
+      --ascii-4: #ffdd76;
+    }
+  }
+
+  .product-card__copy {
+    padding-block-start: 1rem;
+  }
+
+  .product-card h3 {
+    font-size: 1.25rem;
+    letter-spacing: -0.025em;
+  }
+
+  .product-card p {
+    margin-block-start: 0.5rem;
+    line-height: 1.45;
+  }
+
+  .product-card__detail {
+    color: var(--color-secondary);
+  }
+
+  .product-card__footer {
+    margin-block-start: auto;
+    padding-block-start: 0.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    color: var(--color-secondary);
+    font-size: 0.875rem;
+  }
+
+  .product-card__footer a {
+    color: var(--color-text);
+    display: inline-flex;
+    align-items: center;
+    min-block-size: 2.75rem;
+  }
+
+  .product-card__footer a:focus-visible {
+    color: var(--color-text);
+    -webkit-text-fill-color: var(--color-text);
+  }
+
+  .product-link::after {
+    content: none;
+  }
+
+  .product-link__external {
+    margin-inline: 0.2em 0.12em;
+    display: inline-block;
+    color: inherit;
+    font-family: var(--font-mono);
+    font-size: 0.85em;
+    text-decoration: none;
+    transform: translateY(-0.05em);
+  }
+
+  @media (max-width: 60rem) {
+    .products-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 40rem) {
+    .home-hero h1 {
+      font-size: clamp(3rem, 14vw, 5rem);
+    }
+
+    .products-grid {
+      grid-template-columns: 1fr;
+    }
   }
 </style>

@@ -22,6 +22,8 @@ const STUDY_PATH = '/studies/curfew-launch';
 const NOTE_PATH = '/notes/2026-04-08-on-finishing';
 const colophon = en.indieweb.colophon;
 
+test.describe.configure({ timeout: 60_000 });
+
 test.describe('Colophon — study', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto(STUDY_PATH);
@@ -47,17 +49,16 @@ test.describe('Colophon — study', () => {
     expect(datetime).toMatch(/^2026-04-12/);
   });
 
-  test('Also at lists syndication links with rel=syndication and u-syndication', async ({
-    page,
-  }) => {
+  test('Also at lists only publicly enabled syndication links', async ({ page }) => {
     const dl = page.locator('aside.post-colophon dl');
     await expect(dl).toContainText(colophon.alsoAt);
     const links = page.locator('aside.post-colophon a.u-syndication');
-    await expect(links).toHaveCount(2);
+    await expect(links).toHaveCount(1);
     const first = links.first();
     await expect(first).toHaveAttribute('rel', /syndication/);
     const href = await first.getAttribute('href');
-    expect(href).toMatch(/^https?:\/\//);
+    expect(href).toBe('https://fed.brid.gy/r/https://hypertext.studio/studies/curfew-launch');
+    await expect(page.locator('a.u-syndication[href*="bsky.app"]')).toHaveCount(0);
   });
 
   test('Respond note is present, with no comment form', async ({ page }) => {

@@ -1,121 +1,178 @@
 import { expect, test } from '@playwright/test';
+import { PRODUCTS } from '../fixtures/site';
 
-test.describe('Footer (closing scene)', () => {
+test.describe('Footer', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/');
   });
 
-  test('does not exceed one viewport height at desktop', async ({ page }) => {
-    await page.setViewportSize({ width: 1440, height: 900 });
-    const dims = await page.locator('footer.studio-footer').evaluate((el) => ({
-      h: el.getBoundingClientRect().height,
-      vh: window.innerHeight,
-    }));
-    expect(dims.h).toBeLessThanOrEqual(dims.vh + 1); // tolerate sub-pixel rounding
-  });
-
-  test('wordmark anchor is present', async ({ page }) => {
-    await expect(page.locator('.footer-wordmark')).toBeVisible();
-  });
-
-  test('site map links every internal route', async ({ page }) => {
-    const items = page
-      .locator('section', { has: page.locator('h2', { hasText: 'Site map' }) })
-      .getByRole('link');
-    const labels = (await items.allTextContents()).map((s) => s.trim());
-    expect(labels).toEqual(
-      expect.arrayContaining(['Home', 'Studies', 'Contact', 'Privacy', 'Colophon', 'Source']),
-    );
-  });
-
-  test('identity column contains rel=me links', async ({ page }) => {
-    const ident = page.locator('section', { has: page.locator('h2', { hasText: 'Identity' }) });
-    const relMeCount = await ident.locator('a[rel~="me"]').count();
-    expect(relMeCount).toBeGreaterThanOrEqual(3);
-  });
-
-  test('status panel renders six operational rows', async ({ page }) => {
-    const panel = page.locator('section.status-panel');
-    for (const label of ['STUDIO TIME', 'LOCATION', 'EDGE', 'RENDER', 'BUILD', 'DEPLOYED']) {
-      await expect(panel.locator('dt', { hasText: label })).toBeVisible();
+  test('closes the site frame and exposes the launch essentials', async ({ page }) => {
+    const footer = page.getByRole('contentinfo');
+    await expect(footer.locator('.closing-tag')).toHaveText('</hypertext-studio>');
+    for (const label of ['About', 'Support', 'Privacy']) {
+      await expect(footer.getByRole('link', { name: label, exact: true })).toBeVisible();
     }
   });
 
-  test('wordmark renders the <hypertext-studio/> motif', async ({ page }) => {
-    const wm = page.locator('.footer-wordmark');
-    await expect(wm).toContainText('hypertext-studio');
-    await expect(wm).toContainText('<');
-    await expect(wm).toContainText('/>');
+  test('presents product and studio destinations as a hypertext directory', async ({ page }) => {
+    const footer = page.getByRole('contentinfo');
+    const productDirectory = footer.getByRole('navigation', { name: 'Products' });
+    const studioDirectory = footer.getByRole('navigation', { name: 'Studio' });
+
+    for (const product of PRODUCTS) {
+      const link = productDirectory.getByRole('link', { name: product.name, exact: true });
+      await expect(link).toHaveAttribute('href', product.url);
+      await expect(link.locator('.footer-link__address')).toHaveText(new URL(product.url).host);
+    }
+
+    for (const [label, href, address] of [
+      ['About', '/about', '/about'],
+      ['Support', '/contact', '/contact'],
+      ['Privacy', '/privacy', '/privacy'],
+      ['GitHub', 'https://github.com/TheHypertextStudio', 'github.com/TheHypertextStudio'],
+    ] as const) {
+      const link = studioDirectory.getByRole('link', { name: label, exact: true });
+      await expect(link).toHaveAttribute('href', href);
+      await expect(link.locator('.footer-link__address')).toHaveText(address);
+    }
   });
 
-  test('studio time hydrates to a real clock format', async ({ page }) => {
-    const time = page.locator('[data-status="time"]');
-    await expect(time).toBeVisible();
-    // Wait for the JS ticker to replace the placeholder.
-    await expect.poll(async () => (await time.textContent())?.trim()).toMatch(/^\d{1,2}:\d{2}/);
+  test('ends with useful destinations rather than a copyright notice', async ({ page }) => {
+    const footer = page.getByRole('contentinfo');
+    await expect(footer.getByText(/©|copyright/i)).toHaveCount(0);
   });
 
-  test('small-print row has [view source], [print this page], [⌘K]', async ({ page }) => {
-    const sp = page.locator('small.small-print');
-    await expect(sp.getByRole('link', { name: /view source/ })).toBeAttached();
-    await expect(sp.getByRole('button', { name: /print this page/i })).toBeAttached();
-    await expect(sp.getByRole('button', { name: /open the command palette/i })).toBeAttached();
-  });
-
-  test('[view source] points to the GitHub repo at the page path', async ({ page }) => {
-    const link = page.locator('small.small-print a', { hasText: 'view source' });
-    const href = await link.getAttribute('href');
-    expect(href).toMatch(/github\.com\/TheHypertextStudio\/website\/blob\/main\//);
-  });
-
-  test('clicking [⌘K] in small-print opens the palette', async ({ page }) => {
-    await page.locator('small.small-print button[data-action="palette"]').click();
-    await expect(page.locator('dialog#command-palette')).toBeVisible();
-  });
-
-  test('hidden poem easter egg is in the page source for view-source readers', async ({ page }) => {
-    // The poem used to render visibly between the wordmark and small-print
-    // row; it now lives only as an HTML comment + console.info. This guard
-    // keeps the easter egg from quietly disappearing in a future refactor.
-    const html = await page.content();
-    expect(html).toContain('If this work is worth doing, it is worth doing right.');
-    expect(html).toContain('— Hypertext Studio');
-  });
-
-  test('hidden poem easter egg logs to the dev console', async ({ page }) => {
-    const messages: string[] = [];
-    page.on('console', (msg) => {
-      if (msg.type() === 'info') messages.push(msg.text());
-    });
-    await page.goto('/');
-    // Allow the /api/poem fetch to settle (or fall back).
-    await expect
-      .poll(() => messages.some((m) => /worth doing/i.test(m)), { timeout: 5000 })
-      .toBe(true);
-  });
-
-  test('hovering the ❦ ornament in small-print reveals the studio motto tooltip', async ({
+  test('uses quiet hover and borderless reverse-video focus for directory links', async ({
     page,
   }) => {
-    const motto = page.locator('small.small-print .motto');
-    const tooltip = motto.locator('.motto__tooltip');
+    const footer = page.locator('.site-footer');
+    const docket = page
+      .getByRole('navigation', { name: 'Products' })
+      .getByRole('link', { name: 'Docket', exact: true });
 
-    // Resting state: tooltip is in the DOM but visually hidden via opacity 0.
-    await expect(tooltip).toContainText(/worth doing/i);
-    expect(await tooltip.evaluate((el) => parseFloat(getComputedStyle(el).opacity))).toBe(0);
+    const resting = await docket.evaluate((link) => ({
+      background: getComputedStyle(link).backgroundColor,
+      color: getComputedStyle(link).color,
+    }));
+    await docket.hover();
+    const hovered = await docket.evaluate((link) => ({
+      background: getComputedStyle(link).backgroundColor,
+      color: getComputedStyle(link).color,
+    }));
+    await docket.focus();
+    await expect(docket).toBeFocused();
+    await expect.poll(() => docket.evaluate((link) => link.matches(':focus-visible'))).toBe(true);
+    const focused = await docket.evaluate((link) => ({
+      background: getComputedStyle(link).backgroundColor,
+      color: getComputedStyle(link).color,
+      outline: getComputedStyle(link).outlineStyle,
+      shadow: getComputedStyle(link).boxShadow,
+    }));
+    const borders = await footer.evaluate((element) => {
+      const style = getComputedStyle(element);
+      return [
+        style.borderTopWidth,
+        style.borderRightWidth,
+        style.borderBottomWidth,
+        style.borderLeftWidth,
+      ];
+    });
 
-    await motto.hover();
-    await expect
-      .poll(async () => tooltip.evaluate((el) => parseFloat(getComputedStyle(el).opacity)))
-      .toBe(1);
+    expect(hovered.background).not.toBe(resting.background);
+    expect(hovered.background).not.toBe('rgba(0, 0, 0, 0)');
+    expect(hovered.color).toBe(resting.color);
+    expect(focused.background).not.toBe(hovered.background);
+    expect(focused.color).not.toBe(resting.color);
+    expect(focused.outline).toBe('none');
+    expect(focused.shadow).toBe('none');
+    expect(borders).toEqual(['0px', '0px', '0px', '0px']);
   });
 
-  test('the ❦ ornament is keyboard-reachable and reveals the motto on focus', async ({ page }) => {
-    const motto = page.locator('small.small-print .motto');
-    const tooltip = motto.locator('.motto__tooltip');
-    await motto.focus();
-    await expect
-      .poll(async () => tooltip.evaluate((el) => parseFloat(getComputedStyle(el).opacity)))
-      .toBe(1);
+  test('expands the closing scene as the footer enters the viewport', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto('/');
+
+    const footer = page.locator('.site-footer');
+    const supportsScrollTimeline = await page.evaluate(() =>
+      CSS.supports('animation-timeline: view()'),
+    );
+
+    if (!supportsScrollTimeline) {
+      await expect(footer.locator('.closing-tag')).toHaveCSS('animation-name', 'none');
+      const fallbackSize = await footer
+        .locator('.closing-tag')
+        .evaluate((element) => Number.parseFloat(getComputedStyle(element).fontSize));
+      expect(fallbackSize).toBeGreaterThanOrEqual(28);
+      return;
+    }
+
+    await footer.evaluate((element) => {
+      const top = element.getBoundingClientRect().top + window.scrollY;
+      window.scrollTo(0, top - window.innerHeight + 1);
+    });
+    await page.waitForTimeout(100);
+
+    const entering = await footer.evaluate((element) => ({
+      footerHeight: element.getBoundingClientRect().height,
+      closingSize: parseFloat(
+        getComputedStyle(element.querySelector<HTMLElement>('.closing-tag')!).fontSize,
+      ),
+    }));
+
+    await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
+    await page.waitForTimeout(100);
+
+    const expanded = await footer.evaluate((element) => ({
+      footerHeight: element.getBoundingClientRect().height,
+      closingSize: parseFloat(
+        getComputedStyle(element.querySelector<HTMLElement>('.closing-tag')!).fontSize,
+      ),
+    }));
+
+    expect(Math.abs(expanded.footerHeight - entering.footerHeight)).toBeLessThanOrEqual(1);
+    expect(expanded.closingSize - entering.closingSize).toBeGreaterThan(12);
+  });
+
+  test('shows the fully expanded footer without animation when motion is reduced', async ({
+    page,
+  }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto('/about');
+
+    const layout = await page.locator('.site-footer').evaluate((footer) => {
+      const closing = footer.querySelector<HTMLElement>('.closing-tag')!;
+      return {
+        footerHeight: footer.getBoundingClientRect().height,
+        closingSize: parseFloat(getComputedStyle(closing).fontSize),
+        animationName: getComputedStyle(closing).animationName,
+      };
+    });
+
+    expect(layout.footerHeight).toBeGreaterThanOrEqual(200);
+    expect(layout.closingSize).toBeGreaterThanOrEqual(28);
+    expect(layout.animationName).toBe('none');
+  });
+
+  test('fits the expanded closing tag at the minimum mobile width', async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.setViewportSize({ width: 320, height: 568 });
+    await page.goto('/about');
+
+    const fit = await page.locator('.site-footer').evaluate((footer) => {
+      const inner = footer
+        .querySelector<HTMLElement>('.site-footer__inner')!
+        .getBoundingClientRect();
+      const closing = footer.querySelector<HTMLElement>('.closing-tag')!.getBoundingClientRect();
+      return {
+        documentWidth: document.documentElement.scrollWidth,
+        viewportWidth: window.innerWidth,
+        innerWidth: inner.width,
+        closingWidth: closing.width,
+      };
+    });
+
+    expect(fit.documentWidth).toBeLessThanOrEqual(fit.viewportWidth + 1);
+    expect(fit.closingWidth).toBeLessThanOrEqual(fit.innerWidth);
   });
 });

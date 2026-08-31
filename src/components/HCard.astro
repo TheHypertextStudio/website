@@ -11,7 +11,13 @@ import t from '@/i18n';
   <span class="p-locality">{STUDIO_LOCATION.locality}</span>,
   <span class="p-region">{STUDIO_LOCATION.region}</span>
   <a rel="me" href={SOCIAL.github}>GitHub</a>
-  <a rel="me" href={SOCIAL.bluesky}>Bluesky</a>
+  {
+    SOCIAL.bluesky && (
+      <a rel="me" href={SOCIAL.bluesky}>
+        Bluesky
+      </a>
+    )
+  }
   <a rel="me" href={SOCIAL.fediverse}>Fediverse</a>
 </article>
 

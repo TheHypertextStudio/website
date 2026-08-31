@@ -53,6 +53,7 @@ async function create(req: Request, env: MicropubBindings): Promise<Response> {
     bearer: auth.slice(7).trim(),
     endpoint: env.INDIEAUTH_ENDPOINT,
     expectedMe: SITE_URL,
+    requiredScope: 'create',
   });
   if (!ok) return json({ error: 'forbidden' }, 403);
 
@@ -87,7 +88,10 @@ async function create(req: Request, env: MicropubBindings): Promise<Response> {
     return json({ error: 'invalid_request' }, 400);
   }
 
-  const finalSlug = slug || makeSlug(content);
+  const finalSlug = slug ? validateSlug(slug) : makeSlug(content);
+  if (!finalSlug) {
+    return json({ error: 'invalid_request' }, 400);
+  }
   const noteUrl = `${SITE_URL}/notes/${finalSlug}`;
 
   const frontmatter = {
@@ -146,6 +150,11 @@ function makeSlug(text: string): string {
       .replace(/^-+|-+$/g, '')
       .slice(0, 60) || `note-${Date.now()}`
   );
+}
+
+function validateSlug(slug: string): string | null {
+  const candidate = slug.trim();
+  return /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(candidate) && candidate.length <= 80 ? candidate : null;
 }
 
 function json(data: unknown, status = 200): Response {

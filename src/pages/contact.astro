@@ -1,6 +1,10 @@
 ---
 import Base from '@/layouts/Base.astro';
 import t from '@/i18n';
+import { SOCIAL } from '@/consts';
+import { resolveSocialLinks } from '@/lib/social';
+
+const channels = resolveSocialLinks(t.contact.channels, { bluesky: SOCIAL.bluesky });
 ---
 
 <Base title="Contact" description="Reach Hypertext Studio." sourcePath="src/pages/contact.astro">
@@ -41,7 +45,7 @@ import t from '@/i18n';
       </h2>
       <ul class="channels">
         {
-          t.contact.channels.map((c) => (
+          channels.map((c) => (
             <li>
               <a href={c.href} rel={`${c.rel} external noopener`} title={c.label}>
                 {c.label}

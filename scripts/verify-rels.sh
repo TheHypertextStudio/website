@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Confirm rel=me reciprocity:
-#   - The site links to GitHub, Bluesky, Fediverse with rel="me"
+#   - The site links to GitHub, Fediverse, and any configured Bluesky profile
 #   - Each remote profile has rel="me" pointing back to hypertext.studio
 #
 # Outputs a table of pass/fail per identity.
@@ -14,6 +14,8 @@ cd "$REPO_ROOT"
 source "$REPO_ROOT/scripts/lib/log.sh"
 
 readonly SITE="https://hypertext.studio/"
+BLUESKY_HANDLE="${BLUESKY_HANDLE:-$(awk -F= '/^BLUESKY_HANDLE=/{print $2; exit}' .env 2>/dev/null || true)}"
+BLUESKY_HANDLE="${BLUESKY_HANDLE#@}"
 
 check() {
   local label="$1" url="$2" search="$3"
@@ -35,5 +37,9 @@ log::title "rel=me reciprocity check"
 
 check "site → outbound"   "$SITE" 'rel="me"'
 check "GitHub bio"        "https://github.com/TheHypertextStudio" "hypertext.studio"
-check "Bluesky profile"   "https://bsky.app/profile/hypertext.studio" "hypertext.studio"
+if [[ -n "$BLUESKY_HANDLE" ]]; then
+  check "Bluesky profile" "https://bsky.app/profile/$BLUESKY_HANDLE" "hypertext.studio"
+else
+  log::skip "Bluesky profile — BLUESKY_HANDLE is not configured"
+fi
 check "Fediverse actor"   "https://fed.brid.gy/r/https://hypertext.studio/" "hypertext.studio"

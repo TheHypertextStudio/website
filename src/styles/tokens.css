@@ -4,17 +4,31 @@
  * ============================================================================= */
 
 :root {
+  color-scheme: light dark;
+
   /* --- Color ------------------------------------------------------------- */
-  --color-bg: #f5f1e8; /* warm cream */
-  --color-text: #1a1814; /* warm near-black */
-  --color-link: #0033cc; /* classic blue */
-  --color-visited: #6b4fa0; /* faded purple */
-  --color-secondary: #6b6358; /* warm gray */
-  --color-rule: #d4cfc0; /* low-contrast tan/sepia */
-  --color-selection-bg: #fbe6a2;
+  --color-bg: #fbfbfa;
+  --color-footer-bg: #f1f2ee;
+  --color-text: #25231f;
+  --color-link: #25231f;
+  --color-visited: #25231f;
+  --color-secondary: #666666;
+  --color-rule: #ddddda;
+  --color-selection-bg: #dce5ff;
   --color-selection-text: var(--color-text);
-  --color-backdrop: rgba(26, 24, 20, 0.6);
-  --color-focus: #0033cc;
+  --color-backdrop: rgba(37, 35, 31, 0.6);
+  --color-focus: #1646d8;
+  --color-interaction-hover: #e5e6e0;
+  --interaction-hover-bg: var(--color-interaction-hover);
+  --interaction-focus-bg: var(--color-text);
+  --interaction-focus-ink: var(--color-bg);
+  --interaction-focus-canvas: var(--color-bg);
+  --color-docket: #365fff;
+  --color-docket-ink: #ffffff;
+  --color-logdate: #ff73a0;
+  --color-logdate-ink: #211018;
+  --color-curfew: #ffd45a;
+  --color-curfew-ink: #1c1708;
 
   /* --- Typography ------------------------------------------------------- */
   --font-serif:
@@ -70,7 +84,8 @@
   --measure: 36rem; /* main column max-width */
   --measure-aside: 14rem; /* marginalia max-width */
   --layout-gap: 2rem;
-  --layout-margin: 2rem;
+  --layout-margin: clamp(1.25rem, 4vw, 3.5rem);
+  --layout-max: 96rem;
 
   /* --- Radii / borders -------------------------------------------------- */
   --rule-thin: 1px solid var(--color-rule);
@@ -81,6 +96,29 @@
   --ease: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-bg: #181713;
+    --color-footer-bg: #1a1b17;
+    --color-text: #f3f3ed;
+    --color-link: #f3f3ed;
+    --color-visited: #f3f3ed;
+    --color-secondary: #aaa99f;
+    --color-rule: #373832;
+    --color-selection-bg: #35589d;
+    --color-selection-text: #ffffff;
+    --color-backdrop: rgba(24, 23, 19, 0.72);
+    --color-focus: #91adff;
+    --color-interaction-hover: #292b25;
+    --color-docket: #7894ff;
+    --color-docket-ink: #0e1536;
+    --color-logdate: #ff86ad;
+    --color-logdate-ink: #2a1019;
+    --color-curfew: #ffd86f;
+    --color-curfew-ink: #241b05;
+  }
+}
+
 /* Mobile root rebases body type, per §7.1. */
 @media (max-width: 30rem) {
   :root {
@@ -89,12 +127,12 @@
 }
 @media (min-width: 30rem) {
   :root {
-    font-size: 18px;
+    font-size: 16px;
   }
 }
 
 /* High-contrast preference raises link + text contrast. */
-@media (prefers-contrast: more) {
+@media (prefers-contrast: more) and (prefers-color-scheme: light) {
   :root {
     --color-text: #000000;
     --color-link: #0000cc;
@@ -102,9 +140,20 @@
   }
 }
 
+@media (prefers-contrast: more) and (prefers-color-scheme: dark) {
+  :root {
+    --color-text: #ffffff;
+    --color-link: #a9bbff;
+    --color-visited: #d8b5ff;
+    --color-secondary: #ffffff;
+    --color-rule: #ffffff;
+  }
+}
+
 /* Forced colors mode (Windows high-contrast): hand back to system. */
 @media (forced-colors: active) {
   :root {
     color-scheme: light dark;
+    --color-footer-bg: Canvas;
   }
 }

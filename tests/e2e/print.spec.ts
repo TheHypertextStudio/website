@@ -6,22 +6,19 @@ test.describe('Print stylesheet', () => {
     await page.emulateMedia({ media: 'print' });
   });
 
-  test('hides the status bar', async ({ page }) => {
+  test('hides the site footer', async ({ page }) => {
     const display = await page
-      .locator('#status-bar')
+      .locator('footer.site-footer')
       .evaluate((el) => getComputedStyle(el).display);
     expect(display).toBe('none');
   });
 
-  test("hides each product entry's Read more button", async ({ page }) => {
-    // The dialog the button opens is itself hidden under @media print
-    // (it's a `<dialog>`); hiding its trigger removes a dead control from
-    // the printed page.
-    const display = await page
-      .locator('.entry__more')
+  test('keeps product cards together', async ({ page }) => {
+    const breakInside = await page
+      .locator('.product-card')
       .first()
-      .evaluate((el) => getComputedStyle(el).display);
-    expect(display).toBe('none');
+      .evaluate((el) => getComputedStyle(el).breakInside);
+    expect(breakInside).toBe('avoid');
   });
 
   test('inlines external link URLs after the link text via ::after', async ({ page }) => {

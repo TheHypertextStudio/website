@@ -32,16 +32,13 @@ test.describe('Microformats', () => {
     await expect(card.locator('.p-region')).toContainText('NV');
   });
 
-  test('rel=me reciprocity links exist for GitHub, Bluesky, Fediverse', async ({ page }) => {
+  test('rel=me reciprocity links exist for configured identities', async ({ page }) => {
     const card = page.locator('article.h-card');
-    const targets = [
-      'github.com/TheHypertextStudio',
-      'bsky.app/profile/hypertext.studio',
-      'fed.brid.gy',
-    ];
+    const targets = ['github.com/TheHypertextStudio', 'fed.brid.gy'];
     for (const t of targets) {
       await expect(card.locator(`a[rel="me"][href*="${t}"]`).first()).toBeAttached();
     }
+    await expect(card.locator('a[rel="me"][href*="bsky.app/profile"]')).toHaveCount(0);
   });
 });
 

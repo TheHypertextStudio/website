@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "version": "0.1.0",
-  "description": "hypertext.studio — the studio's public face. A small design lab building sustainable, human-centered software.",
+  "description": "Hypertext Studio builds software for humans.",
   "homepage": "https://hypertext.studio",
   "repository": {
     "type": "git",
@@ -31,6 +31,7 @@
     "lint:fix": "eslint . --fix",
     "pretypecheck": "astro sync",
     "typecheck": "astro check && tsc --noEmit",
+    "typecheck:workers": "tsc -p workers/tsconfig.json",
     "test": "vitest run",
     "test:e2e": "playwright test --project=chromium",
     "test:e2e:all": "playwright test",

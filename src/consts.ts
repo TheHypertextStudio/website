@@ -17,9 +17,10 @@ export const STUDIO_EMAIL = 'hello@hypertext.studio';
 export const SOCIAL = {
   github: 'https://github.com/TheHypertextStudio',
   githubRepo: 'https://github.com/TheHypertextStudio/website',
-  bluesky: 'https://bsky.app/profile/hypertext.studio',
+  bluesky: blueskyProfileUrl(import.meta.env.BLUESKY_HANDLE),
   fediverse: 'https://fed.brid.gy/r/https://hypertext.studio/',
   twitter: 'https://twitter.com/hypertextstudio',
 } as const;
 
 export const PRODUCT_DOMAINS = ['logdate.app', 'curfew.app', 'termsly.com'] as const;
+import { blueskyProfileUrl } from '@/lib/social';

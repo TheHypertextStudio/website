@@ -17,13 +17,9 @@ permissions:
   contents: read
 
 jobs:
-  deploy:
+  verify:
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    strategy:
-      fail-fast: false
-      matrix:
-        worker: [poem, webmention, micropub, oembed]
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
@@ -31,8 +27,34 @@ jobs:
           node-version-file: .nvmrc
       - run: corepack enable
       - run: pnpm install --frozen-lockfile
-      - name: Typecheck workers
-        run: pnpm exec tsc -p workers/tsconfig.json
+      - name: Format check
+        run: pnpm run format:check
+      - name: Lint
+        run: pnpm run lint
+      - name: Site typecheck
+        run: pnpm run typecheck
+      - name: Workers typecheck
+        run: pnpm run typecheck:workers
+      - name: Unit tests
+        run: pnpm run test
+      - name: Build site
+        run: pnpm run build
+
+  deploy:
+    needs: verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        worker: [www, poem, webmention, micropub, oembed]
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+      - run: corepack enable
+      - run: pnpm install --frozen-lockfile
       - name: Deploy ${{ matrix.worker }}
         uses: cloudflare/wrangler-action@v4
         with:

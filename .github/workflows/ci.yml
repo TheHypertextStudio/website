@@ -32,7 +32,7 @@ jobs:
       - name: Typecheck
         run: pnpm run typecheck
       - name: Workers typecheck
-        run: pnpm exec tsc -p workers/tsconfig.json
+        run: pnpm run typecheck:workers
       - name: Build
         run: pnpm run build
       - name: Upload dist
@@ -54,3 +54,18 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - name: Vitest
         run: pnpm run test
+
+  browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+      - run: corepack enable
+      - run: pnpm install --frozen-lockfile
+      - name: Install Playwright browsers
+        run: pnpm exec playwright install --with-deps
+      - name: Browser, responsive, and accessibility tests
+        run: pnpm run test:e2e:all
