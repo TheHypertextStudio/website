@@ -140,7 +140,7 @@ const productArtMarkup = Object.fromEntries(
   }
 
   .product-card__ascii {
-    inline-size: max-content;
+    inline-size: 100%;
     margin: 0;
     font-family: var(--font-mono);
     font-size: calc(100cqi / 24);
@@ -151,6 +151,12 @@ const productArtMarkup = Object.fromEntries(
     -webkit-user-select: none;
     user-select: none;
     pointer-events: none;
+  }
+
+  .product-card__ascii :global([data-tone]) {
+    display: inline-block;
+    inline-size: calc(100% / 40);
+    text-align: center;
   }
 
   .product-card__ascii :global([data-tone='1']) {
