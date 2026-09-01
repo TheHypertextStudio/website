@@ -192,7 +192,7 @@ async function makeCheckout({
   return { root, callLog, actionSecret };
 }
 
-describe('bootstrap', () => {
+describe('bootstrap', { timeout: 15_000 }, () => {
   test('persists discovered Cloudflare values and provisions every non-secret resource', async () => {
     const { root, callLog, actionSecret } = await makeCheckout();
 

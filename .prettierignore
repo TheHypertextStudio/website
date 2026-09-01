@@ -3,6 +3,7 @@ dist
 .astro
 .wrangler
 .superpowers
+.claude/worktrees
 pnpm-lock.yaml
 public/fonts
 public/img
