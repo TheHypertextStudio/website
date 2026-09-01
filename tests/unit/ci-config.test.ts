@@ -29,6 +29,15 @@ describe('portable CI policy', () => {
     expect(setup).toContain('package-manager-cache: false');
   });
 
+  test('uses artifact action releases packaged for the supported Node runtime', () => {
+    expect(ci).toMatch(/actions\/upload-artifact@[a-f0-9]{40} # v7/);
+    expect(ci).toMatch(/actions\/download-artifact@[a-f0-9]{40} # v8/);
+  });
+
+  test('keeps well-known metadata in the immutable production artifact', () => {
+    expect(ci).toContain('include-hidden-files: true');
+  });
+
   test('deploys only from main push or an explicit main dispatch', () => {
     expect(ci).toContain("github.ref == 'refs/heads/main'");
     expect(ci).toContain("github.event_name == 'push' || github.event_name == 'workflow_dispatch'");
