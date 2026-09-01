@@ -32,7 +32,7 @@
     "types:workers": "wrangler types workers/generated/www.d.ts --env www --env-interface WwwEnv --env-file /dev/null --include-runtime false && wrangler types workers/generated/poem.d.ts --env poem --env-interface PoemEnv --env-file /dev/null --include-runtime false && wrangler types workers/generated/webmention.d.ts --env webmention --env-interface WebmentionEnv --env-file /dev/null --include-runtime false && wrangler types workers/generated/micropub.d.ts --env micropub --env-interface MicropubEnv --env-file /dev/null --include-runtime false && wrangler types workers/generated/oembed.d.ts --env oembed --env-interface OembedEnv --env-file /dev/null --include-runtime false",
     "typecheck:workers": "pnpm run types:workers && tsc -p workers/tsconfig.json",
     "test": "vitest run",
-    "test:workers": "vitest run --config tests/workers/configs/www.config.ts && vitest run --config tests/workers/configs/poem.config.ts && vitest run --config tests/workers/configs/webmention.config.ts && vitest run --config tests/workers/configs/micropub.config.ts && vitest run --config tests/workers/configs/oembed.config.ts",
+    "test:workers": "node scripts/ci/run-worker-tests.mjs",
     "test:e2e": "playwright test --project=chromium",
     "test:e2e:all": "playwright test",
     "test:e2e:ui": "playwright test --ui",

@@ -4,6 +4,10 @@ import { describe, expect, test } from 'vitest';
 const ci = readFileSync('.github/workflows/ci.yml', 'utf8');
 const codeql = readFileSync('.github/workflows/codeql.yml', 'utf8');
 const setup = readFileSync('.github/actions/setup/action.yml', 'utf8');
+const playwright = readFileSync('playwright.config.ts', 'utf8');
+const packageJson = JSON.parse(readFileSync('package.json', 'utf8')) as {
+  scripts: Record<string, string>;
+};
 
 describe('portable CI policy', () => {
   test('uses least privilege, protected production, one artifact, migrations, and smoke checks', () => {
@@ -42,5 +46,49 @@ describe('portable CI policy', () => {
     expect(ci).toContain("github.ref == 'refs/heads/main'");
     expect(ci).toContain("github.event_name == 'push' || github.event_name == 'workflow_dispatch'");
     expect(ci).not.toContain('paths:');
+  });
+
+  test('publishes rich job summaries without masking failed gates', () => {
+    expect(ci).toContain('node scripts/ci/report.mjs quality');
+    expect(ci).toContain('node scripts/ci/report.mjs build');
+    expect(ci).toContain('node scripts/ci/report.mjs production');
+    expect(ci).toContain('node scripts/ci/report.mjs workflow');
+    expect(ci.match(/if: \$\{\{ always\(\) \}\}/g)?.length).toBeGreaterThanOrEqual(4);
+    expect(codeql).toContain('node scripts/ci/report.mjs codeql');
+  });
+
+  test('keeps detailed browser diagnostics only for failed runs', () => {
+    expect(playwright).toContain('./scripts/ci/playwright-summary-reporter.mjs');
+    expect(ci).toContain('name: playwright-failure-${{ github.sha }}');
+    expect(ci).toContain("if: ${{ steps.browser_tests.outcome == 'failure' }}");
+    expect(ci).not.toContain('if: ${{ failure() }}');
+    expect(ci).toContain('playwright-report/');
+    expect(ci).toContain('test-results/');
+  });
+
+  test('reports each fail-closed production stage separately', () => {
+    for (const id of [
+      'migrate',
+      'deploy_www',
+      'deploy_poem',
+      'deploy_webmention',
+      'deploy_micropub',
+      'deploy_oembed',
+      'deploy_pages',
+      'smoke',
+    ]) {
+      expect(ci).toContain(`id: ${id}`);
+    }
+  });
+
+  test('exposes artifact evidence to an always-run workflow receipt', () => {
+    expect(ci).toContain('artifact-url: ${{ steps.site_artifact.outputs.artifact-url }}');
+    expect(ci).toContain('artifact-digest: ${{ steps.site_artifact.outputs.artifact-digest }}');
+    expect(ci).toMatch(/\n  report:\n[\s\S]*needs: \[quality, test, browser, build, production\]/);
+    expect(ci).toContain('PRODUCTION_RESULT: ${{ needs.production.result }}');
+  });
+
+  test('uses the aggregate Worker runner instead of short-circuiting chained suites', () => {
+    expect(packageJson.scripts['test:workers']).toBe('node scripts/ci/run-worker-tests.mjs');
   });
 });

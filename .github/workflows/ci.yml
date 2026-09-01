@@ -19,24 +19,48 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
-      - uses: ./.github/actions/setup
-      - name: Format, lint, and typecheck
-        run: |
-          pnpm run format:check
-          pnpm run lint
-          pnpm run typecheck
-          pnpm run typecheck:workers
+      - id: checkout
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - id: setup
+        uses: ./.github/actions/setup
+      - name: Check formatting
+        id: format
+        if: ${{ always() && steps.setup.outcome == 'success' }}
+        run: pnpm run format:check
+      - name: Lint application and Astro sources
+        id: lint
+        if: ${{ always() && steps.setup.outcome == 'success' }}
+        run: pnpm run lint
+      - name: Typecheck application
+        id: typecheck
+        if: ${{ always() && steps.setup.outcome == 'success' }}
+        run: pnpm run typecheck
+      - name: Typecheck Workers
+        id: worker_typecheck
+        if: ${{ always() && steps.setup.outcome == 'success' }}
+        run: pnpm run typecheck:workers
+      - name: Publish quality report
+        if: ${{ always() }}
+        env:
+          FORMAT_RESULT: ${{ steps.format.outcome }}
+          LINT_RESULT: ${{ steps.lint.outcome }}
+          TYPECHECK_RESULT: ${{ steps.typecheck.outcome }}
+          WORKER_TYPECHECK_RESULT: ${{ steps.worker_typecheck.outcome }}
+        run: node scripts/ci/report.mjs quality
 
   test:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
-      - uses: ./.github/actions/setup
+      - id: setup
+        uses: ./.github/actions/setup
       - name: Unit tests
+        id: unit_tests
         run: pnpm run test
       - name: Workers runtime tests
+        id: worker_tests
+        if: ${{ always() && steps.setup.outcome == 'success' }}
         run: pnpm run test:workers
 
   browser:
@@ -48,11 +72,25 @@ jobs:
       - name: Install Playwright browsers
         run: pnpm exec playwright install --with-deps
       - name: Browser, responsive, and accessibility tests
+        id: browser_tests
         run: pnpm run test:e2e:all
+      - name: Upload failed browser diagnostics
+        if: ${{ steps.browser_tests.outcome == 'failure' }}
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: playwright-failure-${{ github.sha }}
+          path: |
+            playwright-report/
+            test-results/
+          if-no-files-found: ignore
+          retention-days: 7
 
   build:
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    outputs:
+      artifact-url: ${{ steps.site_artifact.outputs.artifact-url }}
+      artifact-digest: ${{ steps.site_artifact.outputs.artifact-digest }}
     env:
       BLUESKY_HANDLE: ${{ vars.BLUESKY_HANDLE }}
       BLUESKY_DID: ${{ vars.BLUESKY_DID }}
@@ -60,10 +98,12 @@ jobs:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
       - uses: ./.github/actions/setup
       - name: Build the production artifact
+        id: build
         run: pnpm run build
         env:
           GITHUB_SHA: ${{ github.sha }}
       - name: Upload the immutable site artifact
+        id: site_artifact
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: site-${{ github.sha }}
@@ -71,6 +111,17 @@ jobs:
           if-no-files-found: error
           include-hidden-files: true
           retention-days: 7
+      - name: Publish build report
+        if: ${{ always() }}
+        env:
+          ARTIFACT_DIGEST: ${{ steps.site_artifact.outputs.artifact-digest }}
+          ARTIFACT_NAME: site-${{ github.sha }}
+          ARTIFACT_RETENTION_DAYS: 7
+          ARTIFACT_URL: ${{ steps.site_artifact.outputs.artifact-url }}
+          BUILD_RESULT: ${{ steps.build.outcome }}
+          DIST_DIR: dist
+          UPLOAD_RESULT: ${{ steps.site_artifact.outcome }}
+        run: node scripts/ci/report.mjs build
 
   production:
     if: >-
@@ -94,13 +145,63 @@ jobs:
           name: site-${{ github.sha }}
           path: dist/
       - name: Apply remote D1 migrations
+        id: migrate
         run: bash scripts/migrate-d1.sh remote hypertext-studio
-      - name: Deploy all Workers
-        run: |
-          for worker in www poem webmention micropub oembed; do
-            pnpm exec wrangler deploy --env "$worker"
-          done
+      - name: Deploy www Worker
+        id: deploy_www
+        run: pnpm exec wrangler deploy --env www
+      - name: Deploy poem Worker
+        id: deploy_poem
+        run: pnpm exec wrangler deploy --env poem
+      - name: Deploy webmention Worker
+        id: deploy_webmention
+        run: pnpm exec wrangler deploy --env webmention
+      - name: Deploy micropub Worker
+        id: deploy_micropub
+        run: pnpm exec wrangler deploy --env micropub
+      - name: Deploy oEmbed Worker
+        id: deploy_oembed
+        run: pnpm exec wrangler deploy --env oembed
       - name: Deploy the verified Pages artifact
+        id: deploy_pages
         run: pnpm exec wrangler pages deploy dist --project-name=hypertext-studio --branch=main
       - name: Smoke-test production
+        id: smoke
+        env:
+          SMOKE_REPORT_FILE: ${{ runner.temp }}/smoke.tsv
         run: bash scripts/smoke.sh
+      - name: Publish production report
+        if: ${{ always() }}
+        env:
+          MICROPUB_RESULT: ${{ steps.deploy_micropub.outcome }}
+          MIGRATION_RESULT: ${{ steps.migrate.outcome }}
+          OEMBED_RESULT: ${{ steps.deploy_oembed.outcome }}
+          PAGES_RESULT: ${{ steps.deploy_pages.outcome }}
+          POEM_RESULT: ${{ steps.deploy_poem.outcome }}
+          SMOKE_REPORT_FILE: ${{ runner.temp }}/smoke.tsv
+          SMOKE_RESULT: ${{ steps.smoke.outcome }}
+          WEBMENTION_RESULT: ${{ steps.deploy_webmention.outcome }}
+          WWW_RESULT: ${{ steps.deploy_www.outcome }}
+        run: node scripts/ci/report.mjs production
+
+  report:
+    needs: [quality, test, browser, build, production]
+    if: ${{ always() }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - name: Publish workflow receipt
+        env:
+          ARTIFACT_DIGEST: ${{ needs.build.outputs.artifact-digest }}
+          ARTIFACT_URL: ${{ needs.build.outputs.artifact-url }}
+          BROWSER_RESULT: ${{ needs.browser.result }}
+          BUILD_RESULT: ${{ needs.build.result }}
+          PRODUCTION_RESULT: ${{ needs.production.result }}
+          QUALITY_RESULT: ${{ needs.quality.result }}
+          RUN_ACTOR: ${{ github.actor }}
+          RUN_EVENT: ${{ github.event_name }}
+          RUN_REF: ${{ github.ref_name }}
+          RUN_SHA: ${{ github.sha }}
+          TEST_RESULT: ${{ needs.test.result }}
+        run: node scripts/ci/report.mjs workflow
