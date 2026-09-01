@@ -92,6 +92,8 @@ export async function renderBuildReport(options) {
   if (options.buildOutcome === 'success') stats = await collectBuildStats(options.distDir);
 
   const markdown = renderOutcomeTable('Build report', [
+    { name: 'Checkout', outcome: options.checkoutOutcome },
+    { name: 'Toolchain and dependencies', outcome: options.setupOutcome },
     {
       name: 'Production build',
       outcome: options.buildOutcome,
@@ -133,6 +135,9 @@ export function parseSmokeReport(contents) {
 
 export function renderProductionReport(outcomes, smokeRows = []) {
   const stages = [
+    { name: 'Checkout', outcome: outcomes.checkout },
+    { name: 'Toolchain and dependencies', outcome: outcomes.setup },
+    { name: 'Artifact download', outcome: outcomes.artifactDownload },
     { name: 'D1 migrations', outcome: outcomes.migration },
     { name: 'Worker: www', outcome: outcomes.www },
     { name: 'Worker: poem', outcome: outcomes.poem },
@@ -181,6 +186,7 @@ export function renderWorkflowReport(data) {
     { name: 'Tests', outcome: data.test },
     { name: 'Browsers and accessibility', outcome: data.browser },
     { name: 'Build', outcome: data.build },
+    { name: 'Deployable artifact validation', outcome: data.artifact },
     {
       name: 'Production',
       outcome: data.production,
@@ -210,8 +216,10 @@ export function renderWorkflowReport(data) {
 
 export function renderQualityReport(outcomes) {
   return renderOutcomeTable('Quality report', [
+    { name: 'Checkout', outcome: outcomes.checkout },
+    { name: 'Toolchain and dependencies', outcome: outcomes.setup },
     { name: 'Formatting', outcome: outcomes.format },
-    { name: 'ESLint and Astro', outcome: outcomes.lint },
+    { name: 'ESLint', outcome: outcomes.lint },
     { name: 'Application types', outcome: outcomes.typecheck },
     { name: 'Worker types', outcome: outcomes.workerTypecheck },
   ]);
@@ -252,8 +260,10 @@ async function runCli(mode, environment = process.env) {
   if (mode === 'quality') {
     return appendSummary(
       renderQualityReport({
+        checkout: environment.CHECKOUT_RESULT,
         format: environment.FORMAT_RESULT,
         lint: environment.LINT_RESULT,
+        setup: environment.SETUP_RESULT,
         typecheck: environment.TYPECHECK_RESULT,
         workerTypecheck: environment.WORKER_TYPECHECK_RESULT,
       }),
@@ -268,8 +278,10 @@ async function runCli(mode, environment = process.env) {
         artifactName: environment.ARTIFACT_NAME || 'Not available',
         artifactUrl: environment.ARTIFACT_URL || '',
         buildOutcome: environment.BUILD_RESULT,
+        checkoutOutcome: environment.CHECKOUT_RESULT,
         distDir: environment.DIST_DIR || 'dist',
         retentionDays: environment.ARTIFACT_RETENTION_DAYS || '7',
+        setupOutcome: environment.SETUP_RESULT,
         uploadOutcome: environment.UPLOAD_RESULT,
       }),
       environment,
@@ -288,12 +300,15 @@ async function runCli(mode, environment = process.env) {
     return appendSummary(
       renderProductionReport(
         {
+          artifactDownload: environment.ARTIFACT_DOWNLOAD_RESULT,
+          checkout: environment.CHECKOUT_RESULT,
           migration: environment.MIGRATION_RESULT,
           micropub: environment.MICROPUB_RESULT,
           oembed: environment.OEMBED_RESULT,
           pages: environment.PAGES_RESULT,
           poem: environment.POEM_RESULT,
           smoke: environment.SMOKE_RESULT,
+          setup: environment.SETUP_RESULT,
           webmention: environment.WEBMENTION_RESULT,
           www: environment.WWW_RESULT,
         },
@@ -303,10 +318,48 @@ async function runCli(mode, environment = process.env) {
     );
   }
 
+  if (mode === 'test') {
+    return appendSummary(
+      renderOutcomeTable('Test gate report', [
+        { name: 'Checkout', outcome: environment.CHECKOUT_RESULT },
+        { name: 'Toolchain and dependencies', outcome: environment.SETUP_RESULT },
+        { name: 'Unit tests', outcome: environment.UNIT_TEST_RESULT },
+        { name: 'Worker runtime tests', outcome: environment.WORKER_TEST_RESULT },
+      ]),
+      environment,
+    );
+  }
+
+  if (mode === 'browser') {
+    return appendSummary(
+      renderOutcomeTable('Browser gate report', [
+        { name: 'Checkout', outcome: environment.CHECKOUT_RESULT },
+        { name: 'Toolchain and dependencies', outcome: environment.SETUP_RESULT },
+        { name: 'Browser installation', outcome: environment.BROWSER_INSTALL_RESULT },
+        { name: 'Browser, responsive, and accessibility tests', outcome: environment.TEST_RESULT },
+      ]),
+      environment,
+    );
+  }
+
+  if (mode === 'artifact') {
+    return appendSummary(
+      renderOutcomeTable('Artifact validation gate', [
+        { name: 'Checkout', outcome: environment.CHECKOUT_RESULT },
+        { name: 'Toolchain and dependencies', outcome: environment.SETUP_RESULT },
+        { name: 'Artifact download', outcome: environment.ARTIFACT_DOWNLOAD_RESULT },
+        { name: 'Chromium installation', outcome: environment.BROWSER_INSTALL_RESULT },
+        { name: 'Deployable artifact tests', outcome: environment.TEST_RESULT },
+      ]),
+      environment,
+    );
+  }
+
   if (mode === 'workflow') {
     return appendSummary(
       renderWorkflowReport({
         actor: environment.RUN_ACTOR,
+        artifact: environment.ARTIFACT_RESULT,
         artifactDigest: environment.ARTIFACT_DIGEST || '',
         artifactUrl: environment.ARTIFACT_URL || '',
         browser: environment.BROWSER_RESULT,

@@ -8,7 +8,7 @@ export default defineConfig({
   testDir: './tests',
   // Unit and workerd suites have their own Vitest runners. Keeping them out
   // of Playwright prevents Node from trying to load Cloudflare runtime modules.
-  testIgnore: ['**/unit/**', '**/workers/**'],
+  testIgnore: ['**/artifact/**', '**/unit/**', '**/workers/**'],
   fullyParallel: true,
   forbidOnly: CI,
   retries: CI ? 2 : 0,

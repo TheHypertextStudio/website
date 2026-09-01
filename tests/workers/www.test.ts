@@ -1,8 +1,8 @@
-import { SELF } from 'cloudflare:test';
+import { exports } from 'cloudflare:workers';
 import { expect, test } from 'vitest';
 
 test('redirects every www request to the canonical origin', async () => {
-  const response = await SELF.fetch('https://www.hypertext.studio/about?source=www', {
+  const response = await exports.default.fetch('https://www.hypertext.studio/about?source=www', {
     redirect: 'manual',
   });
   expect(response.status).toBe(308);

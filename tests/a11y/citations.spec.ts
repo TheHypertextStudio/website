@@ -9,7 +9,10 @@ for (const route of ROUTES) {
   test(`@a11y ${route} passes axe (wcag2aa + wcag22aa + best-practice)`, async ({
     page,
   }, testInfo) => {
-    const res = await page.goto(route);
+    // Astro's first on-demand compilation can trigger one development reload.
+    // Wait for the network to settle before injecting axe so the analysis runs
+    // in the final document rather than the context being replaced mid-scan.
+    const res = await page.goto(route, { waitUntil: 'networkidle' });
     expect(res?.status()).toBe(200);
     await injectAxe(page);
     const violations = await getViolations(page, undefined, {

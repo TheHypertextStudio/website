@@ -78,9 +78,9 @@ nuke: clean ## clean + remove node_modules
 # Quality gates
 # ----------------------------------------------------------------------------
 
-.PHONY: lint lint-fix format format-check typecheck typecheck-workers test test-workers test-e2e test-a11y quality ci
+.PHONY: lint lint-fix format format-check typecheck typecheck-workers test test-workers test-artifact test-e2e test-a11y quality ci
 
-lint: ## prettier --check + eslint + astro check
+lint: ## prettier --check + eslint
 	@$(PNPM) run format:check
 	@$(PNPM) run lint
 
@@ -106,6 +106,9 @@ test: ## vitest unit tests
 test-workers: ## Vitest inside workerd for all five Workers
 	@$(PNPM) run test:workers
 
+test-artifact: ## Playwright checks against the exact built dist directory
+	@$(PNPM) run test:artifact
+
 test-e2e: ## Playwright browser, responsive, and accessibility checks
 	@$(PNPM) exec playwright test --project=chromium
 
@@ -126,7 +129,7 @@ screenshots: ## capture every page state into .hypertext/screenshots/
 
 quality: format-check lint typecheck typecheck-workers test test-workers ## local quality gate
 
-ci: quality build ## portable repository CI contract
+ci: quality build test-artifact ## portable repository CI contract
 
 # ----------------------------------------------------------------------------
 # Audits (built site)

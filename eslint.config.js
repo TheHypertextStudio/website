@@ -11,7 +11,17 @@ export default [
     },
   },
   {
-    ignores: ['dist/**', '.astro/**', '.wrangler/**', 'node_modules/**', 'pnpm-lock.yaml'],
+    ignores: [
+      '.astro/**',
+      '.hypertext/**',
+      '.wrangler/**',
+      'coverage/**',
+      'dist/**',
+      'node_modules/**',
+      'playwright-report/**',
+      'test-results/**',
+      'pnpm-lock.yaml',
+    ],
   },
   {
     rules: {

@@ -1,6 +1,9 @@
 import { describe, expect, test } from 'vitest';
 
-import { renderPlaywrightSummary } from '../../scripts/ci/playwright-summary-reporter.mjs';
+import {
+  evaluatePlaywrightOutcome,
+  renderPlaywrightSummary,
+} from '../../scripts/ci/playwright-summary-reporter.mjs';
 
 describe('Playwright job summary', () => {
   test('groups outcomes by browser and reports the full-run duration', () => {
@@ -33,5 +36,27 @@ describe('Playwright job summary', () => {
     const markdown = renderPlaywrightSummary([], { duration: 1_000, status: 'interrupted' });
 
     expect(markdown).toContain('**Overall:** ⏹️ Cancelled · **0 tests** · 1s');
+  });
+
+  test('fails a nominally passing run when its zero-flake budget is exceeded', () => {
+    const tests = [
+      { outcome: 'expected', project: 'chromium' },
+      { outcome: 'flaky', project: 'webkit' },
+    ];
+
+    expect(evaluatePlaywrightOutcome(tests, { status: 'passed' }, 0)).toBe('failure');
+
+    const markdown = renderPlaywrightSummary(tests, { duration: 1_000, status: 'passed' }, 0);
+    expect(markdown).toContain('**Overall:** ❌ Failed');
+    expect(markdown).toContain('**Flake budget:** 0 allowed · 1 observed');
+  });
+
+  test('allows an explicitly configured nonzero flake budget', () => {
+    const tests = [{ outcome: 'flaky', project: 'chromium' }];
+
+    expect(evaluatePlaywrightOutcome(tests, { status: 'passed' }, 1)).toBe('success');
+    expect(renderPlaywrightSummary(tests, { duration: 10, status: 'passed' }, 1)).toContain(
+      '**Flake budget:** 1 allowed · 1 observed',
+    );
   });
 });

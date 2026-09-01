@@ -5,6 +5,7 @@ const ci = readFileSync('.github/workflows/ci.yml', 'utf8');
 const codeql = readFileSync('.github/workflows/codeql.yml', 'utf8');
 const setup = readFileSync('.github/actions/setup/action.yml', 'utf8');
 const playwright = readFileSync('playwright.config.ts', 'utf8');
+const artifactPlaywright = readFileSync('playwright.artifact.config.ts', 'utf8');
 const packageJson = JSON.parse(readFileSync('package.json', 'utf8')) as {
   scripts: Record<string, string>;
 };
@@ -53,21 +54,54 @@ describe('portable CI policy', () => {
     expect(ci).toContain('node scripts/ci/report.mjs build');
     expect(ci).toContain('node scripts/ci/report.mjs production');
     expect(ci).toContain('node scripts/ci/report.mjs workflow');
-    expect(ci.match(/if: \$\{\{ always\(\) \}\}/g)?.length).toBeGreaterThanOrEqual(4);
+    expect(ci).toContain('node scripts/ci/report.mjs test');
+    expect(ci).toContain('node scripts/ci/report.mjs browser');
+    expect(ci).toContain('node scripts/ci/report.mjs artifact');
+    expect(ci.match(/if: \$\{\{ always\(\) \}\}/g)?.length).toBeGreaterThanOrEqual(7);
     expect(codeql).toContain('node scripts/ci/report.mjs codeql');
   });
 
   test('keeps detailed browser diagnostics only for failed runs', () => {
     expect(playwright).toContain('./scripts/ci/playwright-summary-reporter.mjs');
     expect(ci).toContain('name: playwright-failure-${{ github.sha }}');
-    expect(ci).toContain("if: ${{ steps.browser_tests.outcome == 'failure' }}");
+    expect(ci).toContain("if: ${{ failure() && steps.browser_tests.outcome == 'failure' }}");
     expect(ci).not.toContain('if: ${{ failure() }}');
     expect(ci).toContain('playwright-report/');
     expect(ci).toContain('test-results/');
+    expect(ci).toContain('if-no-files-found: warn');
+    expect(ci).toContain("if: ${{ failure() && steps.artifact_tests.outcome == 'failure' }}");
+  });
+
+  test('validates the downloaded immutable artifact before production can use it', () => {
+    expect(ci).toMatch(/\n  artifact:\n/);
+    expect(ci).toContain('name: site-${{ github.sha }}');
+    expect(ci).toContain('pnpm run test:artifact');
+    expect(ci).toMatch(
+      /\n  production:\n[\s\S]*needs: \[quality, test, browser, build, artifact\]/,
+    );
+    expect(ci).toMatch(
+      /\n  report:\n[\s\S]*needs: \[quality, test, browser, build, artifact, production\]/,
+    );
+    expect(artifactPlaywright).toContain("testDir: './tests/artifact'");
+    expect(artifactPlaywright).toContain('node scripts/ci/serve-dist.mjs');
+    expect(packageJson.scripts['test:artifact']).toContain('playwright.artifact.config.ts');
+    expect(playwright).toContain("'**/artifact/**'");
+  });
+
+  test('enforces an explicit zero-flake browser budget', () => {
+    expect(ci).toContain('PLAYWRIGHT_FLAKE_BUDGET: 0');
+  });
+
+  test('runs ESLint only once while application typechecking owns Astro validation', () => {
+    expect(packageJson.scripts.lint).toBe('eslint . --max-warnings=0');
+    expect(packageJson.scripts.typecheck).toContain('astro check');
   });
 
   test('reports each fail-closed production stage separately', () => {
     for (const id of [
+      'checkout',
+      'setup',
+      'download_artifact',
       'migrate',
       'deploy_www',
       'deploy_poem',
@@ -84,7 +118,9 @@ describe('portable CI policy', () => {
   test('exposes artifact evidence to an always-run workflow receipt', () => {
     expect(ci).toContain('artifact-url: ${{ steps.site_artifact.outputs.artifact-url }}');
     expect(ci).toContain('artifact-digest: ${{ steps.site_artifact.outputs.artifact-digest }}');
-    expect(ci).toMatch(/\n  report:\n[\s\S]*needs: \[quality, test, browser, build, production\]/);
+    expect(ci).toMatch(
+      /\n  report:\n[\s\S]*needs: \[quality, test, browser, build, artifact, production\]/,
+    );
     expect(ci).toContain('PRODUCTION_RESULT: ${{ needs.production.result }}');
   });
 

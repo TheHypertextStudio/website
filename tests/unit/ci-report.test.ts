@@ -12,6 +12,7 @@ import {
   renderCodeqlReport,
   renderOutcomeTable,
   renderProductionReport,
+  renderQualityReport,
   renderWorkflowReport,
 } from '../../scripts/ci/report.mjs';
 
@@ -75,6 +76,21 @@ describe('CI report rendering', () => {
     expect(markdown).not.toContain('undefined');
   });
 
+  test('shows checkout and setup failures before downstream quality checks', () => {
+    const markdown = renderQualityReport({
+      checkout: 'success',
+      format: 'skipped',
+      lint: 'skipped',
+      setup: 'failure',
+      typecheck: 'skipped',
+      workerTypecheck: 'skipped',
+    });
+
+    expect(markdown).toContain('| Checkout | ✅ Passed |');
+    expect(markdown).toContain('| Toolchain and dependencies | ❌ Failed |');
+    expect(markdown).toContain('| ESLint | ⏭️ Skipped |');
+  });
+
   test('does not claim files were uploaded when artifact publication failed', async () => {
     const root = await mkdtemp(join(tmpdir(), 'hypertext-failed-upload-report-'));
     await mkdir(join(root, '.well-known'), { recursive: true });
@@ -106,12 +122,15 @@ describe('CI report rendering', () => {
 
     const markdown = renderProductionReport(
       {
+        artifactDownload: 'success',
+        checkout: 'success',
         migration: 'success',
         oembed: 'success',
         micropub: 'success',
         pages: 'success',
         poem: 'success',
         smoke: 'failure',
+        setup: 'success',
         webmention: 'success',
         www: 'success',
       },
@@ -122,11 +141,13 @@ describe('CI report rendering', () => {
     expect(markdown).toContain('| Homepage | 200 | 200 | ✅ Passed |');
     expect(markdown).toContain('| Webmentions | 400 | 500 | ❌ Failed |');
     expect(markdown).not.toContain('\n\n\n');
+    expect(markdown).toContain('| Artifact download | ✅ Passed |');
   });
 
   test('labels production as not requested on pull requests', () => {
     const markdown = renderWorkflowReport({
       actor: 'williecubed',
+      artifact: 'success',
       artifactDigest: '',
       artifactUrl: '',
       browser: 'success',
@@ -148,6 +169,7 @@ describe('CI report rendering', () => {
   test('explains an upstream-gated production skip without claiming a deployment', () => {
     const markdown = renderWorkflowReport({
       actor: 'williecubed',
+      artifact: 'success',
       artifactDigest: '',
       artifactUrl: '',
       browser: 'failure',
@@ -167,6 +189,7 @@ describe('CI report rendering', () => {
   test('does not imply production deployed when the deployment failed', () => {
     const markdown = renderWorkflowReport({
       actor: 'williecubed',
+      artifact: 'success',
       artifactDigest: 'sha256',
       artifactUrl: 'https://github.example/artifact',
       browser: 'success',
