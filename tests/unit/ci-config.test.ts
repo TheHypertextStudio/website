@@ -25,6 +25,10 @@ describe('portable CI policy', () => {
     }
   });
 
+  test('does not ask setup-node to run pnpm before Corepack enables it', () => {
+    expect(setup).toContain('package-manager-cache: false');
+  });
+
   test('deploys only from main push or an explicit main dispatch', () => {
     expect(ci).toContain("github.ref == 'refs/heads/main'");
     expect(ci).toContain("github.event_name == 'push' || github.event_name == 'workflow_dispatch'");
