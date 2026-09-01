@@ -72,6 +72,10 @@ describe('portable CI policy', () => {
     expect(ci).toContain("if: ${{ failure() && steps.artifact_tests.outcome == 'failure' }}");
   });
 
+  test('allows every artifact upload to be retried within the same workflow run', () => {
+    expect(ci.match(/overwrite: true/g)).toHaveLength(3);
+  });
+
   test('validates the downloaded immutable artifact before production can use it', () => {
     expect(ci).toMatch(/\n  artifact:\n/);
     expect(ci).toContain('name: site-${{ github.sha }}');

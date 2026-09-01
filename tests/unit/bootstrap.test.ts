@@ -111,6 +111,7 @@ async function makeCheckout({
     [
       '#!/usr/bin/env bash',
       'if [[ "${1:-}" == "--version" ]]; then printf "10.33.3\\n"; exit 0; fi',
+      'printf "pnpm %s\\n" "$*" >> "$BOOTSTRAP_CALL_LOG"',
       'if [[ "${1:-}" == "exec" && "${2:-}" == "astro" ]]; then printf "astro 7.2.7\\n"; exit 0; fi',
       'if [[ "${1:-}" == "exec" && "${2:-}" == "wrangler" ]]; then shift 2; exec wrangler "$@"; fi',
       'exit 0',
@@ -224,6 +225,29 @@ describe('bootstrap', () => {
     expect(calls).toContain('gh repo view ExampleOrg/example-site');
     expect(await readFile(actionSecret, 'utf8')).toBe('account-123');
     expect(calls).not.toContain('oauth-test-token');
+  });
+
+  test('installs the Chromium runtime required by make ci', async () => {
+    const { root, callLog, actionSecret } = await makeCheckout();
+
+    await execFileAsync('bash', ['scripts/bootstrap.sh'], {
+      cwd: root,
+      env: {
+        ...process.env,
+        PATH: `${join(root, 'fake-bin')}:${process.env.PATH}`,
+        BOOTSTRAP_CALL_LOG: callLog,
+        BOOTSTRAP_ACTION_SECRET: actionSecret,
+        GITHUB_REPOSITORY: '',
+        NO_COLOR: '1',
+      },
+    });
+
+    const calls = await readFile(callLog, 'utf8');
+    const expectedInstall =
+      process.platform === 'linux'
+        ? 'pnpm exec playwright install --with-deps chromium'
+        : 'pnpm exec playwright install chromium';
+    expect(calls).toContain(expectedInstall);
   });
 
   test('removes the temporary Cloudflare credential file when domain provisioning fails', async () => {

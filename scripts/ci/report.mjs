@@ -169,18 +169,22 @@ export function renderProductionReport(outcomes, smokeRows = []) {
 
 export function renderWorkflowReport(data) {
   const shortSha = data.sha ? data.sha.slice(0, 7) : 'unknown';
+  const productionRequested =
+    data.refName === 'main' && ['push', 'workflow_dispatch'].includes(data.eventName);
   const productionDetails =
     data.eventName === 'pull_request' && data.production === 'skipped'
       ? 'Not requested for pull requests'
-      : data.production === 'skipped'
-        ? 'Not attempted because an upstream gate did not pass'
-        : data.production === 'success'
-          ? 'Deployed to https://hypertext.studio'
-          : data.production === 'failure'
-            ? 'Deployment did not complete'
-            : data.production === 'cancelled'
-              ? 'Deployment was cancelled'
-              : 'Not run';
+      : data.production === 'skipped' && !productionRequested
+        ? 'Not requested outside main'
+        : data.production === 'skipped'
+          ? 'Not attempted because an upstream gate did not pass'
+          : data.production === 'success'
+            ? 'Deployed to https://hypertext.studio'
+            : data.production === 'failure'
+              ? 'Deployment did not complete'
+              : data.production === 'cancelled'
+                ? 'Deployment was cancelled'
+                : 'Not run';
   const rows = [
     { name: 'Quality', outcome: data.quality },
     { name: 'Tests', outcome: data.test },
@@ -203,6 +207,8 @@ export function renderWorkflowReport(data) {
 
   if (data.eventName === 'pull_request' && data.production === 'skipped') {
     lines.push('', 'Production was not requested for this pull request.');
+  } else if (data.production === 'skipped' && !productionRequested) {
+    lines.push('', 'Production was not requested because this run did not target main.');
   } else if (data.production === 'success') {
     lines.push('', 'Production: https://hypertext.studio');
   }

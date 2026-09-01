@@ -26,7 +26,8 @@
 
 set -euo pipefail
 
-readonly REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+readonly REPO_ROOT
 cd "$REPO_ROOT"
 
 readonly CLOUDFLARE_PROFILE="${CLOUDFLARE_PROFILE:-hypertext-studio}"
@@ -39,7 +40,7 @@ declare -a PAGES_DOMAINS=()
 
 CF_ACCOUNT_ID=""
 
-# shellcheck source=lib/log.sh
+# shellcheck source=scripts/lib/log.sh
 source "$REPO_ROOT/scripts/lib/log.sh"
 
 # ---------------------------------------------------------------------------
@@ -50,7 +51,6 @@ SKIP_CLOUD=0
 SKIP_GITHUB=0
 NON_INTERACTIVE=0
 DOCTOR_ONLY=0
-VERBOSE=0
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -58,7 +58,7 @@ while [[ $# -gt 0 ]]; do
     --skip-github) SKIP_GITHUB=1 ;;
     --non-interactive) NON_INTERACTIVE=1 ;;
     --doctor) DOCTOR_ONLY=1 ;;
-    --verbose) VERBOSE=1; set -x ;;
+    --verbose) set -x ;;
     -h|--help)
       sed -n '2,/^# ===/p' "${BASH_SOURCE[0]}" | sed 's/^# \?//'
       exit 0
@@ -71,7 +71,7 @@ while [[ $# -gt 0 ]]; do
   shift
 done
 
-readonly SKIP_CLOUD SKIP_GITHUB NON_INTERACTIVE DOCTOR_ONLY VERBOSE
+readonly SKIP_CLOUD SKIP_GITHUB NON_INTERACTIVE DOCTOR_ONLY
 
 # Tracks summary lines for the final report.
 declare -a SUMMARY=()
@@ -151,6 +151,8 @@ json_account_id() {
 
 write_wrangler_ids() {
   local account_id="$1" database_id="$2"
+  # The JavaScript template literals and regex are intentionally single-quoted shell input.
+  # shellcheck disable=SC2016
   node -e '
     const fs = require("node:fs");
     const path = process.argv[1];
@@ -373,7 +375,14 @@ install_deps() {
   fi
   pnpm install
   log::ok "dependencies installed"
+  if [[ "$(uname -s)" == "Linux" ]]; then
+    pnpm exec playwright install --with-deps chromium
+  else
+    pnpm exec playwright install chromium
+  fi
+  log::ok "Chromium installed for local validation"
   record "deps:               $(jq -r '. | (.dependencies // {} | length) + (.devDependencies // {} | length)' package.json 2>/dev/null || echo "n/a") packages"
+  record "browser:            Chromium installed"
 }
 
 # ---------------------------------------------------------------------------

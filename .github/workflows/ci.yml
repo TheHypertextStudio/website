@@ -99,6 +99,7 @@ jobs:
             playwright-report/
             test-results/
           if-no-files-found: warn
+          overwrite: true
           retention-days: 7
       - name: Publish browser gate report
         if: ${{ always() }}
@@ -136,6 +137,7 @@ jobs:
           path: dist/
           if-no-files-found: error
           include-hidden-files: true
+          overwrite: true
           retention-days: 7
       - name: Publish build report
         if: ${{ always() }}
@@ -183,6 +185,7 @@ jobs:
             playwright-report/
             test-results/artifact/
           if-no-files-found: warn
+          overwrite: true
           retention-days: 7
       - name: Publish artifact validation report
         if: ${{ always() }}

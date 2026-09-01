@@ -186,6 +186,29 @@ describe('CI report rendering', () => {
     expect(markdown).not.toContain('Production: https://hypertext.studio');
   });
 
+  test('labels production as not requested for a manual run outside main', () => {
+    const markdown = renderWorkflowReport({
+      actor: 'williecubed',
+      artifact: 'success',
+      artifactDigest: '',
+      artifactUrl: '',
+      browser: 'success',
+      build: 'success',
+      eventName: 'workflow_dispatch',
+      production: 'skipped',
+      quality: 'success',
+      refName: 'feature',
+      sha: '1234567890abcdef',
+      test: 'success',
+    });
+
+    expect(markdown).toContain('Not requested outside main');
+    expect(markdown).toContain(
+      'Production was not requested because this run did not target main.',
+    );
+    expect(markdown).not.toContain('upstream gate did not pass');
+  });
+
   test('does not imply production deployed when the deployment failed', () => {
     const markdown = renderWorkflowReport({
       actor: 'williecubed',
