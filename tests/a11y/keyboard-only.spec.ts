@@ -1,6 +1,15 @@
 import { expect, test } from '@playwright/test';
 import { PAGES } from '../fixtures/site';
 
+const FOCUSABLE = [
+  'a[href]',
+  'button:not([disabled])',
+  'input:not([disabled])',
+  'select:not([disabled])',
+  'textarea:not([disabled])',
+  '[tabindex]:not([tabindex="-1"])',
+].join(', ');
+
 test.describe('@a11y Keyboard-only navigation', () => {
   for (const p of PAGES) {
     test(`${p.path} has more than three focusable elements in the Tab cycle`, async ({ page }) => {
@@ -11,12 +20,10 @@ test.describe('@a11y Keyboard-only navigation', () => {
       // on per-browser Tab semantics. Skip-link reachability is asserted
       // separately on every browser by the dedicated test in pages.spec.ts.
       await page.goto(p.path);
-      const count = await page
-        .locator(
-          'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
-        )
-        .count();
-      expect(count).toBeGreaterThan(3);
+      // Poll rather than sampling once: Astro's first on-demand compilation can
+      // swap the document mid-scan, which counts zero focusables on a page that
+      // has plenty. Same reload race as the networkidle wait in citations.spec.ts.
+      await expect.poll(() => page.locator(FOCUSABLE).count()).toBeGreaterThan(3);
     });
   }
 
