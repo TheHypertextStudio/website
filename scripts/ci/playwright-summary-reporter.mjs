@@ -1,5 +1,7 @@
 import { escapeMarkdownCell, formatDuration, outcomeLabel, appendSummary } from './report.mjs';
 
+const OUTCOME_COUNTERS = { expected: 'passed', flaky: 'flaky', unexpected: 'failed' };
+
 function countFlaky(tests) {
   return tests.filter((test) => test.outcome === 'flaky').length;
 }
@@ -26,10 +28,7 @@ export function renderPlaywrightSummary(tests, result, flakeBudget = 0) {
       passed: 0,
       skipped: 0,
     };
-    if (test.outcome === 'expected') counts.passed += 1;
-    else if (test.outcome === 'unexpected') counts.failed += 1;
-    else if (test.outcome === 'flaky') counts.flaky += 1;
-    else counts.skipped += 1;
+    counts[OUTCOME_COUNTERS[test.outcome] ?? 'skipped'] += 1;
     projects.set(test.project, counts);
   }
 

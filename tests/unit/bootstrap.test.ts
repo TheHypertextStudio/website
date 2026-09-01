@@ -225,12 +225,35 @@ describe('bootstrap', { timeout: 15_000 }, () => {
     expect(calls).toContain('gh repo view ExampleOrg/example-site');
     expect(await readFile(actionSecret, 'utf8')).toBe('account-123');
     expect(calls).not.toContain('oauth-test-token');
+
+    // Chromium backs `make ci` / `make test-artifact`.
+    expect(calls).toContain(
+      process.platform === 'linux'
+        ? 'pnpm exec playwright install --with-deps chromium'
+        : 'pnpm exec playwright install chromium',
+    );
   });
 
-  test('installs the Chromium runtime required by make ci', async () => {
+  test('finishes bootstrap and records the gap when the browser install fails', async () => {
     const { root, callLog, actionSecret } = await makeCheckout();
+    // A rootless container has no usable sudo, so `playwright install --with-deps`
+    // fails. Bootstrap must warn and carry on rather than abort under `set -e`.
+    await executable(
+      join(root, 'fake-bin/pnpm'),
+      [
+        '#!/usr/bin/env bash',
+        'if [[ "${1:-}" == "--version" ]]; then printf "10.33.3\\n"; exit 0; fi',
+        'printf "pnpm %s\\n" "$*" >> "$BOOTSTRAP_CALL_LOG"',
+        'if [[ "$*" == *"playwright install"* ]]; then exit 1; fi',
+        'if [[ "${1:-}" == "exec" && "${2:-}" == "astro" ]]; then printf "astro 7.2.7\\n"; exit 0; fi',
+        'if [[ "${1:-}" == "exec" && "${2:-}" == "wrangler" ]]; then shift 2; exec wrangler "$@"; fi',
+        'exit 0',
+        '',
+      ].join('\n'),
+    );
 
-    await execFileAsync('bash', ['scripts/bootstrap.sh'], {
+    // Throws on a non-zero exit, so reaching the assertions proves it survived.
+    const { stdout } = await execFileAsync('bash', ['scripts/bootstrap.sh'], {
       cwd: root,
       env: {
         ...process.env,
@@ -242,12 +265,10 @@ describe('bootstrap', { timeout: 15_000 }, () => {
       },
     });
 
-    const calls = await readFile(callLog, 'utf8');
-    const expectedInstall =
-      process.platform === 'linux'
-        ? 'pnpm exec playwright install --with-deps chromium'
-        : 'pnpm exec playwright install chromium';
-    expect(calls).toContain(expectedInstall);
+    expect(stdout).toContain('Chromium not installed');
+    expect(stdout).toContain('browser:            not installed');
+    // Phases after the browser install still ran.
+    expect(await readFile(join(root, '.env'), 'utf8')).toContain('=');
   });
 
   test('removes the temporary Cloudflare credential file when domain provisioning fails', async () => {

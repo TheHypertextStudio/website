@@ -224,6 +224,9 @@ jobs:
       - name: Apply remote D1 migrations
         id: migrate
         run: bash scripts/migrate-d1.sh remote hypertext-studio
+      # One step per Worker, sequential, on purpose: the production report renders
+      # a row per Worker from steps.deploy_*.outcome. Backgrounding them in a single
+      # step would save ~40-80s and lose those per-Worker receipts.
       - name: Deploy www Worker
         id: deploy_www
         run: pnpm exec wrangler deploy --env www

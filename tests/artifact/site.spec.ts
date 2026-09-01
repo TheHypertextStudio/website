@@ -1,13 +1,17 @@
 import { expect, test } from '@playwright/test';
 
+import { STATIC_FILES } from '../fixtures/site';
+
 const canonicalOrigin = 'https://hypertext.studio';
 
 test('serves the built public pages with their intended identity', async ({ request }) => {
   const pages = [
     { marker: 'Hypertext Studio builds software for humans.', path: '/' },
     { marker: 'Willie Chalmers III', path: '/about/' },
-    { marker: 'Privacy', path: '/privacy/' },
-    { marker: 'Contact', path: '/contact/' },
+    // Every page carries "Privacy" and "Contact" in the footer site-map, so
+    // each marker has to be body copy that only its own page contains.
+    { marker: 'What we collect when you visit hypertext.studio.', path: '/privacy/' },
+    { marker: 'Press, partnership, and product feedback go to the same inbox.', path: '/contact/' },
   ];
 
   for (const page of pages) {
@@ -41,6 +45,48 @@ test('serves every same-origin asset referenced by the built homepage', async ({
     const response = await request.get(url);
     expect(response.status(), url).toBe(200);
   }
+});
+
+// Adding a file to the fixture extends this suite automatically. The content
+// types come from dist/_headers, which only the Pages runtime applies.
+test('serves every static file the site declares, with its declared type', async ({ request }) => {
+  for (const file of STATIC_FILES) {
+    const response = await request.get(file.path);
+    expect(response.status(), file.path).toBe(200);
+    expect(response.headers()['content-type'], file.path).toMatch(file.contentType);
+  }
+});
+
+test('applies the _headers security policy to every response', async ({ request }) => {
+  for (const path of ['/', '/about/', '/llms.txt']) {
+    const headers = (await request.get(path)).headers();
+    expect(headers['content-security-policy'], path).toContain("default-src 'self'");
+    expect(headers['content-security-policy'], path).toContain("frame-ancestors 'none'");
+    expect(headers['strict-transport-security'], path).toContain('max-age=63072000');
+    expect(headers['x-content-type-options'], path).toBe('nosniff');
+    expect(headers['x-frame-options'], path).toBe('DENY');
+    expect(headers['referrer-policy'], path).toBe('strict-origin-when-cross-origin');
+  }
+});
+
+test('long-caches immutable build assets and fonts', async ({ page, request }) => {
+  await page.goto('/');
+  const asset = await page
+    .locator('script[src^="/_astro/"], link[rel="stylesheet"][href^="/_astro/"]')
+    .first()
+    .evaluate((element) => element.getAttribute('src') ?? element.getAttribute('href'));
+
+  for (const path of [asset, '/fonts/InterVariable.woff2']) {
+    const cacheControl = (await request.get(path!)).headers()['cache-control'];
+    expect(cacheControl, path!).toContain('immutable');
+    expect(cacheControl, path!).toContain('max-age=31536000');
+  }
+});
+
+test('redirects bare page paths to their canonical trailing slash', async ({ request }) => {
+  const response = await request.get('/about', { maxRedirects: 0 });
+  expect(response.status()).toBe(308);
+  expect(response.headers()['location']).toBe('/about/');
 });
 
 test('publishes canonical discovery and well-known metadata', async ({ request }) => {

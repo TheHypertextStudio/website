@@ -2,30 +2,39 @@
 
 import { existsSync, mkdtempSync, readFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { join, resolve } from 'node:path';
+import { join } from 'node:path';
 import { spawnSync } from 'node:child_process';
-import { pathToFileURL } from 'node:url';
 
-import { appendSummary, escapeMarkdownCell, formatDuration, outcomeLabel } from './report.mjs';
+import {
+  appendSummary,
+  escapeMarkdownCell,
+  formatDuration,
+  isEntryPoint,
+  outcomeLabel,
+} from './report.mjs';
 
-const WORKERS = [
-  ['www', 'tests/workers/configs/www.config.ts'],
-  ['poem', 'tests/workers/configs/poem.config.ts'],
-  ['webmention', 'tests/workers/configs/webmention.config.ts'],
-  ['micropub', 'tests/workers/configs/micropub.config.ts'],
-  ['oembed', 'tests/workers/configs/oembed.config.ts'],
-];
+const WORKERS = ['www', 'poem', 'webmention', 'micropub', 'oembed'];
+
+const configFor = (name) => `tests/workers/configs/${name}.config.ts`;
+
+// Aggregate key -> Vitest JSON report field. The totals seed is derived from
+// this map plus durationMs, so the two key lists cannot drift apart.
+const COUNT_FIELDS = {
+  failedFiles: 'numFailedTestSuites',
+  failedTests: 'numFailedTests',
+  passedFiles: 'numPassedTestSuites',
+  passedTests: 'numPassedTests',
+  pendingTests: 'numPendingTests',
+  totalFiles: 'numTotalTestSuites',
+  totalTests: 'numTotalTests',
+};
+
+const SUMMED_KEYS = ['durationMs', ...Object.keys(COUNT_FIELDS)];
 
 function reportNumbers(report) {
-  return {
-    failedFiles: report?.numFailedTestSuites ?? 0,
-    failedTests: report?.numFailedTests ?? 0,
-    passedFiles: report?.numPassedTestSuites ?? 0,
-    passedTests: report?.numPassedTests ?? 0,
-    pendingTests: report?.numPendingTests ?? 0,
-    totalFiles: report?.numTotalTestSuites ?? 0,
-    totalTests: report?.numTotalTests ?? 0,
-  };
+  return Object.fromEntries(
+    Object.entries(COUNT_FIELDS).map(([key, field]) => [key, report?.[field] ?? 0]),
+  );
 }
 
 export function aggregateVitestReports(runs) {
@@ -39,22 +48,10 @@ export function aggregateVitestReports(runs) {
     };
   });
 
-  const totals = rows.reduce(
-    (sum, row) => {
-      for (const key of Object.keys(sum)) sum[key] += row[key];
-      return sum;
-    },
-    {
-      durationMs: 0,
-      failedFiles: 0,
-      failedTests: 0,
-      passedFiles: 0,
-      passedTests: 0,
-      pendingTests: 0,
-      totalFiles: 0,
-      totalTests: 0,
-    },
-  );
+  const totals = Object.fromEntries(SUMMED_KEYS.map((key) => [key, 0]));
+  for (const row of rows) {
+    for (const key of SUMMED_KEYS) totals[key] += row[key];
+  }
 
   return { failed: rows.some((row) => row.failed), rows, totals };
 }
@@ -83,7 +80,7 @@ export async function runWorkerTests() {
   const runs = [];
 
   try {
-    for (const [name, config] of WORKERS) {
+    for (const name of WORKERS) {
       const reportPath = join(reportDirectory, `${name}.json`);
       const startedAt = Date.now();
       const child = spawnSync(
@@ -93,7 +90,7 @@ export async function runWorkerTests() {
           'vitest',
           'run',
           '--config',
-          config,
+          configFor(name),
           '--reporter=default',
           '--reporter=json',
           `--outputFile=${reportPath}`,
@@ -117,8 +114,7 @@ export async function runWorkerTests() {
   }
 }
 
-const entryPoint = process.argv[1] ? pathToFileURL(resolve(process.argv[1])).href : '';
-if (entryPoint && import.meta.url === entryPoint) {
+if (isEntryPoint(import.meta.url)) {
   runWorkerTests()
     .then((exitCode) => {
       process.exitCode = exitCode;

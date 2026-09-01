@@ -1,11 +1,16 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, test } from 'vitest';
 
+import artifactConfig from '../../playwright.artifact.config';
+import browserConfig from '../../playwright.config';
+import { sharedConfig } from '../../playwright.shared';
+
 const ci = readFileSync('.github/workflows/ci.yml', 'utf8');
 const codeql = readFileSync('.github/workflows/codeql.yml', 'utf8');
 const setup = readFileSync('.github/actions/setup/action.yml', 'utf8');
 const playwright = readFileSync('playwright.config.ts', 'utf8');
 const artifactPlaywright = readFileSync('playwright.artifact.config.ts', 'utf8');
+const sharedPlaywright = readFileSync('playwright.shared.ts', 'utf8');
 const packageJson = JSON.parse(readFileSync('package.json', 'utf8')) as {
   scripts: Record<string, string>;
 };
@@ -62,7 +67,11 @@ describe('portable CI policy', () => {
   });
 
   test('keeps detailed browser diagnostics only for failed runs', () => {
-    expect(playwright).toContain('./scripts/ci/playwright-summary-reporter.mjs');
+    // Registered once, and actually reaching both suites: reference identity
+    // proves neither config overrode the shared reporter list.
+    expect(sharedPlaywright).toContain('./scripts/ci/playwright-summary-reporter.mjs');
+    expect(browserConfig.reporter).toBe(sharedConfig.reporter);
+    expect(artifactConfig.reporter).toBe(sharedConfig.reporter);
     expect(ci).toContain('name: playwright-failure-${{ github.sha }}');
     expect(ci).toContain("if: ${{ failure() && steps.browser_tests.outcome == 'failure' }}");
     expect(ci).not.toContain('if: ${{ failure() }}');
@@ -87,7 +96,9 @@ describe('portable CI policy', () => {
       /\n  report:\n[\s\S]*needs: \[quality, test, browser, build, artifact, production\]/,
     );
     expect(artifactPlaywright).toContain("testDir: './tests/artifact'");
-    expect(artifactPlaywright).toContain('node scripts/ci/serve-dist.mjs');
+    // The artifact gate must serve through the real Pages runtime, or it cannot
+    // see _headers / _redirects and silently validates less than its name claims.
+    expect(artifactPlaywright).toContain('wrangler pages dev');
     expect(packageJson.scripts['test:artifact']).toContain('playwright.artifact.config.ts');
     expect(playwright).toContain("'**/artifact/**'");
   });

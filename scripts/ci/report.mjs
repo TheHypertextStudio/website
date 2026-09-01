@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import { appendFile, readdir, readFile, stat } from 'node:fs/promises';
-import { fileURLToPath } from 'node:url';
+import { pathToFileURL } from 'node:url';
 import { resolve } from 'node:path';
 
 const OUTCOME_LABELS = {
@@ -11,6 +11,21 @@ const OUTCOME_LABELS = {
   skipped: '⏭️ Skipped',
 };
 
+// [row label, workflow env var] — the single source for the production stage
+// list, shared by the renderer and the CLI. Same shape as a TABLE_MODES entry.
+const PRODUCTION_STAGES = [
+  ['Checkout', 'CHECKOUT_RESULT'],
+  ['Toolchain and dependencies', 'SETUP_RESULT'],
+  ['Artifact download', 'ARTIFACT_DOWNLOAD_RESULT'],
+  ['D1 migrations', 'MIGRATION_RESULT'],
+  ['Worker: www', 'WWW_RESULT'],
+  ['Worker: poem', 'POEM_RESULT'],
+  ['Worker: webmention', 'WEBMENTION_RESULT'],
+  ['Worker: micropub', 'MICROPUB_RESULT'],
+  ['Worker: oEmbed', 'OEMBED_RESULT'],
+  ['Pages', 'PAGES_RESULT'],
+  ['Production smoke', 'SMOKE_RESULT'],
+];
 export function escapeMarkdownCell(value) {
   return String(value ?? '')
     .replaceAll('\\', '\\\\')
@@ -33,12 +48,22 @@ export function formatDuration(milliseconds) {
   return remainingMinutes ? `${hours}h ${remainingMinutes}m` : `${hours}h`;
 }
 
+/** Turn [row label, env var] pairs into outcome-table rows. */
+export function rowsFrom(pairs, environment) {
+  return pairs.map(([name, key]) => ({ name, outcome: environment[key] }));
+}
+
 export function outcomeLabel(outcome) {
   return OUTCOME_LABELS[outcome] ?? '➖ Not run';
 }
 
-export function renderOutcomeTable(title, rows) {
-  const lines = [`## ${title}`, '', '| Check | Result | Details |', '| --- | --- | --- |'];
+// Pass a nullish title for a bare table, or `lead` for a line between the
+// heading and the table. Both exist so callers never post-process the markdown.
+export function renderOutcomeTable(title, rows, { lead } = {}) {
+  const lines = [];
+  if (title) lines.push(`## ${title}`, '');
+  if (lead) lines.push(lead, '');
+  lines.push('| Check | Result | Details |', '| --- | --- | --- |');
 
   for (const row of rows) {
     lines.push(
@@ -49,32 +74,25 @@ export function renderOutcomeTable(title, rows) {
   return `${lines.join('\n')}\n`;
 }
 
-async function walkFiles(root, relative = '') {
+export async function collectBuildStats(root, relative = '') {
   const directory = resolve(root, relative);
   const entries = await readdir(directory, { withFileTypes: true });
-  const files = [];
+  const stats = { bytes: 0, files: 0, htmlPages: 0, wellKnownFiles: 0 };
 
   for (const entry of entries) {
     const childRelative = relative ? `${relative}/${entry.name}` : entry.name;
-    if (entry.isDirectory()) files.push(...(await walkFiles(root, childRelative)));
-    else if (entry.isFile()) files.push(childRelative);
+    if (entry.isDirectory()) {
+      const nested = await collectBuildStats(root, childRelative);
+      for (const key of Object.keys(stats)) stats[key] += nested[key];
+    } else if (entry.isFile()) {
+      stats.bytes += (await stat(resolve(directory, entry.name))).size;
+      stats.files += 1;
+      if (childRelative.endsWith('.html')) stats.htmlPages += 1;
+      if (childRelative.startsWith('.well-known/')) stats.wellKnownFiles += 1;
+    }
   }
 
-  return files;
-}
-
-export async function collectBuildStats(root) {
-  const files = await walkFiles(root);
-  let bytes = 0;
-
-  for (const file of files) bytes += (await stat(resolve(root, file))).size;
-
-  return {
-    bytes,
-    files: files.length,
-    htmlPages: files.filter((file) => file.endsWith('.html')).length,
-    wellKnownFiles: files.filter((file) => file.startsWith('.well-known/')).length,
-  };
+  return stats;
 }
 
 function formatBytes(bytes) {
@@ -88,10 +106,16 @@ function countLabel(count, singular, plural = `${singular}s`) {
 }
 
 export async function renderBuildReport(options) {
-  let stats;
-  if (options.buildOutcome === 'success') stats = await collectBuildStats(options.distDir);
+  const stats =
+    options.buildOutcome === 'success' ? await collectBuildStats(options.distDir) : undefined;
+  const wellKnown = stats && countLabel(stats.wellKnownFiles, '.well-known file');
+  const uploadDetails = !stats
+    ? 'Not available'
+    : options.uploadOutcome === 'success'
+      ? `${wellKnown} included`
+      : `Upload did not complete; ${wellKnown} ${stats.wellKnownFiles === 1 ? 'was' : 'were'} present`;
 
-  const markdown = renderOutcomeTable('Build report', [
+  const table = renderOutcomeTable('Build report', [
     { name: 'Checkout', outcome: options.checkoutOutcome },
     { name: 'Toolchain and dependencies', outcome: options.setupOutcome },
     {
@@ -101,18 +125,17 @@ export async function renderBuildReport(options) {
         ? `${countLabel(stats.htmlPages, 'HTML page')} · ${countLabel(stats.files, 'file')} · ${formatBytes(stats.bytes)}`
         : 'No deployable artifact was produced',
     },
-    {
-      name: 'Artifact upload',
-      outcome: options.uploadOutcome,
-      details: stats
-        ? options.uploadOutcome === 'success'
-          ? `${countLabel(stats.wellKnownFiles, '.well-known file')} included`
-          : `Upload did not complete; ${countLabel(stats.wellKnownFiles, '.well-known file')} ${stats.wellKnownFiles === 1 ? 'was' : 'were'} present`
-        : 'Not available',
-    },
+    { name: 'Artifact upload', outcome: options.uploadOutcome, details: uploadDetails },
   ]);
 
-  return `${markdown}\n- Artifact: \`${escapeMarkdownCell(options.artifactName)}\`\n- Artifact URL: ${options.artifactUrl || 'Not available'}\n- SHA-256: ${options.artifactDigest ? `\`${escapeMarkdownCell(options.artifactDigest)}\`` : 'Not available'}\n- Retention: ${escapeMarkdownCell(options.retentionDays)} days\n`;
+  const footer = [
+    `- Artifact: \`${escapeMarkdownCell(options.artifactName)}\``,
+    `- Artifact URL: ${options.artifactUrl || 'Not available'}`,
+    `- SHA-256: ${options.artifactDigest ? `\`${escapeMarkdownCell(options.artifactDigest)}\`` : 'Not available'}`,
+    `- Retention: ${options.retentionDays ? `${escapeMarkdownCell(options.retentionDays)} days` : 'Not available'}`,
+  ];
+
+  return `${table}\n${footer.join('\n')}\n`;
 }
 
 export function parseSmokeReport(contents) {
@@ -133,20 +156,7 @@ export function parseSmokeReport(contents) {
   });
 }
 
-export function renderProductionReport(outcomes, smokeRows = []) {
-  const stages = [
-    { name: 'Checkout', outcome: outcomes.checkout },
-    { name: 'Toolchain and dependencies', outcome: outcomes.setup },
-    { name: 'Artifact download', outcome: outcomes.artifactDownload },
-    { name: 'D1 migrations', outcome: outcomes.migration },
-    { name: 'Worker: www', outcome: outcomes.www },
-    { name: 'Worker: poem', outcome: outcomes.poem },
-    { name: 'Worker: webmention', outcome: outcomes.webmention },
-    { name: 'Worker: micropub', outcome: outcomes.micropub },
-    { name: 'Worker: oEmbed', outcome: outcomes.oembed },
-    { name: 'Pages', outcome: outcomes.pages },
-    { name: 'Production smoke', outcome: outcomes.smoke },
-  ];
+export function renderProductionReport(stages, smokeRows = []) {
   const lines = [renderOutcomeTable('Production report', stages).trimEnd()];
 
   if (smokeRows.length) {
@@ -167,24 +177,34 @@ export function renderProductionReport(outcomes, smokeRows = []) {
   return `${lines.join('\n')}\n`;
 }
 
+const PRODUCTION_DETAILS = {
+  'pr-skip': 'Not requested for pull requests',
+  'off-main-skip': 'Not requested outside main',
+  'gated-skip': 'Not attempted because an upstream gate did not pass',
+  success: 'Deployed to https://hypertext.studio',
+  failure: 'Deployment did not complete',
+  cancelled: 'Deployment was cancelled',
+};
+
+const PRODUCTION_NOTES = {
+  'pr-skip': 'Production was not requested for this pull request.',
+  'off-main-skip': 'Production was not requested because this run did not target main.',
+  success: 'Production: https://hypertext.studio',
+};
+
+// Why the production job did or did not run, as one value: the table cell and
+// the prose note below it are both looked up from it so they cannot disagree.
+function productionState(data) {
+  if (data.production !== 'skipped') return data.production;
+  if (data.eventName === 'pull_request') return 'pr-skip';
+  const requested =
+    data.refName === 'main' && ['push', 'workflow_dispatch'].includes(data.eventName);
+  return requested ? 'gated-skip' : 'off-main-skip';
+}
+
 export function renderWorkflowReport(data) {
   const shortSha = data.sha ? data.sha.slice(0, 7) : 'unknown';
-  const productionRequested =
-    data.refName === 'main' && ['push', 'workflow_dispatch'].includes(data.eventName);
-  const productionDetails =
-    data.eventName === 'pull_request' && data.production === 'skipped'
-      ? 'Not requested for pull requests'
-      : data.production === 'skipped' && !productionRequested
-        ? 'Not requested outside main'
-        : data.production === 'skipped'
-          ? 'Not attempted because an upstream gate did not pass'
-          : data.production === 'success'
-            ? 'Deployed to https://hypertext.studio'
-            : data.production === 'failure'
-              ? 'Deployment did not complete'
-              : data.production === 'cancelled'
-                ? 'Deployment was cancelled'
-                : 'Not run';
+  const state = productionState(data);
   const rows = [
     { name: 'Quality', outcome: data.quality },
     { name: 'Tests', outcome: data.test },
@@ -194,7 +214,7 @@ export function renderWorkflowReport(data) {
     {
       name: 'Production',
       outcome: data.production,
-      details: productionDetails,
+      details: PRODUCTION_DETAILS[state] ?? 'Not run',
     },
   ];
   const lines = [
@@ -202,16 +222,10 @@ export function renderWorkflowReport(data) {
     '',
     `**Commit:** \`${escapeMarkdownCell(shortSha)}\` · **Ref:** \`${escapeMarkdownCell(data.refName || 'unknown')}\` · **Event:** \`${escapeMarkdownCell(data.eventName || 'unknown')}\` · **Actor:** @${escapeMarkdownCell(data.actor || 'unknown')}`,
     '',
-    renderOutcomeTable('Run results', rows).replace('## Run results\n\n', '').trimEnd(),
+    renderOutcomeTable(null, rows).trimEnd(),
   ];
 
-  if (data.eventName === 'pull_request' && data.production === 'skipped') {
-    lines.push('', 'Production was not requested for this pull request.');
-  } else if (data.production === 'skipped' && !productionRequested) {
-    lines.push('', 'Production was not requested because this run did not target main.');
-  } else if (data.production === 'success') {
-    lines.push('', 'Production: https://hypertext.studio');
-  }
+  if (PRODUCTION_NOTES[state]) lines.push('', PRODUCTION_NOTES[state]);
 
   if (data.artifactUrl) lines.push(`Artifact: ${data.artifactUrl}`);
   if (data.artifactDigest)
@@ -220,37 +234,26 @@ export function renderWorkflowReport(data) {
   return `${lines.join('\n')}\n`;
 }
 
-export function renderQualityReport(outcomes) {
-  return renderOutcomeTable('Quality report', [
-    { name: 'Checkout', outcome: outcomes.checkout },
-    { name: 'Toolchain and dependencies', outcome: outcomes.setup },
-    { name: 'Formatting', outcome: outcomes.format },
-    { name: 'ESLint', outcome: outcomes.lint },
-    { name: 'Application types', outcome: outcomes.typecheck },
-    { name: 'Worker types', outcome: outcomes.workerTypecheck },
-  ]);
-}
-
 export function renderCodeqlReport(outcomes) {
   const phases = [outcomes.init, outcomes.analyze];
-  const overall = phases.includes('failure')
-    ? 'failure'
-    : phases.includes('cancelled')
-      ? 'cancelled'
-      : phases.every((phase) => phase === 'success')
-        ? 'success'
-        : phases.includes('skipped')
-          ? 'skipped'
-          : '';
-  const table = renderOutcomeTable('CodeQL report', [
-    { name: 'Initialize', outcome: outcomes.init, details: outcomes.language },
-    { name: 'Analyze and upload', outcome: outcomes.analyze, details: outcomes.language },
-  ]);
+  const overall =
+    ['failure', 'cancelled', 'skipped'].find((status) => phases.includes(status)) ??
+    (phases.every((phase) => phase === 'success') ? 'success' : '');
 
-  return table.replace(
-    '## CodeQL report\n\n',
-    `## CodeQL report\n\n**Overall:** ${outcomeLabel(overall)}\n\n`,
+  return renderOutcomeTable(
+    'CodeQL report',
+    [
+      { name: 'Initialize', outcome: outcomes.init, details: outcomes.language },
+      { name: 'Analyze and upload', outcome: outcomes.analyze, details: outcomes.language },
+    ],
+    { lead: `**Overall:** ${outcomeLabel(overall)}` },
   );
+}
+
+/** True when `importMetaUrl`'s module was invoked directly, rather than imported. */
+export function isEntryPoint(importMetaUrl) {
+  if (!process.argv[1]) return false;
+  return pathToFileURL(resolve(process.argv[1])).href === importMetaUrl;
 }
 
 export async function appendSummary(markdown, environment = process.env) {
@@ -262,39 +265,74 @@ export async function appendSummary(markdown, environment = process.env) {
   await appendFile(destination, markdown, 'utf8');
 }
 
-async function runCli(mode, environment = process.env) {
-  if (mode === 'quality') {
-    return appendSummary(
-      renderQualityReport({
-        checkout: environment.CHECKOUT_RESULT,
-        format: environment.FORMAT_RESULT,
-        lint: environment.LINT_RESULT,
-        setup: environment.SETUP_RESULT,
-        typecheck: environment.TYPECHECK_RESULT,
-        workerTypecheck: environment.WORKER_TYPECHECK_RESULT,
-      }),
-      environment,
-    );
-  }
+// Gates whose whole report is one outcome table: [heading, [row label, env var]].
+const TABLE_MODES = {
+  quality: [
+    'Quality report',
+    [
+      ['Checkout', 'CHECKOUT_RESULT'],
+      ['Toolchain and dependencies', 'SETUP_RESULT'],
+      ['Formatting', 'FORMAT_RESULT'],
+      ['ESLint', 'LINT_RESULT'],
+      ['Application types', 'TYPECHECK_RESULT'],
+      ['Worker types', 'WORKER_TYPECHECK_RESULT'],
+    ],
+  ],
+  test: [
+    'Test gate report',
+    [
+      ['Checkout', 'CHECKOUT_RESULT'],
+      ['Toolchain and dependencies', 'SETUP_RESULT'],
+      ['Unit tests', 'UNIT_TEST_RESULT'],
+      ['Worker runtime tests', 'WORKER_TEST_RESULT'],
+    ],
+  ],
+  browser: [
+    'Browser gate report',
+    [
+      ['Checkout', 'CHECKOUT_RESULT'],
+      ['Toolchain and dependencies', 'SETUP_RESULT'],
+      ['Browser installation', 'BROWSER_INSTALL_RESULT'],
+      ['Browser, responsive, and accessibility tests', 'TEST_RESULT'],
+    ],
+  ],
+  artifact: [
+    'Artifact validation gate',
+    [
+      ['Checkout', 'CHECKOUT_RESULT'],
+      ['Toolchain and dependencies', 'SETUP_RESULT'],
+      ['Artifact download', 'ARTIFACT_DOWNLOAD_RESULT'],
+      ['Chromium installation', 'BROWSER_INSTALL_RESULT'],
+      ['Deployable artifact tests', 'TEST_RESULT'],
+    ],
+  ],
+};
 
-  if (mode === 'build') {
-    return appendSummary(
-      await renderBuildReport({
-        artifactDigest: environment.ARTIFACT_DIGEST || '',
-        artifactName: environment.ARTIFACT_NAME || 'Not available',
-        artifactUrl: environment.ARTIFACT_URL || '',
-        buildOutcome: environment.BUILD_RESULT,
-        checkoutOutcome: environment.CHECKOUT_RESULT,
-        distDir: environment.DIST_DIR || 'dist',
-        retentionDays: environment.ARTIFACT_RETENTION_DAYS || '7',
-        setupOutcome: environment.SETUP_RESULT,
-        uploadOutcome: environment.UPLOAD_RESULT,
-      }),
-      environment,
-    );
-  }
+/** Render one table-only gate from TABLE_MODES. */
+export function renderTableMode(mode, environment) {
+  const [title, pairs] = TABLE_MODES[mode];
+  return renderOutcomeTable(title, rowsFrom(pairs, environment));
+}
 
-  if (mode === 'production') {
+const MODES = {
+  ...Object.fromEntries(
+    Object.keys(TABLE_MODES).map((mode) => [mode, (env) => renderTableMode(mode, env)]),
+  ),
+
+  build: (environment) =>
+    renderBuildReport({
+      artifactDigest: environment.ARTIFACT_DIGEST || '',
+      artifactName: environment.ARTIFACT_NAME || 'Not available',
+      artifactUrl: environment.ARTIFACT_URL || '',
+      buildOutcome: environment.BUILD_RESULT,
+      checkoutOutcome: environment.CHECKOUT_RESULT,
+      distDir: environment.DIST_DIR || 'dist',
+      retentionDays: environment.ARTIFACT_RETENTION_DAYS || '',
+      setupOutcome: environment.SETUP_RESULT,
+      uploadOutcome: environment.UPLOAD_RESULT,
+    }),
+
+  production: async (environment) => {
     let smokeRows = [];
     if (environment.SMOKE_REPORT_FILE) {
       try {
@@ -303,100 +341,40 @@ async function runCli(mode, environment = process.env) {
         if (error?.code !== 'ENOENT') throw error;
       }
     }
-    return appendSummary(
-      renderProductionReport(
-        {
-          artifactDownload: environment.ARTIFACT_DOWNLOAD_RESULT,
-          checkout: environment.CHECKOUT_RESULT,
-          migration: environment.MIGRATION_RESULT,
-          micropub: environment.MICROPUB_RESULT,
-          oembed: environment.OEMBED_RESULT,
-          pages: environment.PAGES_RESULT,
-          poem: environment.POEM_RESULT,
-          smoke: environment.SMOKE_RESULT,
-          setup: environment.SETUP_RESULT,
-          webmention: environment.WEBMENTION_RESULT,
-          www: environment.WWW_RESULT,
-        },
-        smokeRows,
-      ),
-      environment,
-    );
-  }
+    return renderProductionReport(rowsFrom(PRODUCTION_STAGES, environment), smokeRows);
+  },
 
-  if (mode === 'test') {
-    return appendSummary(
-      renderOutcomeTable('Test gate report', [
-        { name: 'Checkout', outcome: environment.CHECKOUT_RESULT },
-        { name: 'Toolchain and dependencies', outcome: environment.SETUP_RESULT },
-        { name: 'Unit tests', outcome: environment.UNIT_TEST_RESULT },
-        { name: 'Worker runtime tests', outcome: environment.WORKER_TEST_RESULT },
-      ]),
-      environment,
-    );
-  }
+  workflow: (environment) =>
+    renderWorkflowReport({
+      actor: environment.RUN_ACTOR,
+      artifact: environment.ARTIFACT_RESULT,
+      artifactDigest: environment.ARTIFACT_DIGEST || '',
+      artifactUrl: environment.ARTIFACT_URL || '',
+      browser: environment.BROWSER_RESULT,
+      build: environment.BUILD_RESULT,
+      eventName: environment.RUN_EVENT,
+      production: environment.PRODUCTION_RESULT,
+      quality: environment.QUALITY_RESULT,
+      refName: environment.RUN_REF,
+      sha: environment.RUN_SHA,
+      test: environment.TEST_RESULT,
+    }),
 
-  if (mode === 'browser') {
-    return appendSummary(
-      renderOutcomeTable('Browser gate report', [
-        { name: 'Checkout', outcome: environment.CHECKOUT_RESULT },
-        { name: 'Toolchain and dependencies', outcome: environment.SETUP_RESULT },
-        { name: 'Browser installation', outcome: environment.BROWSER_INSTALL_RESULT },
-        { name: 'Browser, responsive, and accessibility tests', outcome: environment.TEST_RESULT },
-      ]),
-      environment,
-    );
-  }
+  codeql: (environment) =>
+    renderCodeqlReport({
+      analyze: environment.ANALYZE_RESULT,
+      init: environment.INIT_RESULT,
+      language: environment.CODEQL_LANGUAGE || 'unknown',
+    }),
+};
 
-  if (mode === 'artifact') {
-    return appendSummary(
-      renderOutcomeTable('Artifact validation gate', [
-        { name: 'Checkout', outcome: environment.CHECKOUT_RESULT },
-        { name: 'Toolchain and dependencies', outcome: environment.SETUP_RESULT },
-        { name: 'Artifact download', outcome: environment.ARTIFACT_DOWNLOAD_RESULT },
-        { name: 'Chromium installation', outcome: environment.BROWSER_INSTALL_RESULT },
-        { name: 'Deployable artifact tests', outcome: environment.TEST_RESULT },
-      ]),
-      environment,
-    );
-  }
-
-  if (mode === 'workflow') {
-    return appendSummary(
-      renderWorkflowReport({
-        actor: environment.RUN_ACTOR,
-        artifact: environment.ARTIFACT_RESULT,
-        artifactDigest: environment.ARTIFACT_DIGEST || '',
-        artifactUrl: environment.ARTIFACT_URL || '',
-        browser: environment.BROWSER_RESULT,
-        build: environment.BUILD_RESULT,
-        eventName: environment.RUN_EVENT,
-        production: environment.PRODUCTION_RESULT,
-        quality: environment.QUALITY_RESULT,
-        refName: environment.RUN_REF,
-        sha: environment.RUN_SHA,
-        test: environment.TEST_RESULT,
-      }),
-      environment,
-    );
-  }
-
-  if (mode === 'codeql') {
-    return appendSummary(
-      renderCodeqlReport({
-        analyze: environment.ANALYZE_RESULT,
-        init: environment.INIT_RESULT,
-        language: environment.CODEQL_LANGUAGE || 'unknown',
-      }),
-      environment,
-    );
-  }
-
-  throw new Error(`Unknown report mode: ${mode || '<missing>'}`);
+async function runCli(mode, environment = process.env) {
+  const render = MODES[mode];
+  if (!render) throw new Error(`Unknown report mode: ${mode || '<missing>'}`);
+  return appendSummary(await render(environment), environment);
 }
 
-const entryPoint = process.argv[1] ? resolve(process.argv[1]) : '';
-if (entryPoint && fileURLToPath(import.meta.url) === entryPoint) {
+if (isEntryPoint(import.meta.url)) {
   runCli(process.argv[2]).catch((error) => {
     console.error(error instanceof Error ? error.message : error);
     process.exitCode = 1;

@@ -12,7 +12,7 @@ import {
   renderCodeqlReport,
   renderOutcomeTable,
   renderProductionReport,
-  renderQualityReport,
+  renderTableMode,
   renderWorkflowReport,
 } from '../../scripts/ci/report.mjs';
 
@@ -77,13 +77,13 @@ describe('CI report rendering', () => {
   });
 
   test('shows checkout and setup failures before downstream quality checks', () => {
-    const markdown = renderQualityReport({
-      checkout: 'success',
-      format: 'skipped',
-      lint: 'skipped',
-      setup: 'failure',
-      typecheck: 'skipped',
-      workerTypecheck: 'skipped',
+    const markdown = renderTableMode('quality', {
+      CHECKOUT_RESULT: 'success',
+      FORMAT_RESULT: 'skipped',
+      LINT_RESULT: 'skipped',
+      SETUP_RESULT: 'failure',
+      TYPECHECK_RESULT: 'skipped',
+      WORKER_TYPECHECK_RESULT: 'skipped',
     });
 
     expect(markdown).toContain('| Checkout | ✅ Passed |');
@@ -121,19 +121,10 @@ describe('CI report rendering', () => {
     );
 
     const markdown = renderProductionReport(
-      {
-        artifactDownload: 'success',
-        checkout: 'success',
-        migration: 'success',
-        oembed: 'success',
-        micropub: 'success',
-        pages: 'success',
-        poem: 'success',
-        smoke: 'failure',
-        setup: 'success',
-        webmention: 'success',
-        www: 'success',
-      },
+      [
+        { name: 'Artifact download', outcome: 'success' },
+        { name: 'Production smoke', outcome: 'failure' },
+      ],
       smoke,
     );
 

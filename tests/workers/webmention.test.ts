@@ -1,6 +1,20 @@
 import { env, exports } from 'cloudflare:workers';
-import { expect, test } from 'vitest';
+import { beforeEach, expect, test } from 'vitest';
 import { claimVerification } from '../../workers/webmention/index';
+
+// The real migration is the only schema in the repo; inlining a reduced copy per
+// test is how the two former copies drifted apart.
+import schema from '../../migrations/0001_create_webmentions.sql?raw';
+
+beforeEach(async () => {
+  await env.DB.prepare('DROP TABLE IF EXISTS webmentions').run();
+  for (const statement of schema
+    .split(';')
+    .map((part) => part.trim())
+    .filter(Boolean)) {
+    await env.DB.prepare(statement).run();
+  }
+});
 
 test('rejects unsupported webmention methods in the Workers runtime', async () => {
   const response = await exports.default.fetch('https://hypertext.studio/webmention', {
@@ -10,19 +24,6 @@ test('rejects unsupported webmention methods in the Workers runtime', async () =
 });
 
 test('atomically claims one verification for concurrent duplicate submissions', async () => {
-  await env.DB.prepare('DROP TABLE IF EXISTS webmentions').run();
-  await env.DB.prepare(
-    `CREATE TABLE webmentions (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      source TEXT NOT NULL,
-      target TEXT NOT NULL,
-      status TEXT NOT NULL DEFAULT 'pending',
-      received_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
-      verified_at TEXT,
-      UNIQUE (source, target)
-    )`,
-  ).run();
-
   const source = 'https://source.example/post';
   const target = 'https://hypertext.studio/studies/example';
   const claims = await Promise.all([
@@ -40,26 +41,6 @@ test('atomically claims one verification for concurrent duplicate submissions', 
 });
 
 test('lists verified mentions grouped by type in the Workers runtime', async () => {
-  await env.DB.prepare('DROP TABLE IF EXISTS webmentions').run();
-  await env.DB.prepare(
-    `CREATE TABLE webmentions (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      source TEXT NOT NULL,
-      target TEXT NOT NULL,
-      status TEXT NOT NULL DEFAULT 'pending',
-      mention_type TEXT NOT NULL DEFAULT 'mention',
-      author_url TEXT,
-      author_name TEXT,
-      author_photo TEXT,
-      content TEXT,
-      content_html TEXT,
-      published_at TEXT,
-      received_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
-      verified_at TEXT,
-      UNIQUE (source, target)
-    )`,
-  ).run();
-
   const target = 'https://hypertext.studio/studies/example';
   await env.DB.prepare(
     `INSERT INTO webmentions

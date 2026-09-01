@@ -8,7 +8,7 @@
 #
 # Sections:
 #   1. Prereqs         — Node, corepack, pnpm, optional CLIs (gh, wrangler)
-#   2. Dependencies    — pnpm install
+#   2. Dependencies    — pnpm install, plus Chromium for make test-artifact
 #   3. Env             — copy .env.example → .env
 #   4. Git hooks       — wire .githooks/ as core.hooksPath
 #   5. Cloudflare      — account, D1, Pages, domains, schema, Worker secrets
@@ -375,14 +375,23 @@ install_deps() {
   fi
   pnpm install
   log::ok "dependencies installed"
-  if [[ "$(uname -s)" == "Linux" ]]; then
-    pnpm exec playwright install --with-deps chromium
-  else
-    pnpm exec playwright install chromium
-  fi
-  log::ok "Chromium installed for local validation"
   record "deps:               $(jq -r '. | (.dependencies // {} | length) + (.devDependencies // {} | length)' package.json 2>/dev/null || echo "n/a") packages"
-  record "browser:            Chromium installed"
+  install_browser
+}
+
+# Chromium only backs `make ci` / `make test-artifact`. On Linux --with-deps
+# shells out to sudo apt-get, which is unavailable in rootless containers, so
+# fall back to the browser-only install and warn instead of aborting bootstrap.
+install_browser() {
+  if [[ "$(uname -s)" == "Linux" ]] && pnpm exec playwright install --with-deps chromium ||
+    pnpm exec playwright install chromium; then
+    log::ok "Chromium installed for local validation"
+    record "browser:            Chromium installed"
+    return 0
+  fi
+  log::warn "Chromium not installed; 'make test-artifact' will fail until you run:"
+  log::warn "  pnpm exec playwright install --with-deps chromium"
+  record "browser:            not installed (make test-artifact unavailable)"
 }
 
 # ---------------------------------------------------------------------------
