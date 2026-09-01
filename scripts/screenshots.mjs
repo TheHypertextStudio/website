@@ -18,7 +18,7 @@
  * out of the regression flow and lets us iterate visually without `--grep`.
  */
 
-import { chromium } from 'playwright';
+import { chromium } from '@playwright/test';
 import { mkdir, rm, writeFile } from 'node:fs/promises';
 import { spawn } from 'node:child_process';
 import path from 'node:path';
@@ -43,14 +43,16 @@ const VIEWPORTS = [
 
 const PAGES = [
   { slug: 'home', path: '/' },
+  { slug: 'about', path: '/about' },
+  { slug: 'notes', path: '/notes' },
   { slug: 'privacy', path: '/privacy' },
   { slug: 'colophon', path: '/colophon' },
   { slug: 'studies', path: '/studies' },
   { slug: 'contact', path: '/contact' },
-  { slug: '404', path: '/this-route-does-not-exist' },
+  { slug: '404', path: '/this-route-does-not-exist', expectedStatus: 404 },
 ];
 
-const PRODUCTS = ['logdate', 'curfew', 'termsly'];
+const PRODUCTS = ['docket', 'logdate', 'curfew'];
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -119,8 +121,16 @@ async function capturePages(browser) {
   for (const vp of VIEWPORTS) {
     const ctx = await browser.newContext({ viewport: vp });
     const page = await ctx.newPage();
-    for (const { slug, path: route } of PAGES) {
-      await page.goto(BASE + route, { waitUntil: 'networkidle', timeout: 15_000 }).catch(() => {});
+    for (const { slug, path: route, expectedStatus = 200 } of PAGES) {
+      const response = await page.goto(BASE + route, {
+        waitUntil: 'networkidle',
+        timeout: 15_000,
+      });
+      if (!response || response.status() !== expectedStatus) {
+        throw new Error(
+          `${route} returned ${response?.status() ?? 'no response'}; expected ${expectedStatus}`,
+        );
+      }
       await wait(150);
       await capture(page, `pages/${slug}-${vp.name}.png`);
       await capture(page, `pages/${slug}-${vp.name}-full.png`, { fullPage: true });
@@ -135,57 +145,25 @@ async function captureInteractions(browser) {
   const page = await ctx.newPage();
   await page.goto(BASE + '/', { waitUntil: 'networkidle' });
 
-  // Card hover.
-  await page.locator('.product-card').first().hover();
+  const productLink = page.locator('.product-card__footer a').first();
+  await productLink.hover();
   await wait(150);
-  await capture(page, 'interactions/card-hover.png');
+  await capture(page, 'interactions/product-link-hover.png');
 
-  // Status bar with link hovered.
-  await page.locator('a[rel~="external"]').first().hover();
-  await wait(100);
-  await capture(page, 'interactions/status-bar-link-hover.png');
-
-  // Status bar with modifier held.
-  await page.mouse.move(0, 0);
-  await page.keyboard.down(process.platform === 'darwin' ? 'Meta' : 'Control');
-  await wait(100);
-  await capture(page, 'interactions/status-bar-modifier.png');
-  await page.keyboard.up(process.platform === 'darwin' ? 'Meta' : 'Control');
-
-  // Heading anchor hover.
-  await page.locator('h2#work-heading').hover();
+  await productLink.focus();
   await wait(150);
-  await capture(page, 'interactions/heading-anchor-hover.png');
+  await capture(page, 'interactions/product-link-focus.png');
 
-  // Each product dialog.
-  for (const slug of PRODUCTS) {
-    await page.goto(BASE + '/', { waitUntil: 'networkidle' });
-    await page.locator(`button[data-dialog-target="${slug}-detail"]`).click();
-    await wait(200);
-    await capture(page, `interactions/dialog-${slug}.png`);
-    await page.keyboard.press('Escape');
-  }
-
-  // Command palette: closed → opened → filtered → arrow-navigated.
-  await page.keyboard.press(process.platform === 'darwin' ? 'Meta+k' : 'Control+k');
+  const footer = page.locator('.site-footer');
+  await footer.scrollIntoViewIfNeeded();
+  const footerLink = footer.locator('.footer-link').first();
+  await footerLink.hover();
   await wait(150);
-  await capture(page, 'interactions/palette-open.png');
+  await capture(page, 'interactions/footer-link-hover.png');
 
-  await page.locator('#palette-input').fill('logdate');
-  await wait(120);
-  await capture(page, 'interactions/palette-filtered.png');
-
-  await page.locator('#palette-input').fill('zzznoresults');
-  await wait(120);
-  await capture(page, 'interactions/palette-empty.png');
-
-  await page.keyboard.press('Escape');
-
-  // Shortcut sheet.
-  await page.keyboard.press('?');
+  await footerLink.focus();
   await wait(150);
-  await capture(page, 'interactions/shortcut-sheet.png');
-  await page.keyboard.press('Escape');
+  await capture(page, 'interactions/footer-link-focus.png');
 
   await ctx.close();
 }
@@ -236,28 +214,21 @@ async function captureComponents(browser) {
   await page.goto(BASE + '/', { waitUntil: 'networkidle' });
 
   await captureLocator(page.locator('header.site-header'), 'components/header.png');
-  await captureLocator(page.locator('section.thesis'), 'components/thesis.png');
+  await captureLocator(page.locator('.home-hero'), 'components/hero.png');
 
   for (const slug of PRODUCTS) {
     await captureLocator(
-      page.locator(`.product-card[data-slug="${slug}"]`),
+      page.locator(`article.product-card#${slug}`),
       `components/card-${slug}.png`,
     );
   }
 
-  await captureLocator(page.locator('section.colophon'), 'components/footer-colophon.png');
-  await captureLocator(page.locator('section.status-panel'), 'components/footer-status-panel.png');
-  await captureLocator(page.locator('.footer-wordmark'), 'components/footer-wordmark.png');
-  // The poem band only exists when the studio has set a TXT record. Capture
-  // it only if visible.
-  if (await page.locator('figure.poem:not([hidden])').count()) {
-    await captureLocator(page.locator('figure.poem'), 'components/footer-poem.png');
-  }
-  await captureLocator(page.locator('small.small-print'), 'components/footer-small-print.png');
+  await captureLocator(page.locator('.footer-directory'), 'components/footer-directory.png');
+  await captureLocator(page.locator('.closing-tag'), 'components/footer-closing-tag.png');
 
   // The full footer at viewport size.
   await page
-    .locator('footer.studio-footer')
+    .locator('footer.site-footer')
     .evaluate((el) => el.scrollIntoView({ block: 'start', behavior: 'instant' }));
   await wait(200);
   await capture(page, 'components/footer-full.png');

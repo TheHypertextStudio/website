@@ -69,25 +69,12 @@ const allReaders: Webmention[] = [...likes, ...reposts, ...bookmarks];
           {citations.map((m) => {
             const date = formatDate(m.publishedAt ?? m.receivedAt);
             const paragraphs = excerptParagraphs(m.content);
-            const excerptText = excerptParagraphs(m.content, 280)?.join('\n\n') ?? '';
             return (
               <li>
-                <article
-                  class="citation h-cite"
-                  data-hovercard="citation"
-                  data-author={authorLabel(m)}
-                  data-source={displaySource(m.source)}
-                  data-date={date?.datetime ?? ''}
-                  data-excerpt={excerptText}
-                >
+                <article class="citation h-cite">
                   <header class="citation-meta">
                     {m.authorUrl ? (
-                      <a
-                        class="citation-author p-author"
-                        href={m.authorUrl}
-                        rel="external"
-                        data-hovercard-skip
-                      >
+                      <a class="citation-author p-author" href={m.authorUrl} rel="external">
                         {authorLabel(m)}
                       </a>
                     ) : (
@@ -98,12 +85,7 @@ const allReaders: Webmention[] = [...likes, ...reposts, ...bookmarks];
                         {date.display}
                       </time>
                     )}
-                    <a
-                      class="citation-source u-url"
-                      href={m.source}
-                      rel="external"
-                      data-hovercard-skip
-                    >
+                    <a class="citation-source u-url" href={m.source} rel="external">
                       {displaySource(m.source)}
                     </a>
                   </header>
