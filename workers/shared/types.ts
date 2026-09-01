@@ -14,22 +14,13 @@ export interface WebmentionRow {
   verified_at: string | null;
 }
 
-export interface MicropubBindings {
+export interface MicropubBindings extends MicropubEnv {
   GITHUB_TOKEN: string;
-  INDIEAUTH_ENDPOINT: string;
-  GITHUB_REPO: string;
-  NOTES_PATH: string;
-  DEFAULT_BRANCH: string;
 }
 
-export interface OembedBindings {
-  SITE_URL: string;
-  SITE_NAME: string;
-}
+export type OembedBindings = OembedEnv;
 
-export interface WebmentionBindings {
-  DB: D1Database;
-}
+export type WebmentionBindings = WebmentionEnv;
 
 // Re-export for convenience in worker entry files.
 export type Json = string | number | boolean | null | { [k: string]: Json } | Json[];

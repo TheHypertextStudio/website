@@ -6,5 +6,6 @@ dist
 pnpm-lock.yaml
 public/fonts
 public/img
+workers/generated
 **/*.min.css
 **/*.min.js

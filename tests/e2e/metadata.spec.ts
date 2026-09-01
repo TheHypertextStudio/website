@@ -4,7 +4,7 @@ import { readJsonLd } from '../fixtures/utils';
 
 test.describe('<head> metadata', () => {
   for (const p of PAGES) {
-    test(`${p.path} has Open Graph + Twitter card`, async ({ page }) => {
+    test(`${p.path} has complete Open Graph metadata`, async ({ page }) => {
       await page.goto(p.path);
       const og = {
         site_name: await page.locator('meta[property="og:site_name"]').getAttribute('content'),
@@ -18,9 +18,6 @@ test.describe('<head> metadata', () => {
       expect(og.description?.length).toBeGreaterThan(0);
       expect(og.type).toBe('website');
       expect(og.image).toMatch(/^https:\/\/hypertext\.studio\//);
-
-      const twcard = await page.locator('meta[name="twitter:card"]').getAttribute('content');
-      expect(twcard).toBe('summary_large_image');
     });
 
     test(`${p.path} has canonical + i18n alternates`, async ({ page }) => {

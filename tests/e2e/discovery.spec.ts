@@ -39,14 +39,18 @@ test.describe('Discovery files', () => {
     expect(body).toContain('# Hypertext Studio');
     expect(body).toContain('LogDate');
     expect(body).toContain('Curfew');
-    expect(body).toContain('Termsly');
+    expect(body).toContain('Docket');
+    expect(body).not.toContain('Termsly');
   });
 
   test('llms-full.txt concatenates content', async ({ request }) => {
     const body = await (await request.get('/llms-full.txt')).text();
-    expect(body).toContain('Hypertext Studio explores how to create');
-    expect(body).toContain('LogDate');
+    expect(body).toContain('Hypertext Studio builds software for humans');
+    expect(body).toContain('Curfew, the launch study');
     expect(body.length).toBeGreaterThan(500);
+    expect(body).not.toContain('Termsly');
+    expect(body).not.toContain('The locked delay');
+    expect(body).not.toContain('/studies/three-products-one-privacy-stance');
   });
 
   test('site.webmanifest is valid JSON with required keys', async ({ request }) => {

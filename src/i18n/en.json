@@ -7,52 +7,6 @@
     "wordmarkAlt": "<hypertext.studio>",
     "ogAlt": "Hypertext Studio builds software for humans."
   },
-  "thesis": {
-    "body": "Hypertext Studio explores how to create sustainable human-centered software."
-  },
-  "mission": {
-    "heading": "What we do",
-    "headingId": "mission",
-    "body": [
-      "Hypertext Studio is a small design lab building sustainable, human-centered software. We work in a fourth mode: design research where the apparatus is a real product.",
-      "Each product is a sustained attempt to answer one design question. The product must work as a product first — paid software, real users, supported, in production. The research happens through that constraint, not despite it.",
-      "The studies we publish alongside each major release are the studio's intellectual contribution. The products are the apparatus."
-    ]
-  },
-  "work": {
-    "heading": "Work",
-    "headingId": "work",
-    "products": {
-      "logdate": {
-        "name": "LogDate",
-        "tagline": "A better home to document and store your memories.",
-        "url": "https://logdate.app",
-        "linkTitle": "LogDate"
-      },
-      "curfew": {
-        "name": "Curfew",
-        "tagline": "Software for the version of you that planned ahead.",
-        "url": "",
-        "linkTitle": "Curfew"
-      },
-      "termsly": {
-        "name": "Termsly",
-        "tagline": "Know what you're agreeing to.",
-        "url": "",
-        "linkTitle": "Termsly"
-      }
-    },
-    "card": {
-      "details": "Details",
-      "visit": "Visit",
-      "close": "Close",
-      "closeProduct": "Close {product} details"
-    },
-    "metadata": {
-      "stage": "Stage",
-      "platforms": "Platforms"
-    }
-  },
   "studies": {
     "indexHeading": "Studies",
     "lede": "Long-form design essays — what we built, what we learned, and what we'd do differently.",
@@ -73,118 +27,6 @@
     },
     "inReplyToLabel": "in reply to",
     "citedSuffix": "cited"
-  },
-  "header": {
-    "homeLinkTitle": "Hypertext Studio — home"
-  },
-  "footer": {
-    "wordmark": "Hypertext Studio",
-    "siteMap": {
-      "heading": "Site map",
-      "items": [
-        { "label": "Home", "href": "/" },
-        { "label": "About", "href": "/about" },
-        { "label": "Studies", "href": "/studies" },
-        { "label": "Contact", "href": "/contact" },
-        { "label": "Privacy", "href": "/privacy" },
-        { "label": "Colophon", "href": "/colophon" },
-        { "label": "Source", "href": "https://github.com/TheHypertextStudio/website" }
-      ]
-    },
-    "identity": {
-      "heading": "Identity",
-      "items": [
-        { "label": "GitHub", "href": "https://github.com/TheHypertextStudio", "rel": "me" },
-        { "label": "Bluesky", "network": "bluesky", "rel": "me" },
-        {
-          "label": "Fediverse",
-          "href": "https://fed.brid.gy/r/https://hypertext.studio/",
-          "rel": "me"
-        },
-        { "label": "hello@hypertext.studio", "href": "mailto:hello@hypertext.studio", "rel": "me" }
-      ]
-    },
-    "smallPrint": {
-      "location": "Las Vegas, NV",
-      "lastUpdatedLabel": "updated",
-      "viewSourceLabel": "view source",
-      "printLabel": "print this page",
-      "paletteLabel": "⌘K"
-    },
-    "poem": {
-      "fallback": "If this work is worth doing, it is worth doing right."
-    },
-    "statusPanel": {
-      "studioTime": "STUDIO TIME",
-      "location": "LOCATION",
-      "edge": "EDGE",
-      "render": "RENDER",
-      "build": "BUILD",
-      "deployed": "DEPLOYED"
-    }
-  },
-  "statusBar": {
-    "modifierHint": "K palette · ? help · g h home · g a about · g w work"
-  },
-  "palette": {
-    "openLabel": "Open command palette",
-    "closeLabel": "Close command palette",
-    "placeholder": "Type a command or search…",
-    "noResults": "No matches"
-  },
-  "shortcuts": {
-    "heading": "Keyboard shortcuts",
-    "groups": [
-      {
-        "label": "Go to",
-        "items": [
-          { "keys": ["g", "h"], "label": "Home" },
-          { "keys": ["g", "w"], "label": "Work" },
-          { "keys": ["g", "a"], "label": "About" },
-          { "keys": ["g", "s"], "label": "Studies" },
-          { "keys": ["g", "n"], "label": "Notes" },
-          { "keys": ["g", "c"], "label": "Colophon" }
-        ]
-      },
-      {
-        "label": "Open",
-        "items": [
-          { "keys": ["⌘", "K"], "label": "Command palette" },
-          { "keys": ["?"], "label": "This shortcut sheet" }
-        ]
-      }
-    ]
-  },
-  "about": {
-    "title": "About",
-    "lede": "Hypertext Studio is a small design lab building sustainable, human-centered software. We are an LLC and a Public Benefit Corporation. We do not have investors, a runway, or a growth curve we are optimizing.",
-    "sections": [
-      {
-        "heading": "The fourth mode",
-        "id": "fourth-mode",
-        "body": "Design practices usually operate in one of three modes. Client work, where the idea is constrained by what a client will pay for. Research and prototyping, where the idea is unconstrained but never tested at scale. Product company, where the idea bends toward growth and retention.\n\nWe work in a fourth mode: design research where the apparatus is a real product.\n\nEach product is a sustained attempt to answer one design question. It must work as a product first — pays for itself, supports its users, deals with the App Store, the support tickets, the accessibility audits, the people using the software in ways the designer did not predict. The research happens through that constraint, not despite it. Design ideas are not real until they have survived users who did not sign up for the manifesto."
-      },
-      {
-        "heading": "What we work on",
-        "id": "work",
-        "body": "LogDate asks what personal memory software looks like when it isn't designed for surveillance, feed extraction, or social validation. Curfew asks what it looks like to give people real, hard-edged control over their own attention — including the ability to revoke their own consent to their devices, before the impulse to use them arises. Termsly asks what informed consent would actually require, in UX terms, between digital services and the people who use them.\n\nThe products are conceptually independent. They are not a thematic suite. They share infrastructure where it makes sense; they answer different questions."
-      },
-      {
-        "heading": "How we publish",
-        "id": "publish",
-        "body": "Each product produces studies — design research write-ups tied to major feature releases. Not portfolio shots. Real research papers. Each describes a design question, the bets we made, what users taught us, what worked, what didn't, and what the experiment ultimately said about the question.\n\nThe studies live on hypertext.studio. Copies may appear elsewhere — POSSE: publish on own site, syndicate elsewhere."
-      },
-      {
-        "heading": "What we are not",
-        "id": "not",
-        "body": "Not a venture-scale startup. Not an agency or consultancy. Not a research lab that doesn't ship. Not a generative-AI-interface lab. Not a portfolio site disguised as a studio. Not a media company, content brand, or thought-leadership operation. Not a community or a movement. We are an organization that makes things."
-      },
-      {
-        "heading": "Where we are",
-        "id": "where",
-        "body": "Las Vegas, Nevada. Distributed when we need to be."
-      }
-    ]
   },
   "contact": {
     "title": "Contact",
@@ -256,7 +98,7 @@
     "intro": "How this site is built.",
     "credits": [
       { "key": "typefaces", "value": "Source Serif 4, Inter, IBM Plex Mono" },
-      { "key": "framework", "value": "Astro 6, static output" },
+      { "key": "framework", "value": "Astro 7, static output" },
       { "key": "hosting", "value": "Cloudflare Pages + Workers + D1" },
       { "key": "analytics", "value": "Cloudflare Web Analytics — cookieless" }
     ]

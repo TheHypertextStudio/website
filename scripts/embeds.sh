@@ -15,9 +15,6 @@ Embed validators for $URL
   Open Graph (Facebook):
     https://developers.facebook.com/tools/debug/?q=$ENC
 
-  X / Twitter Card:
-    https://cards-dev.twitter.com/validator (paste URL)
-
   LinkedIn Post Inspector:
     https://www.linkedin.com/post-inspector/?url=$ENC
 

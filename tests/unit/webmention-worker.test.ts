@@ -22,13 +22,20 @@ function request(): Request {
   });
 }
 
-function harness() {
+function harness({ duplicate = false }: { duplicate?: false | 'recent' | 'stale' } = {}) {
   const queries: QueryRecord[] = [];
   const database = {
     prepare(sql: string) {
       return {
         bind(...params: unknown[]) {
           return {
+            async first() {
+              queries.push({ sql, params });
+              if (sql.includes('RETURNING id')) {
+                return duplicate === 'recent' ? null : { id: 1 };
+              }
+              return duplicate ? { status: 'pending' } : null;
+            },
             async run() {
               queries.push({ sql, params });
               return { success: true };
@@ -102,6 +109,99 @@ describe('Webmention receiving worker', () => {
     }
 
     const finalUpdate = queries.at(-1);
-    expect(finalUpdate?.sql).toContain("status = 'rejected'");
+    expect(finalUpdate?.sql).toContain('DELETE FROM webmentions');
+  });
+
+  test('rejects a nonexistent target before creating a database row', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response('missing', { status: 404 })));
+    const { queries, env, context } = harness();
+
+    const response = await (webmentionWorker.fetch as unknown as WorkerFetch)(
+      request(),
+      env,
+      context,
+    );
+
+    expect(response.status).toBe(400);
+    expect(queries).toHaveLength(0);
+  });
+
+  test('rejects an oversized submission before target validation', async () => {
+    const fetchMock = vi.fn();
+    vi.stubGlobal('fetch', fetchMock);
+    const oversizedRequest = new Request('https://hypertext.studio/webmention', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({
+        source: 'https://source.example/post',
+        target: `https://hypertext.studio/${'x'.repeat(9_000)}`,
+      }),
+    });
+    const { env, context } = harness();
+
+    const response = await (webmentionWorker.fetch as unknown as WorkerFetch)(
+      oversizedRequest,
+      env,
+      context,
+    );
+
+    expect(response.status).toBe(413);
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  test('deduplicates a recent pending source-target pair', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue(new Response('target exists', { status: 200 })),
+    );
+    const { queries, background, env, context } = harness({ duplicate: 'recent' });
+
+    const response = await (webmentionWorker.fetch as unknown as WorkerFetch)(
+      request(),
+      env,
+      context,
+    );
+
+    expect(response.status).toBe(202);
+    expect(background).toHaveLength(0);
+    expect(
+      queries.some(
+        ({ sql }) =>
+          sql.includes('ON CONFLICT (source, target)') &&
+          sql.includes("WHERE webmentions.received_at < datetime('now', '-1 hour')"),
+      ),
+    ).toBe(true);
+  });
+
+  test('requeues a stale source-target pair without violating the unique constraint', async () => {
+    const target = 'https://hypertext.studio/studies/example';
+    vi.stubGlobal(
+      'fetch',
+      vi
+        .fn()
+        .mockResolvedValueOnce(new Response('target exists', { status: 200 }))
+        .mockResolvedValueOnce(
+          new Response('<a href="' + target + '">Referenced post</a>', {
+            headers: { 'Content-Type': 'text/html; charset=utf-8' },
+          }),
+        ),
+    );
+    const { queries, background, env, context } = harness({ duplicate: 'stale' });
+
+    const response = await (webmentionWorker.fetch as unknown as WorkerFetch)(
+      request(),
+      env,
+      context,
+    );
+
+    expect(response.status).toBe(202);
+    expect(background).toHaveLength(1);
+    await Promise.all(background);
+    expect(
+      queries.some(
+        ({ sql }) =>
+          sql.includes('ON CONFLICT (source, target)') && sql.includes("status = 'pending'"),
+      ),
+    ).toBe(true);
   });
 });

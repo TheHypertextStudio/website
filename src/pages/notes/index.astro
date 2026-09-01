@@ -48,11 +48,7 @@ const rows = notes.map((n: CollectionEntry<'notes'>, i: number) => ({
 }));
 ---
 
-<Base
-  title={t.notes.indexHeading}
-  description="Short writings from Hypertext Studio."
-  sourcePath="src/pages/notes/index.astro"
->
+<Base title={t.notes.indexHeading} description="Short writings from Hypertext Studio.">
   <article class="notes-layout">
     <header class="notes-header">
       <h1>{t.notes.indexHeading}</h1>

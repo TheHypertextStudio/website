@@ -24,10 +24,10 @@ dest=public
 cat > "$dest/favicon.svg" <<'SVG'
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <rect width="64" height="64" fill="#F5F1E8" />
+  <rect width="64" height="64" fill="#FBFBFA" />
   <text x="32" y="46" text-anchor="middle"
         font-family="Source Serif 4, Iowan Old Style, Charter, Georgia, serif"
-        font-size="48" font-weight="600" fill="#0033CC">§</text>
+        font-size="48" font-weight="600" fill="#3157D5">§</text>
 </svg>
 SVG
 
@@ -55,17 +55,25 @@ async function out(size, file, opts = {}) {
   console.log('  →', file, size);
 }
 
-await out(32, 'favicon-32.png');
+const faviconPng = await sharp(svg, { density: 400 }).resize(32, 32).png().toBuffer();
+const icoHeader = Buffer.alloc(22);
+icoHeader.writeUInt16LE(0, 0);
+icoHeader.writeUInt16LE(1, 2);
+icoHeader.writeUInt16LE(1, 4);
+icoHeader.writeUInt8(32, 6);
+icoHeader.writeUInt8(32, 7);
+icoHeader.writeUInt8(0, 8);
+icoHeader.writeUInt8(0, 9);
+icoHeader.writeUInt16LE(1, 10);
+icoHeader.writeUInt16LE(32, 12);
+icoHeader.writeUInt32LE(faviconPng.length, 14);
+icoHeader.writeUInt32LE(22, 18);
+await fs.writeFile('$dest/favicon.ico', Buffer.concat([icoHeader, faviconPng]));
+console.log('  → favicon.ico 32');
 await out(180, 'apple-touch-icon.png');
 await out(192, 'icon-192.png');
 await out(512, 'icon-512.png');
-await out(512, 'icon-maskable.png', { fit: 'contain', background: { r: 245, g: 241, b: 232 } });
+await out(512, 'icon-maskable.png', { fit: 'contain', background: { r: 251, g: 251, b: 250 } });
 " 2>&1
-
-# 3. Convert favicon-32.png → favicon.ico (Sharp can't write ICO; we'd use png-to-ico
-#    for a true multi-resolution ICO, but a single 32×32 PNG named .ico works in
-#    every modern browser. Skip silently if the binary isn't present.)
-cp "$dest/favicon-32.png" "$dest/favicon.ico"
-rm -f "$dest/favicon-32.png"
 
 echo "  ✓ favicons regenerated"

@@ -8,6 +8,8 @@
  * https://indieauth.spec.indieweb.org/#access-token-verification
  */
 
+import { fetchWithTimeout, normalizeCanonicalIdentity } from './http';
+
 interface VerifyOptions {
   bearer: string;
   endpoint: string; // INDIEAUTH_ENDPOINT
@@ -21,20 +23,31 @@ export async function verifyIndieAuth({
   expectedMe,
   requiredScope,
 }: VerifyOptions): Promise<boolean> {
-  const res = await fetch(endpoint, {
-    method: 'GET',
-    headers: {
-      Authorization: `Bearer ${bearer}`,
-      Accept: 'application/json',
-    },
-  });
+  let res: Response;
+  try {
+    res = await fetchWithTimeout(
+      endpoint,
+      {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${bearer}`,
+          Accept: 'application/json',
+        },
+      },
+      5_000,
+    );
+  } catch {
+    return false;
+  }
   if (!res.ok) return false;
   const data = (await res.json().catch(() => null)) as {
     me?: string;
     scope?: string | string[];
   } | null;
   if (!data?.me) return false;
-  if (new URL(data.me).origin !== new URL(expectedMe).origin) return false;
+  const actualIdentity = normalizeCanonicalIdentity(data.me);
+  const expectedIdentity = normalizeCanonicalIdentity(expectedMe);
+  if (!actualIdentity || !expectedIdentity || actualIdentity !== expectedIdentity) return false;
   if (!requiredScope) return true;
 
   const scopes = Array.isArray(data.scope)

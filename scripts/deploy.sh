@@ -1,9 +1,8 @@
 #!/usr/bin/env bash
 # Deployment dispatcher.
 #
-#   scripts/deploy.sh preview   # Cloudflare Pages preview
-#   scripts/deploy.sh prod      # Cloudflare Pages prod + workers
-#   scripts/deploy.sh workers   # workers only
+#   scripts/deploy.sh preview       # explicit Cloudflare Pages preview
+#   scripts/deploy.sh break-glass   # manual production recovery path
 
 set -euo pipefail
 
@@ -29,21 +28,26 @@ deploy_workers() {
   done
 }
 
+apply_migrations() {
+  log::step "applying remote D1 migrations"
+  bash scripts/migrate-d1.sh remote hypertext-studio
+}
+
 case "$target" in
   preview)
-    bash scripts/build.sh
+    pnpm run build
     deploy_pages "$(git symbolic-ref --short HEAD 2>/dev/null || echo 'preview')"
     ;;
-  prod|production)
-    bash scripts/build.sh
+  break-glass)
+    log::warn "manual production recovery path; normal releases are owned by GitHub Actions"
+    pnpm run build
+    apply_migrations
+    deploy_workers
     deploy_pages main
-    deploy_workers
-    ;;
-  workers)
-    deploy_workers
+    BASE_URL="https://hypertext.studio" bash scripts/smoke.sh
     ;;
   *)
-    log::err "unknown target: $target (expected: preview | prod | workers)"
+    log::err "unknown target: $target (expected: preview | break-glass)"
     exit 64
     ;;
 esac

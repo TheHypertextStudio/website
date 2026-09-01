@@ -1,6 +1,11 @@
 import { describe, expect, test } from 'vitest';
 
-import { blueskyProfileUrl, filterSyndicationUrls, resolveSocialLinks } from '../../src/lib/social';
+import {
+  blueskyProfileUrl,
+  filterSyndicationUrls,
+  normalizeSocialHandle,
+  resolveSocialLinks,
+} from '../../src/lib/social';
 
 describe('blueskyProfileUrl', () => {
   test('returns no public profile when the build has no configured handle', () => {
@@ -13,6 +18,13 @@ describe('blueskyProfileUrl', () => {
     expect(blueskyProfileUrl('@hypertext.studio')).toBe(
       'https://bsky.app/profile/hypertext.studio',
     );
+  });
+});
+
+describe('optional social handle', () => {
+  test('normalizes whitespace and a leading at sign', () => {
+    expect(normalizeSocialHandle('  @hypertextstudio ')).toBe('hypertextstudio');
+    expect(normalizeSocialHandle('')).toBeUndefined();
   });
 });
 

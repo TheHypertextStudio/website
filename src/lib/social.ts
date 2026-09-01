@@ -11,8 +11,14 @@ export interface SocialLink {
   href: string;
 }
 
-export function blueskyProfileUrl(handle: string | undefined): string | undefined {
+export function normalizeSocialHandle(handle: string | undefined): string | undefined {
   const normalized = handle?.trim().replace(/^@/, '');
+  if (!normalized) return undefined;
+  return normalized;
+}
+
+export function blueskyProfileUrl(handle: string | undefined): string | undefined {
+  const normalized = normalizeSocialHandle(handle);
   if (!normalized) return undefined;
   return `https://bsky.app/profile/${encodeURIComponent(normalized)}`;
 }

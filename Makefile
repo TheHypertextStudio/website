@@ -2,7 +2,7 @@
 # Hypertext Studio — canonical task surface
 #
 # Every key task runs through `make`. Run `make help` for the categorised list.
-# Targets group into: setup, dev, quality, audits, content ops, deploy, release.
+# Targets group into: setup, dev, quality, audits, content, and explicit deploy.
 # =============================================================================
 
 SHELL := /usr/bin/env bash
@@ -23,7 +23,6 @@ PNPM := $(shell command -v pnpm 2>/dev/null || echo "corepack pnpm")
 ##@ Audits
 ##@ Content
 ##@ Deploy
-##@ Release
 
 .PHONY: help
 help: ## show this help (the default)
@@ -63,8 +62,8 @@ dev-astro: ## raw astro dev (no Portless) on http://localhost:4321
 dev-all: ## site + all five workers via Portless (subdomains on .localhost)
 	@bash scripts/dev.sh
 
-build: ## production build (astro + content-id stamp + word count)
-	@bash scripts/build.sh
+build: ## production build (generated metadata + Astro)
+	@$(PNPM) run build
 
 preview: build ## preview the production build locally
 	@$(PNPM) run preview
@@ -79,7 +78,7 @@ nuke: clean ## clean + remove node_modules
 # Quality gates
 # ----------------------------------------------------------------------------
 
-.PHONY: lint lint-fix format format-check typecheck test test-e2e test-a11y quality
+.PHONY: lint lint-fix format format-check typecheck typecheck-workers test test-workers test-e2e test-a11y quality ci
 
 lint: ## prettier --check + eslint + astro check
 	@$(PNPM) run format:check
@@ -98,10 +97,16 @@ format-check: ## prettier --check
 typecheck: ## astro check + tsc --noEmit
 	@$(PNPM) run typecheck
 
+typecheck-workers: ## generate binding types + typecheck all Workers
+	@$(PNPM) run typecheck:workers
+
 test: ## vitest unit tests
 	@$(PNPM) run test
 
-test-e2e: ## playwright e2e (palette, dialogs, status bar, print, …)
+test-workers: ## Vitest inside workerd for all five Workers
+	@$(PNPM) run test:workers
+
+test-e2e: ## Playwright browser, responsive, and accessibility checks
 	@$(PNPM) exec playwright test --project=chromium
 
 test-e2e-all: ## playwright e2e across chromium + firefox + webkit
@@ -119,7 +124,9 @@ test-install: ## install Playwright browsers (run once after bootstrap)
 screenshots: ## capture every page state into .hypertext/screenshots/
 	@node scripts/screenshots.mjs
 
-quality: format-check lint typecheck test ## full quality gate (CI default)
+quality: format-check lint typecheck typecheck-workers test test-workers ## local quality gate
+
+ci: quality build ## portable repository CI contract
 
 # ----------------------------------------------------------------------------
 # Audits (built site)
@@ -141,7 +148,7 @@ audit-html: ## W3C html-validator on every built page
 audit-schema: ## schema.org validator on JSON-LD blocks
 	@bash scripts/audit.sh schema
 
-embeds: ## print embed validator URLs (FB, X, LinkedIn, Discord, Slack)
+embeds: ## print embed validator URLs (Open Graph, LinkedIn, Schema.org)
 	@bash scripts/embeds.sh
 
 verify-rels: ## confirm rel=me reciprocity for configured identities
@@ -151,7 +158,7 @@ verify-rels: ## confirm rel=me reciprocity for configured identities
 # Content operations
 # ----------------------------------------------------------------------------
 
-.PHONY: new-study icons og words content-id
+.PHONY: new-study icons og
 
 new-study: ## scaffold a new MDX study: make new-study TITLE="..."
 	@bash scripts/new-study.sh "$(TITLE)"
@@ -162,35 +169,17 @@ icons: ## regenerate § favicon set
 og: ## regenerate templated OG images
 	@bash scripts/og.sh
 
-words: ## recompute total word count for status panel
-	@bash scripts/words.sh
-
-content-id: ## stamp BUILD_HASH and BUILD_TIME for the footer
-	@bash scripts/content-id.sh
-
 # ----------------------------------------------------------------------------
 # Deploy
 # ----------------------------------------------------------------------------
 
-.PHONY: deploy deploy-prod deploy-workers
+.PHONY: deploy-preview deploy-break-glass
 
-deploy: build ## preview deployment to Cloudflare Pages
+deploy-preview: ## explicitly deploy a Pages preview
 	@bash scripts/deploy.sh preview
 
-deploy-prod: build ## production deployment (Pages + workers)
-	@bash scripts/deploy.sh prod
-
-deploy-workers: ## wrangler deploy all four workers (without site)
-	@bash scripts/deploy.sh workers
-
-# ----------------------------------------------------------------------------
-# Release
-# ----------------------------------------------------------------------------
-
-.PHONY: release
-
-release: quality build ## version bump + changelog + tag + push
-	@bash scripts/release.sh
+deploy-break-glass: ## manual production recovery; normal releases use GitHub Actions
+	@bash scripts/deploy.sh break-glass
 
 # ----------------------------------------------------------------------------
 # Convenience

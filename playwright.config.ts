@@ -6,7 +6,9 @@ const TEST_BASE_URL = EXTERNAL_BASE_URL ?? 'http://127.0.0.1:4322';
 
 export default defineConfig({
   testDir: './tests',
-  testIgnore: ['**/unit/**'],
+  // Unit and workerd suites have their own Vitest runners. Keeping them out
+  // of Playwright prevents Node from trying to load Cloudflare runtime modules.
+  testIgnore: ['**/unit/**', '**/workers/**'],
   fullyParallel: true,
   forbidOnly: CI,
   retries: CI ? 2 : 0,

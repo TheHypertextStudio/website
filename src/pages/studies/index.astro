@@ -1,29 +1,22 @@
 ---
 import Base from '@/layouts/Base.astro';
-import { getCollection } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
 import { getWebmentions } from '@/lib/webmentions';
 import { SITE_URL } from '@/consts';
 import t from '@/i18n';
+import { getPublishedStudies } from '@/lib/published-content';
 
-const allStudies = await getCollection('studies');
-const studies = allStudies
-  .filter((s: CollectionEntry<'studies'>) => !s.data.draft || import.meta.env.DEV)
-  .sort(
-    (a: CollectionEntry<'studies'>, b: CollectionEntry<'studies'>) =>
-      b.data.publishedAt.valueOf() - a.data.publishedAt.valueOf(),
-  );
+const studies = (await getPublishedStudies()).sort(
+  (a: CollectionEntry<'studies'>, b: CollectionEntry<'studies'>) =>
+    b.data.publishedAt.valueOf() - a.data.publishedAt.valueOf(),
+);
 
 // Fetch citation counts in parallel at build. Failures are silent (lib
 // returns empty groups). Counts surface as a small meta-line item; zero
 // is rendered silently.
-// Drafts (only visible in dev) have no published URL, so the webmention
-// lookup would always return empty — skip the round-trip.
 const citationCounts = await Promise.all(
   studies.map((s: CollectionEntry<'studies'>) =>
-    s.data.draft
-      ? Promise.resolve(0)
-      : getWebmentions(`${SITE_URL}/studies/${s.id}`).then((g) => g.citations.length),
+    getWebmentions(`${SITE_URL}/studies/${s.id}`).then((g) => g.citations.length),
   ),
 );
 
@@ -38,7 +31,6 @@ const studyRows = studies.map((s: CollectionEntry<'studies'>, i: number) => ({
 <Base
   title={t.studies.indexHeading}
   description="Design decisions and post-mortems from Hypertext Studio."
-  sourcePath="src/pages/studies/index.astro"
 >
   <article class="studies-layout">
     <header class="studies-header">

@@ -7,9 +7,16 @@
  */
 
 import { verifyIndieAuth } from '../shared/auth';
+import {
+  BodyTooLargeError,
+  escapeMarkdownInput,
+  fetchWithTimeout,
+  readLimitedBody,
+} from '../shared/http';
 import type { MicropubBindings } from '../shared/types';
 
 const SITE_URL = 'https://hypertext.studio';
+const MAX_BODY_BYTES = 64 * 1024;
 
 export default {
   async fetch(req: Request, env: MicropubBindings): Promise<Response> {
@@ -58,30 +65,46 @@ async function create(req: Request, env: MicropubBindings): Promise<Response> {
   if (!ok) return json({ error: 'forbidden' }, 403);
 
   const ct = req.headers.get('Content-Type') ?? '';
+  const isJson = ct.includes('application/json');
+  const isForm = ct.includes('application/x-www-form-urlencoded');
+  if (!isJson && !isForm) {
+    return json({ error: 'unsupported_media_type' }, 415);
+  }
+
+  let rawBody: string;
+  try {
+    rawBody = await readLimitedBody(req, MAX_BODY_BYTES);
+  } catch (error) {
+    if (error instanceof BodyTooLargeError) return json({ error: 'request_too_large' }, 413);
+    return json({ error: 'invalid_request' }, 400);
+  }
+
   let h = '',
     content = '',
     categories: string[] = [],
     slug = '';
-  if (ct.includes('application/json')) {
-    const body = (await req.json()) as {
-      type?: string[];
-      properties?: Record<string, string[]>;
-    };
+  if (isJson) {
+    let body: { type?: string[]; properties?: Record<string, string[]> };
+    try {
+      body = JSON.parse(rawBody) as typeof body;
+    } catch {
+      return json({ error: 'invalid_request' }, 400);
+    }
     h = (body.type ?? [])[0]?.replace(/^h-/, '') ?? 'entry';
     content = body.properties?.content?.[0] ?? '';
     categories = body.properties?.category ?? [];
     slug = body.properties?.['mp-slug']?.[0] ?? '';
   } else {
-    const form = await req.formData();
-    h = String(form.get('h') ?? 'entry');
-    content = String(form.get('content') ?? '');
+    const form = new URLSearchParams(rawBody);
+    h = form.get('h') ?? 'entry';
+    content = form.get('content') ?? '';
     const cat = form.get('category[]') ?? form.get('category');
     categories = cat
       ? String(cat)
           .split(',')
           .map((s) => s.trim())
       : [];
-    slug = String(form.get('mp-slug') ?? '');
+    slug = form.get('mp-slug') ?? '';
   }
 
   if (h !== 'entry' || !content.trim()) {
@@ -101,10 +124,15 @@ async function create(req: Request, env: MicropubBindings): Promise<Response> {
   };
   const body = `---\n${Object.entries(frontmatter)
     .map(([k, v]) => `${k}: ${typeof v === 'string' ? `"${v}"` : JSON.stringify(v)}`)
-    .join('\n')}\n---\n\n${content}\n`;
+    .join('\n')}\n---\n\n${escapeMarkdownInput(content)}\n`;
 
-  const path = `${env.NOTES_PATH}/${finalSlug}.mdx`;
-  const sha = await commitFile(env, path, body, `chore: micropub note ${finalSlug}`);
+  const path = `${env.NOTES_PATH}/${finalSlug}.md`;
+  let sha: string;
+  try {
+    sha = await commitFile(env, path, body, `chore: micropub note ${finalSlug}`);
+  } catch {
+    return json({ error: 'upstream_failure' }, 502);
+  }
 
   return new Response(null, {
     status: 202,
@@ -122,21 +150,25 @@ async function commitFile(
   message: string,
 ): Promise<string> {
   const api = `https://api.github.com/repos/${env.GITHUB_REPO}/contents/${path}`;
-  const res = await fetch(api, {
-    method: 'PUT',
-    headers: {
-      Authorization: `Bearer ${env.GITHUB_TOKEN}`,
-      'User-Agent': 'hypertext-studio-micropub',
-      Accept: 'application/vnd.github+json',
+  const res = await fetchWithTimeout(
+    api,
+    {
+      method: 'PUT',
+      headers: {
+        Authorization: `Bearer ${env.GITHUB_TOKEN}`,
+        'User-Agent': 'hypertext-studio-micropub',
+        Accept: 'application/vnd.github+json',
+      },
+      body: JSON.stringify({
+        message,
+        content: btoa(unescape(encodeURIComponent(body))),
+        branch: env.DEFAULT_BRANCH,
+      }),
     },
-    body: JSON.stringify({
-      message,
-      content: btoa(unescape(encodeURIComponent(body))),
-      branch: env.DEFAULT_BRANCH,
-    }),
-  });
+    10_000,
+  );
   if (!res.ok) {
-    throw new Error(`github contents api failed: ${res.status} ${await res.text()}`);
+    throw new Error(`github contents api failed: ${res.status}`);
   }
   const data = (await res.json()) as { commit?: { sha?: string } };
   return data.commit?.sha ?? '';

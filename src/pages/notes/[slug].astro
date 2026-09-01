@@ -41,7 +41,6 @@ const seoTitle = snippet || `${t.indieweb.post.noteLabel} · ${isoDate(data.publ
   description={snippet || `A note from ${SITE_NAME}.`}
   ogType="article"
   canonical={canonical}
-  sourcePath={`src/content/notes/${note.id}.${note.filePath?.split('.').pop() ?? 'mdx'}`}
 >
   <article class="note h-entry" lang="en">
     {

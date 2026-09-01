@@ -1,3 +1,5 @@
+import { blueskyProfileUrl } from '@/lib/social';
+
 export const SITE_URL = 'https://hypertext.studio';
 export const SITE_NAME = 'Hypertext Studio';
 export const SITE_LOCALE = 'en';
@@ -19,8 +21,10 @@ export const SOCIAL = {
   githubRepo: 'https://github.com/TheHypertextStudio/website',
   bluesky: blueskyProfileUrl(import.meta.env.BLUESKY_HANDLE),
   fediverse: 'https://fed.brid.gy/r/https://hypertext.studio/',
-  twitter: 'https://twitter.com/hypertextstudio',
 } as const;
 
-export const PRODUCT_DOMAINS = ['logdate.app', 'curfew.app', 'termsly.com'] as const;
-import { blueskyProfileUrl } from '@/lib/social';
+export const PRODUCT_DOMAINS = [
+  'docket.hypertext.studio',
+  'logdate.app',
+  'curfew.hypertext.studio',
+] as const;

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Production build pipeline: stamp build identity, build site, count words,
-# (re)generate OG image and icons if missing.
+# Production build pipeline. This script is the single build owner used by
+# package scripts, Make, CI, previews, and break-glass deployments.
 
 set -euo pipefail
 
@@ -10,23 +10,18 @@ cd "$REPO_ROOT"
 # shellcheck source=lib/log.sh
 source "$REPO_ROOT/scripts/lib/log.sh"
 
-log::step "stamping build identity"
-bash scripts/content-id.sh
+log::step "generating optional public identity"
+node scripts/public-metadata.mjs
 
 if [[ ! -f public/favicon.svg ]]; then
   log::step "generating favicons"
   bash scripts/icons.sh
 fi
 
-if [[ ! -f public/og.png ]]; then
-  log::step "generating default OG image"
-  bash scripts/og.sh
-fi
+log::step "generating default OG image"
+bash scripts/og.sh
 
 log::step "astro build"
-pnpm run build
-
-log::step "counting words"
-bash scripts/words.sh
+pnpm exec astro build
 
 log::ok "build complete"

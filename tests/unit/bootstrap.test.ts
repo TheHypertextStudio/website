@@ -39,8 +39,10 @@ async function makeCheckout({
 
   await mkdir(join(root, 'scripts/lib'), { recursive: true });
   await mkdir(join(root, 'workers/shared'), { recursive: true });
+  await mkdir(join(root, 'migrations'), { recursive: true });
   await mkdir(join(root, 'fake-bin'), { recursive: true });
   await cp('scripts/bootstrap.sh', join(root, 'scripts/bootstrap.sh'));
+  await cp('scripts/migrate-d1.sh', join(root, 'scripts/migrate-d1.sh'));
   await cp('scripts/lib/log.sh', join(root, 'scripts/lib/log.sh'));
   await writeFile(
     join(root, 'package.json'),
@@ -66,10 +68,7 @@ async function makeCheckout({
       '',
     ].join('\n'),
   );
-  await writeFile(
-    join(root, 'workers/shared/d1-schema.sql'),
-    'CREATE TABLE IF NOT EXISTS notes (id TEXT);\n',
-  );
+  await writeFile(join(root, 'migrations/0001_create_webmentions.sql'), 'SELECT 1;\n');
   await writeFile(
     join(root, 'wrangler.toml'),
     [
@@ -113,6 +112,7 @@ async function makeCheckout({
       '#!/usr/bin/env bash',
       'if [[ "${1:-}" == "--version" ]]; then printf "10.33.3\\n"; exit 0; fi',
       'if [[ "${1:-}" == "exec" && "${2:-}" == "astro" ]]; then printf "astro 7.2.7\\n"; exit 0; fi',
+      'if [[ "${1:-}" == "exec" && "${2:-}" == "wrangler" ]]; then shift 2; exec wrangler "$@"; fi',
       'exit 0',
       '',
     ].join('\n'),
@@ -127,7 +127,7 @@ async function makeCheckout({
       '  "auth activate hypertext-studio "*) ;;',
       '  "whoami --json") printf \'%s\\n\' \'{"loggedIn":true,"accounts":[{"id":"account-123","name":"Hypertext Studio"}]}\' ;;',
       '  "d1 list --json --profile hypertext-studio") printf \'%s\\n\' \'[{"uuid":"d1-456","name":"example-database"}]\' ;;',
-      `  "d1 execute example-database --remote --command PRAGMA table_info(webmentions) --json --yes --profile hypertext-studio") printf '%s\\n' '${JSON.stringify(
+      `  "d1 execute example-database --env webmention --remote --command PRAGMA table_info(webmentions) --json --yes --profile hypertext-studio") printf '%s\\n' '${JSON.stringify(
         [
           {
             results: mentionTypePresent
@@ -216,7 +216,7 @@ describe('bootstrap', () => {
       'wrangler pages project create example-pages --production-branch main --profile hypertext-studio',
     );
     expect(calls).toContain(
-      'wrangler d1 execute example-database --remote --file workers/shared/d1-schema.sql --yes --profile hypertext-studio',
+      'wrangler d1 migrations apply example-database --env webmention --remote --profile hypertext-studio',
     );
     expect(calls).toContain('/pages/projects/example-pages/domains');
     expect(calls).toContain('example.test');
@@ -294,10 +294,10 @@ describe('bootstrap', () => {
 
     const calls = await readFile(callLog, 'utf8');
     expect(calls).toContain(
-      "wrangler d1 execute example-database --remote --command ALTER TABLE webmentions ADD COLUMN mention_type TEXT NOT NULL DEFAULT 'mention' --yes --profile hypertext-studio",
+      "wrangler d1 execute example-database --env webmention --remote --command ALTER TABLE webmentions ADD COLUMN mention_type TEXT NOT NULL DEFAULT 'mention' --yes --profile hypertext-studio",
     );
     expect(calls.indexOf('ALTER TABLE webmentions')).toBeLessThan(
-      calls.indexOf('--file workers/shared/d1-schema.sql'),
+      calls.indexOf('d1 migrations apply example-database'),
     );
   });
 

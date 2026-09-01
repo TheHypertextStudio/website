@@ -16,22 +16,22 @@ mkdir -p .hypertext
 cat > .hypertext/og.svg <<'SVG'
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
-  <rect width="1200" height="630" fill="#F5F1E8" />
+  <rect width="1200" height="630" fill="#FBFBFA" />
   <text x="80" y="180"
         font-family="Inter, system-ui, sans-serif"
         font-size="120" font-weight="700" letter-spacing="-3"
-        fill="#1A1814">Hypertext</text>
+        fill="#25231F">Hypertext</text>
   <text x="80" y="320"
         font-family="Inter, system-ui, sans-serif"
         font-size="120" font-weight="700" letter-spacing="-3"
-        fill="#1A1814">Studio</text>
+        fill="#25231F">Studio</text>
   <text x="80" y="540"
         font-family="Source Serif 4, serif"
         font-style="italic" font-size="36"
-        fill="#6B6358">design lab building sustainable, human-centered software</text>
+        fill="#6E6A63">builds software for humans</text>
   <text x="80" y="595"
         font-family="IBM Plex Mono, monospace"
-        font-size="22" fill="#6B6358" letter-spacing="0.5">hypertext.studio</text>
+        font-size="22" fill="#6E6A63" letter-spacing="0.5">hypertext.studio</text>
 </svg>
 SVG
 

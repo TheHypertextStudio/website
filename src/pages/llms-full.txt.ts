@@ -1,11 +1,11 @@
 import type { APIRoute } from 'astro';
-import { getCollection } from 'astro:content';
 import t from '@/i18n';
 import productsData from '@/data/products.json';
 import { SITE_URL, SITE_NAME } from '@/consts';
+import { getPublishedStudies } from '@/lib/published-content';
 
 export const GET: APIRoute = async () => {
-  const studies = await getCollection('studies').catch(() => []);
+  const studies = await getPublishedStudies().catch(() => []);
 
   const lines: string[] = [
     `# ${SITE_NAME}`,
@@ -15,10 +15,6 @@ export const GET: APIRoute = async () => {
     `Canonical: ${SITE_URL}`,
     '',
     '---',
-    '',
-    '## Thesis',
-    '',
-    t.thesis.body,
     '',
     '## Products',
     '',

@@ -5,6 +5,7 @@ import mdx from '@astrojs/mdx';
 import remarkGfm from 'remark-gfm';
 import rehypeSlug from 'rehype-slug';
 import rehypeAutolinkHeadings from 'rehype-autolink-headings';
+import { unified } from '@astrojs/markdown-remark';
 
 export default defineConfig({
   site: 'https://hypertext.studio',
@@ -21,15 +22,18 @@ export default defineConfig({
   devToolbar: {
     enabled: false,
   },
+  markdown: {
+    processor: unified({
+      remarkPlugins: [remarkGfm],
+      rehypePlugins: [rehypeSlug, [rehypeAutolinkHeadings, { behavior: 'wrap' }]],
+    }),
+  },
   integrations: [
     // GFM (tables, footnotes, strikethrough, autolinks) + heading IDs +
     // self-linked headings give studies the distill.pub-shaped affordances
     // (footnotes at the foot, deep-link to any section) without per-MDX
     // boilerplate. See docs/content.md and docs/mission.md §10.
-    mdx({
-      remarkPlugins: [remarkGfm],
-      rehypePlugins: [rehypeSlug, [rehypeAutolinkHeadings, { behavior: 'wrap' }]],
-    }),
+    mdx(),
     sitemap({
       filter: (page) => !page.includes('/404'),
       changefreq: 'monthly',

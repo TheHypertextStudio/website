@@ -1,6 +1,6 @@
 import type { Page } from '@playwright/test';
 
-/** Use Meta on macOS/webkit, Control elsewhere — match the keymap in src/scripts/keyboard.ts */
+/** Use Meta on macOS/WebKit and Control elsewhere for platform-native shortcuts. */
 export const PALETTE_KEY = process.platform === 'darwin' ? 'Meta+k' : 'Control+k';
 
 /**

@@ -37,7 +37,6 @@ Optional identities will have one configuration boundary:
 
 - `BLUESKY_HANDLE` controls public Bluesky profile and syndication links.
 - `BLUESKY_DID` controls creation of `/.well-known/atproto-did`. No configured DID means no generated file.
-- `TWITTER_HANDLE` controls Twitter card account metadata. No configured handle means those tags and JSON-LD identity entries are absent.
 
 Build-time generators will own optional files so stale files cannot survive from `public/`. Static metadata will be reconciled with the actual product list, current tagline, Astro version, theme colors, organization facts, and current technology. The favicon will have valid file contents for its declared type, canonical `hreflang` URLs will use the current page, and the web manifest and Open Graph images will use the current design tokens.
 
@@ -72,7 +71,7 @@ The existing asynchronous response model remains, but all temporary rows receive
 
 ### Worker Runtime
 
-Wrangler environments remain the source of Worker names, routes, and bindings. Compatibility dates will be current and observability enabled. Generated Worker types will replace handwritten binding declarations where Wrangler supports them. Unit tests will continue to cover pure logic, while a workerd-backed Vitest layer will prove bindings, routing, limits, and response behavior in the actual Workers runtime.
+Wrangler environments remain the source of Worker names, routes, and bindings. The compatibility date will be the newest date supported by the pinned workerd runtime, and observability will be enabled. Generated Worker types will replace handwritten binding declarations where Wrangler supports them. Unit tests will continue to cover pure logic, while a workerd-backed Vitest layer will prove bindings, routing, limits, and response behavior in the actual Workers runtime.
 
 ## Database Migrations
 

@@ -1,43 +1,16 @@
 version: 2
 updates:
   - package-ecosystem: npm
-    directory: '/'
+    directory: /
     schedule:
       interval: weekly
-      day: monday
-    open-pull-requests-limit: 5
     groups:
-      astro:
-        patterns:
-          - 'astro'
-          - '@astrojs/*'
-        update-types:
-          - 'minor'
-          - 'patch'
-      dev-tooling:
-        patterns:
-          - 'eslint*'
-          - 'prettier*'
-          - '@playwright/*'
-          - 'axe-playwright'
-          - 'vitest'
-          - 'lint-staged'
-        update-types:
-          - 'minor'
-          - 'patch'
-      types:
-        patterns:
-          - '@types/*'
-    ignore:
-      - dependency-name: 'astro'
-        update-types: ['version-update:semver-major']
+      production-dependencies:
+        dependency-type: production
+      development-dependencies:
+        dependency-type: development
 
   - package-ecosystem: github-actions
-    directory: '/'
+    directory: /
     schedule:
       interval: weekly
-      day: monday
-    groups:
-      actions:
-        patterns:
-          - '*'

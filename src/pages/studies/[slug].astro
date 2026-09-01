@@ -1,5 +1,5 @@
 ---
-import { getCollection, render } from 'astro:content';
+import { render } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
 import Base from '@/layouts/Base.astro';
 import Citations from '@/components/Citations.astro';
@@ -8,15 +8,14 @@ import { getWebmentions } from '@/lib/webmentions';
 import { isoDate } from '@/i18n/format';
 import { SITE_URL, SITE_NAME } from '@/consts';
 import t from '@/i18n';
+import { getPublishedStudies } from '@/lib/published-content';
 
 export async function getStaticPaths() {
-  const studies = await getCollection('studies');
-  return studies
-    .filter((s: CollectionEntry<'studies'>) => !s.data.draft || import.meta.env.DEV)
-    .map((study: CollectionEntry<'studies'>) => ({
-      params: { slug: study.id },
-      props: { study },
-    }));
+  const studies = await getPublishedStudies();
+  return studies.map((study: CollectionEntry<'studies'>) => ({
+    params: { slug: study.id },
+    props: { study },
+  }));
 }
 
 interface Props {
@@ -32,13 +31,7 @@ const mentions = await getWebmentions(canonical);
 const citationsCount = mentions.citations.length;
 ---
 
-<Base
-  title={data.title}
-  description={data.summary}
-  ogType="article"
-  canonical={canonical}
-  sourcePath={`src/content/studies/${study.id}.${study.filePath?.split('.').pop() ?? 'mdx'}`}
->
+<Base title={data.title} description={data.summary} ogType="article" canonical={canonical}>
   <div class="study-page">
     <article class="study h-entry" lang="en">
       {

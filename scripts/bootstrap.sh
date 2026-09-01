@@ -149,20 +149,6 @@ json_account_id() {
   ' "$configured_id" "$preferred_name"
 }
 
-json_has_d1_column() {
-  local wanted="$1"
-  node -e '
-    let input = "";
-    process.stdin.setEncoding("utf8");
-    process.stdin.on("data", (chunk) => (input += chunk));
-    process.stdin.on("end", () => {
-      const payload = JSON.parse(input || "[]");
-      const rows = payload.flatMap((result) => result.results || []);
-      process.exit(rows.some((row) => row.name === process.argv[1]) ? 0 : 1);
-    });
-  ' "$wanted"
-}
-
 write_wrangler_ids() {
   local account_id="$1" database_id="$2"
   node -e '
@@ -356,11 +342,11 @@ check_prereqs() {
 
   # Optional CLIs — soft-fail; print install hints.
   if command -v wrangler >/dev/null 2>&1; then
-    log::ok "wrangler $(wrangler --version 2>/dev/null | head -n1)"
-    record "wrangler:           $(wrangler --version 2>/dev/null | head -n1)"
+    log::ok "global Wrangler available (bootstrap uses the repository-pinned version)"
+    record "wrangler:           repository-pinned via pnpm"
   else
-    log::skip "wrangler not installed (will use 'pnpm dlx wrangler')"
-    record "wrangler:           (using pnpm dlx)"
+    log::ok "Wrangler will run from the repository dependency"
+    record "wrangler:           repository-pinned via pnpm"
   fi
   if command -v gh >/dev/null 2>&1; then
     log::ok "gh $(gh --version | head -n1 | awk '{print $3}')"
@@ -440,8 +426,7 @@ setup_cloudflare() {
     return
   fi
 
-  local wrangler_cmd="wrangler"
-  command -v wrangler >/dev/null 2>&1 || wrangler_cmd="pnpm dlx wrangler"
+  local wrangler_cmd="pnpm exec wrangler"
 
   if ! $wrangler_cmd auth activate "$CLOUDFLARE_PROFILE" "$REPO_ROOT" >/dev/null 2>&1; then
     log::info "creating Wrangler auth profile '$CLOUDFLARE_PROFILE' (a browser window will open)"
@@ -485,22 +470,9 @@ setup_cloudflare() {
   write_wrangler_ids "$CF_ACCOUNT_ID" "$d1_id"
   log::ok "D1 '$CLOUDFLARE_D1_DATABASE' configured ($d1_id)"
 
-  local webmentions_schema
-  webmentions_schema="$($wrangler_cmd d1 execute "$CLOUDFLARE_D1_DATABASE" \
-    --remote --command "PRAGMA table_info(webmentions)" --json --yes \
-    --profile "$CLOUDFLARE_PROFILE")"
-  if printf '%s' "$webmentions_schema" | json_has_d1_column id &&
-    ! printf '%s' "$webmentions_schema" | json_has_d1_column mention_type; then
-    $wrangler_cmd d1 execute "$CLOUDFLARE_D1_DATABASE" \
-      --remote \
-      --command "ALTER TABLE webmentions ADD COLUMN mention_type TEXT NOT NULL DEFAULT 'mention'" \
-      --yes --profile "$CLOUDFLARE_PROFILE"
-    log::ok "D1 webmentions schema upgraded"
-  fi
-
-  $wrangler_cmd d1 execute "$CLOUDFLARE_D1_DATABASE" \
-    --remote --file workers/shared/d1-schema.sql --yes --profile "$CLOUDFLARE_PROFILE"
-  log::ok "D1 schema applied"
+  bash "$REPO_ROOT/scripts/migrate-d1.sh" \
+    remote "$CLOUDFLARE_D1_DATABASE" --profile "$CLOUDFLARE_PROFILE"
+  log::ok "D1 migrations applied"
 
   local pages_json
   pages_json="$($wrangler_cmd pages project list --json --profile "$CLOUDFLARE_PROFILE")"

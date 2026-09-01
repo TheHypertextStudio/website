@@ -77,11 +77,10 @@ const studies = defineCollection({
     publishedAt: z.coerce.date(),
     modifiedAt: z.coerce.date().optional(),
     author: z.string().default('Hypertext Studio'),
-    product: z.enum(['logdate', 'curfew', 'termsly']).optional(),
+    product: z.enum(['docket', 'logdate', 'curfew', 'termsly']).optional(),
     heroImage: z.string().optional(),
     tags: z.array(z.string()).default([]),
-    draft: z.boolean().default(false),
-    wordCount: z.number().optional(),
+    draft: z.boolean().default(true),
     timeRequired: z.string().optional(),
     // POSSE: canonical lives here; copies elsewhere are listed in the colophon.
     syndicatedTo: z.array(z.url()).default([]),

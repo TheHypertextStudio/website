@@ -5,10 +5,11 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
+  workflow_dispatch:
 
 concurrency:
-  group: ci-${{ github.ref }}
-  cancel-in-progress: true
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 permissions:
   contents: read
@@ -16,56 +17,89 @@ permissions:
 jobs:
   quality:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-node@v7
-        with:
-          node-version-file: .nvmrc
-      - run: corepack enable
-      - name: Install
-        run: pnpm install --frozen-lockfile
-      - name: Format check
-        run: pnpm run format:check
-      - name: Lint
-        run: pnpm run lint
-      - name: Typecheck
-        run: pnpm run typecheck
-      - name: Workers typecheck
-        run: pnpm run typecheck:workers
-      - name: Build
-        run: pnpm run build
-      - name: Upload dist
-        uses: actions/upload-artifact@v7
-        with:
-          name: dist
-          path: dist/
-          retention-days: 3
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: ./.github/actions/setup
+      - name: Format, lint, and typecheck
+        run: |
+          pnpm run format:check
+          pnpm run lint
+          pnpm run typecheck
+          pnpm run typecheck:workers
 
   test:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-node@v7
-        with:
-          node-version-file: .nvmrc
-      - run: corepack enable
-      - run: pnpm install --frozen-lockfile
-      - name: Vitest
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: ./.github/actions/setup
+      - name: Unit tests
         run: pnpm run test
+      - name: Workers runtime tests
+        run: pnpm run test:workers
 
   browser:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-node@v7
-        with:
-          node-version-file: .nvmrc
-      - run: corepack enable
-      - run: pnpm install --frozen-lockfile
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: ./.github/actions/setup
       - name: Install Playwright browsers
         run: pnpm exec playwright install --with-deps
       - name: Browser, responsive, and accessibility tests
         run: pnpm run test:e2e:all
+
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      BLUESKY_HANDLE: ${{ vars.BLUESKY_HANDLE }}
+      BLUESKY_DID: ${{ vars.BLUESKY_DID }}
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: ./.github/actions/setup
+      - name: Build the production artifact
+        run: pnpm run build
+        env:
+          GITHUB_SHA: ${{ github.sha }}
+      - name: Upload the immutable site artifact
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: site-${{ github.sha }}
+          path: dist/
+          if-no-files-found: error
+          retention-days: 7
+
+  production:
+    if: >-
+      github.ref == 'refs/heads/main' &&
+      (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+    needs: [quality, test, browser, build]
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment:
+      name: production
+      url: https://hypertext.studio
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: ./.github/actions/setup
+      - name: Download the verified site artifact
+        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5
+        with:
+          name: site-${{ github.sha }}
+          path: dist/
+      - name: Apply remote D1 migrations
+        run: bash scripts/migrate-d1.sh remote hypertext-studio
+      - name: Deploy all Workers
+        run: |
+          for worker in www poem webmention micropub oembed; do
+            pnpm exec wrangler deploy --env "$worker"
+          done
+      - name: Deploy the verified Pages artifact
+        run: pnpm exec wrangler pages deploy dist --project-name=hypertext-studio --branch=main
+      - name: Smoke-test production
+        run: bash scripts/smoke.sh

@@ -1,14 +1,12 @@
 import { expect, test } from '@playwright/test';
 import { PAGES } from '../fixtures/site';
 
-const STUDY_PAGES = [
-  { path: '/studies/curfew-the-locked-delay', title: 'The locked delay' },
-  { path: '/studies/logdate-voice-without-transcription', title: 'Voice without transcription' },
-  { path: '/studies/termsly-diffing-the-eula', title: 'Diffing the EULA' },
-  {
-    path: '/studies/three-products-one-privacy-stance',
-    title: 'Three products, one privacy stance',
-  },
+const PUBLISHED_STUDY = { path: '/studies/curfew-launch', title: 'Curfew, the launch study' };
+const DRAFT_STUDIES = [
+  '/studies/curfew-the-locked-delay',
+  '/studies/logdate-voice-without-transcription',
+  '/studies/termsly-diffing-the-eula',
+  '/studies/three-products-one-privacy-stance',
 ] as const;
 
 test.describe('Every page', () => {
@@ -91,13 +89,17 @@ test.describe('Every page', () => {
     );
   });
 
-  for (const study of STUDY_PAGES) {
-    test(`${study.path} renders its study instead of the development error page`, async ({
-      page,
-    }) => {
-      const response = await page.goto(study.path);
-      expect(response?.status()).toBe(200);
-      await expect(page.getByRole('heading', { level: 1, name: study.title })).toBeVisible();
+  test('an explicitly published study renders', async ({ page }) => {
+    const response = await page.goto(PUBLISHED_STUDY.path);
+    expect(response?.status()).toBe(200);
+    await expect(
+      page.getByRole('heading', { level: 1, name: PUBLISHED_STUDY.title }),
+    ).toBeVisible();
+  });
+
+  for (const path of DRAFT_STUDIES) {
+    test(`${path} remains unpublished`, async ({ page }) => {
+      expect((await page.goto(path))?.status()).toBe(404);
     });
   }
 });

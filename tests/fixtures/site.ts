@@ -40,7 +40,6 @@ export const STATIC_FILES = [
   { path: '/llms.txt', contentType: /text\/(plain|markdown)/ },
   { path: '/site.webmanifest', contentType: /^application\/manifest\+json/ },
   { path: '/.well-known/security.txt', contentType: /text\/plain/ },
-  { path: '/.well-known/atproto-did', contentType: /text\/plain/ },
   {
     path: '/.well-known/webfinger',
     contentType: /(application\/jrd\+json|application\/json|text\/plain)/,

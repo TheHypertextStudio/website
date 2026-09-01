@@ -30,7 +30,7 @@ export default {
 
     // Fetch and extract title + description from the actual page so we get
     // per-page payloads without maintaining a separate index.
-    let title = env.SITE_NAME;
+    let title: string = env.SITE_NAME;
     let description = '';
     try {
       const res = await fetch(parsed.toString(), {

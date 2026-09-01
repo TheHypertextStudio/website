@@ -2,11 +2,11 @@
 # Each worker has its own [env.<name>] block; the top level is intentionally
 # minimal so `wrangler dev <env>` and `wrangler deploy <env>` are unambiguous.
 #
-# Apply schema once with: wrangler d1 execute hypertext-studio --file workers/shared/d1-schema.sql
+# Apply schema with: wrangler d1 migrations apply hypertext-studio --env webmention --remote
 
 name = "hypertext-studio"
 account_id = "2500680a3b2b0fe6a011c1c25fed5008"
-compatibility_date = "2026-01-15"
+compatibility_date = "2026-08-22"
 compatibility_flags = ["nodejs_compat"]
 
 # Default placeholder so plain `wrangler dev` errors clearly.
@@ -23,6 +23,9 @@ routes = [
   { pattern = "www.hypertext.studio/*", zone_name = "hypertext.studio" }
 ]
 
+[env.www.observability]
+enabled = true
+
 # ----------------------------------------------------------------------------
 # poem — DNS TXT lookup for the footer's rotating quotation.
 # Route:    GET https://hypertext.studio/api/poem
@@ -34,6 +37,9 @@ main = "workers/poem/index.ts"
 routes = [
   { pattern = "hypertext.studio/api/poem*", zone_name = "hypertext.studio" }
 ]
+
+[env.poem.observability]
+enabled = true
 
 # ----------------------------------------------------------------------------
 # webmention — receive endpoint per W3C Webmention spec.
@@ -52,6 +58,10 @@ routes = [
 binding = "DB"
 database_name = "hypertext-studio"
 database_id = "b1ea6c3b-1315-4bbc-ac9b-5751c4253883"
+migrations_dir = "migrations"
+
+[env.webmention.observability]
+enabled = true
 
 # ----------------------------------------------------------------------------
 # micropub — IndieAuth-protected publishing endpoint.
@@ -75,6 +85,9 @@ NOTES_PATH = "src/content/notes"
 DEFAULT_BRANCH = "main"
 INDIEAUTH_ENDPOINT = "https://tokens.indieauth.com/token"
 
+[env.micropub.observability]
+enabled = true
+
 # ----------------------------------------------------------------------------
 # oembed — return rich JSON payload for embed-aware platforms.
 # Route:    GET https://hypertext.studio/oembed?url=...
@@ -90,3 +103,6 @@ routes = [
 [env.oembed.vars]
 SITE_URL = "https://hypertext.studio"
 SITE_NAME = "Hypertext Studio"
+
+[env.oembed.observability]
+enabled = true
