@@ -20,7 +20,7 @@ jobs:
     timeout-minutes: 15
     steps:
       - id: checkout
-        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - id: setup
         uses: ./.github/actions/setup
       - name: Check formatting
@@ -55,7 +55,7 @@ jobs:
     timeout-minutes: 15
     steps:
       - id: checkout
-        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - id: setup
         uses: ./.github/actions/setup
       - name: Unit tests
@@ -81,7 +81,7 @@ jobs:
       PLAYWRIGHT_FLAKE_BUDGET: 0
     steps:
       - id: checkout
-        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - id: setup
         uses: ./.github/actions/setup
       - name: Install Playwright browsers
@@ -121,7 +121,7 @@ jobs:
       BLUESKY_DID: ${{ vars.BLUESKY_DID }}
     steps:
       - id: checkout
-        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - id: setup
         uses: ./.github/actions/setup
       - name: Build the production artifact
@@ -161,7 +161,7 @@ jobs:
       PLAYWRIGHT_FLAKE_BUDGET: 0
     steps:
       - id: checkout
-        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - id: setup
         uses: ./.github/actions/setup
       - name: Download the immutable site artifact
@@ -212,7 +212,7 @@ jobs:
       CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
     steps:
       - id: checkout
-        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - id: setup
         uses: ./.github/actions/setup
       - name: Download the verified site artifact
@@ -273,7 +273,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: Publish workflow receipt
         env:
           ARTIFACT_DIGEST: ${{ needs.build.outputs.artifact-digest }}
