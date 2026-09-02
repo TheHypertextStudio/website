@@ -117,6 +117,47 @@ test('publishes canonical discovery and well-known metadata', async ({ request }
   expect(await hostMeta.text()).toContain('rel="lrdd"');
 });
 
+// Google Play Services fetches this file directly from the phone before it
+// lets the Docket Android app use a hypertext.studio passkey. On 2026-09-01 it
+// rejected the association while the file still sent Cross-Origin-Resource-Policy
+// and declared only the login-credential relation. These are the served bytes
+// and headers it accepted afterwards.
+test('serves the Docket asset links the way Play Services fetches them', async ({ request }) => {
+  const response = await request.get('/.well-known/assetlinks.json', {
+    headers: {
+      'User-Agent':
+        'com.google.android.gms/263360035 (Linux; U; Android 17; en_US; Pixel 8 Pro; Build/CP41.260814.003.B1; Cronet/151.0.7922.83)',
+    },
+  });
+  expect(response.status()).toBe(200);
+
+  const headers = response.headers();
+  expect(headers['content-type']).toMatch(/^application\/json/);
+  expect(headers['access-control-allow-origin']).toBe('*');
+  expect(headers['cross-origin-resource-policy']).toBeUndefined();
+  expect(headers['cache-control']).toContain('max-age=3600');
+
+  const statements = (await response.json()) as Array<{
+    relation: string[];
+    target: { namespace: string; package_name?: string; sha256_cert_fingerprints?: string[] };
+  }>;
+  const docket = statements.find(
+    (statement) =>
+      statement.target.namespace === 'android_app' &&
+      statement.target.package_name === 'studio.hypertext.docket',
+  );
+  expect(docket, 'a statement for studio.hypertext.docket').toBeDefined();
+  expect(docket!.relation).toEqual(
+    expect.arrayContaining([
+      'delegate_permission/common.get_login_creds',
+      'delegate_permission/common.handle_all_urls',
+    ]),
+  );
+  expect(docket!.target.sha256_cert_fingerprints).toContain(
+    'DF:32:69:D4:DC:C9:C4:FE:72:FE:61:62:A0:F4:E9:EE:5F:04:14:47:DC:B3:8E:F6:A9:25:76:FC:38:90:DB:C7',
+  );
+});
+
 test('preserves the not-found contract in the built artifact', async ({ request }) => {
   const response = await request.get('/this-route-must-not-exist');
   expect(response.status()).toBe(404);
