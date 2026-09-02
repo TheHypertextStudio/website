@@ -57,7 +57,7 @@ const productArtMarkup = Object.fromEntries(
   <HCard />
   <div class="home">
     <header class="home-hero">
-      <h1>Hypertext Studio builds software for humans.</h1>
+      <h1><span class="home-hero__mark">Hypertext Studio</span> builds software for humans.</h1>
     </header>
 
     <section class="products-grid" id="products" aria-labelledby="products-heading">
@@ -112,6 +112,13 @@ const productArtMarkup = Object.fromEntries(
     font-weight: 560;
     line-height: 0.96;
     letter-spacing: -0.065em;
+  }
+
+  /* Fragment targets clear the sticky bar. The global rule in motifs.css only
+   * covers headings; these two are a <section> and an <article>. */
+  .products-grid,
+  .product-card {
+    scroll-margin-block-start: calc(var(--header-block-size) + var(--space-md));
   }
 
   .products-grid {
@@ -302,6 +309,117 @@ const productArtMarkup = Object.fromEntries(
 
     .products-grid {
       grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<!-- The scroll handoff reaches into the header, so it can't live in a scoped
+  block. It ships only with this page, which is the scoping that matters: the
+  bar is bare at rest on the home page alone, because only here does the hero
+  already say the name. -->
+<style is:global>
+  /* At the top of the home page the bar carries no mark — the hero owns the
+   * name. As you scroll, the hero's "Hypertext Studio" fades out while the
+   * monospace tag fades in over the same line, then travels up and shrinks
+   * into the bar's resting slot.
+   *
+   * Offsets are derived from the same tokens that lay the two elements out,
+   * so the mark starts exactly on the hero's first line with no measurement:
+   *   dx  the hero's inline padding minus the header's
+   *   dy  half the bar + the hero's block padding + half the hero's line box
+   *       (line-height is 0.96, so the first line's centre sits 0.48em down)
+   *
+   * Guarded the way the footer's closing tag is: Firefox still has
+   * scroll-driven animations behind a flag, and those readers — along with
+   * anyone asking for reduced motion or running forced colours — get the mark
+   * resting in the bar from the start. Nothing is lost, only the motion. */
+  @supports (animation-timeline: scroll()) {
+    @media (prefers-reduced-motion: no-preference) and (forced-colors: none) {
+      /* Clipping the bar is what makes the arrival read. The mark rides up
+       * from the hero's line entirely behind the bar's bottom edge, so it is
+       * revealed as it enters rather than floating over the headline on its
+       * way. The clip also takes hit-testing with it, so the oversized mark
+       * never sits on top of the hero as an invisible target. */
+      .site-header {
+        overflow: hidden;
+      }
+
+      .site-wordmark {
+        --wordmark-dx: calc(clamp(1.25rem, 2.5vw, 2rem) - var(--layout-margin));
+        --wordmark-dy: calc(
+          var(--header-block-size) / 2 + clamp(4rem, 8vw, 6rem) + 0.48 * clamp(3rem, 7vw, 7.5rem)
+        );
+        --wordmark-hero-size: clamp(1.5rem, 4vw, 3.5rem);
+
+        position: absolute;
+        inset-block-start: 0;
+        inset-inline-start: var(--layout-margin);
+        block-size: var(--header-block-size);
+        display: inline-flex;
+        align-items: center;
+        animation: wordmark-handoff linear both;
+        animation-timeline: scroll(root block);
+        /* Short on purpose. The mark is parked by the time the hero's first
+         * line has gone under the bar — a handoff that is still in flight
+         * after the headline has left reads as a stray element, not a bar. */
+        animation-range: 0 18vh;
+      }
+
+      /* A keyboard reader who tabs in at the top would otherwise be sent to an
+       * invisible link parked over the hero. Dropping the animation returns
+       * the mark to its resting declarations — in the bar, opaque, clickable. */
+      .site-wordmark:focus-visible {
+        animation: none;
+      }
+
+      .home-hero__mark {
+        /* Fades as it slides under the bar, not before — a hole in the
+         * headline while the name is still on screen reads as a bug. */
+        animation: hero-mark-out linear both;
+        animation-timeline: scroll(root block);
+        animation-range: 3vh 11vh;
+      }
+    }
+  }
+
+  /* The mark rides the whole way up, shrinking as it goes, but only becomes
+   * visible over the last stretch — by 78% it has cleared the bar's bottom
+   * edge, so it is never seen sliced by the clip. The bar has no rule under
+   * it any more, so that cut has nothing to read as and would look like a
+   * rendering fault rather than a reveal.
+   *
+   * The two forms never share the screen: the hero's name is under the bar
+   * before the tag appears. A 560-weight sans and a monospace tag cannot
+   * register on one line, and cross-fading them reads as a smudge. */
+  @keyframes wordmark-handoff {
+    0% {
+      opacity: 0;
+      font-size: var(--wordmark-hero-size);
+      translate: var(--wordmark-dx) var(--wordmark-dy);
+    }
+
+    78% {
+      opacity: 0;
+    }
+
+    96% {
+      opacity: 1;
+    }
+
+    100% {
+      opacity: 1;
+      font-size: var(--wordmark-rest-size);
+      translate: 0 0;
+    }
+  }
+
+  @keyframes hero-mark-out {
+    from {
+      opacity: 1;
+    }
+
+    to {
+      opacity: 0;
     }
   }
 </style>

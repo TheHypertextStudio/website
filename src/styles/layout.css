@@ -53,6 +53,14 @@
   }
 }
 
+/* The custom element wrapping header/main/footer in Base.astro is unknown to
+ * the UA, so it defaults to display:inline. A sticky block child of an inline
+ * box has no well-defined containing block; making the wrapper a block gives
+ * the sticky header the full page as its range. */
+hypertext-studio {
+  display: block;
+}
+
 main {
   min-block-size: 70dvh;
 }

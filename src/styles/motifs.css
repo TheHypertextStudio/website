@@ -27,7 +27,9 @@ hr.section-delim::after {
 
 :is(h1, h2, h3, h4, h5, h6) {
   position: relative;
-  scroll-margin-block-start: var(--space-xl);
+  /* Clear the sticky app bar, plus a gutter, so a fragment jump never parks
+   * its target underneath the header. */
+  scroll-margin-block-start: calc(var(--header-block-size) + var(--space-md));
 }
 
 .anchor {

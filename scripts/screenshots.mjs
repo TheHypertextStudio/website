@@ -211,10 +211,20 @@ async function captureComponents(browser) {
   log('\n▸ component close-ups');
   const ctx = await browser.newContext({ viewport: { width: 1440, height: 900 } });
   const page = await ctx.newPage();
-  await page.goto(BASE + '/', { waitUntil: 'networkidle' });
-
+  // The home page's bar is deliberately bare at the top — the hero owns the
+  // studio name there — so the resting bar is captured from a page that has
+  // no hero, and the home page contributes its scrolled state instead.
+  await page.goto(BASE + '/about', { waitUntil: 'networkidle' });
   await captureLocator(page.locator('header.site-header'), 'components/header.png');
+
+  await page.goto(BASE + '/', { waitUntil: 'networkidle' });
   await captureLocator(page.locator('.home-hero'), 'components/hero.png');
+
+  await page.evaluate(() => window.scrollTo(0, 600));
+  await wait(200);
+  await captureLocator(page.locator('header.site-header'), 'components/header-scrolled.png');
+  await page.evaluate(() => window.scrollTo(0, 0));
+  await wait(200);
 
   for (const slug of PRODUCTS) {
     await captureLocator(
