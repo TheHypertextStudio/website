@@ -20,6 +20,11 @@
 
 <style>
   .site-header {
+    position: sticky;
+    inset-block-start: 0;
+    /* Above page content, below the skip link (999) and the studies sticky
+     * headings (2), which scroll underneath the bar. */
+    z-index: 10;
     max-inline-size: var(--layout-max);
     min-inline-size: 0;
     margin-inline: auto;
@@ -28,12 +33,56 @@
     align-items: center;
     justify-content: space-between;
     gap: 1.5rem;
-    border-block-end: 1px solid var(--color-rule);
+  }
+
+  /* The scrolled panel, painted as a pseudo-element behind the bar's own
+   * content so the blur never filters the text sitting on top of it. Its
+   * resting state is "on": engines without scroll-driven animations, and
+   * readers who ask for reduced motion, get a legible bar rather than
+   * transparent text over scrolling content. The animation below only takes
+   * it away at the very top of the page, where nothing is underneath. */
+  .site-header::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: color-mix(in srgb, var(--color-bg) 72%, transparent);
+    -webkit-backdrop-filter: blur(12px) saturate(1.4);
+    backdrop-filter: blur(12px) saturate(1.4);
+  }
+
+  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    .site-header::before {
+      background: var(--color-bg);
+    }
+  }
+
+  @supports (animation-timeline: scroll()) {
+    @media (prefers-reduced-motion: no-preference) {
+      .site-header::before {
+        animation: header-panel-in linear both;
+        animation-timeline: scroll(root block);
+        animation-range: 0 var(--header-block-size);
+      }
+    }
+  }
+
+  @keyframes header-panel-in {
+    from {
+      opacity: 0;
+    }
+
+    to {
+      opacity: 1;
+    }
   }
 
   .site-wordmark {
+    /* Published as a variable so the home page's scroll handoff can land the
+     * mark on the same size the bar rests at, at every breakpoint. */
+    --wordmark-rest-size: 0.9375rem;
     font-family: var(--font-mono);
-    font-size: 0.9375rem;
+    font-size: var(--wordmark-rest-size);
     letter-spacing: -0.03em;
     color: var(--color-text);
     text-decoration: none;
@@ -50,6 +99,9 @@
   }
 
   nav {
+    /* Holds the nav against the inline end even when the wordmark leaves the
+     * flex row during the home page's scroll handoff. */
+    margin-inline-start: auto;
     display: flex;
     gap: clamp(1rem, 3vw, 2rem);
     font-size: 0.9375rem;
@@ -82,10 +134,11 @@
     }
 
     .site-wordmark {
+      --wordmark-rest-size: clamp(0.75rem, 3.333vw, 0.8125rem);
       display: inline-flex;
       align-items: center;
       min-block-size: 2.75rem;
-      font-size: clamp(0.75rem, 3.333vw, 0.8125rem);
+      font-size: var(--wordmark-rest-size);
     }
 
     nav {
@@ -106,6 +159,17 @@
   @media (max-width: 21rem) {
     nav {
       gap: 0.25rem;
+    }
+  }
+
+  @media (forced-colors: active) {
+    .site-header::before {
+      animation: none;
+      opacity: 1;
+      background: Canvas;
+      -webkit-backdrop-filter: none;
+      backdrop-filter: none;
+      border-block-end: 1px solid CanvasText;
     }
   }
 </style>

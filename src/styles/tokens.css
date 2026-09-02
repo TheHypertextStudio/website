@@ -86,6 +86,11 @@
   --layout-gap: 2rem;
   --layout-margin: clamp(1.25rem, 4vw, 3.5rem);
   --layout-max: 96rem;
+  /* Resting height of the sticky app bar: block padding plus the wordmark's
+   * line box. Three files need it — the bar's own scroll timeline, the hero
+   * handoff offset, and every fragment target's scroll-margin — so it lives
+   * here rather than being re-derived. */
+  --header-block-size: 3.875rem;
 
   /* --- Radii / borders -------------------------------------------------- */
   --rule-thin: 1px solid var(--color-rule);
@@ -128,6 +133,14 @@
 @media (min-width: 30rem) {
   :root {
     font-size: 16px;
+  }
+}
+
+/* The compact header trades block padding (1.25rem -> 0.625rem) for a 2.75rem
+ * touch target on its links, which nets out slightly taller than desktop. */
+@media (max-width: 32rem) {
+  :root {
+    --header-block-size: 4rem;
   }
 }
 
