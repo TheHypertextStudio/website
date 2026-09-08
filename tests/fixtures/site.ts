@@ -41,6 +41,10 @@ export const STATIC_FILES = [
   { path: '/site.webmanifest', contentType: /^application\/manifest\+json/ },
   { path: '/.well-known/security.txt', contentType: /text\/plain/ },
   {
+    path: '/.well-known/apple-app-site-association',
+    contentType: /application\/json/,
+  },
+  {
     path: '/.well-known/webfinger',
     contentType: /(application\/jrd\+json|application\/json|text\/plain)/,
   },
