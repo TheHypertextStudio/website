@@ -69,6 +69,20 @@ test.describe('Discovery files', () => {
     expect(body).toMatch(/^Preferred-Languages:/m);
   });
 
+  test('apple-app-site-association authorizes the Docket application', async ({ request }) => {
+    const response = await request.get('/.well-known/apple-app-site-association', {
+      maxRedirects: 0,
+    });
+    expect(response.status()).toBe(200);
+    const data = JSON.parse(await response.text());
+
+    expect(data).toEqual({
+      webcredentials: {
+        apps: ['39AB9DY3K8.studio.hypertext.docket'],
+      },
+    });
+  });
+
   test('webfinger has the studio actor metadata', async ({ request }) => {
     const body = await (await request.get('/.well-known/webfinger')).text();
     const data = JSON.parse(body);
