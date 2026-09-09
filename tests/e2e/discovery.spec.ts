@@ -78,7 +78,7 @@ test.describe('Discovery files', () => {
 
     expect(data).toEqual({
       webcredentials: {
-        apps: ['39AB9DY3K8.studio.hypertext.docket'],
+        apps: ['T95VDD3A4W.studio.hypertext.docket'],
       },
     });
   });
