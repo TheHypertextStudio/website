@@ -1,0 +1,9 @@
+#!/bin/sh
+set -eu
+root=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
+if [ "${BOOTSTRAP_OFFLINE:-0}" = 1 ]; then
+  printf '%s\n' 'Native dependency preparation can download artifacts. Use --no-install for strict offline setup.' >&2
+  exit 1
+fi
+cd "$root/."
+exec pnpm rebuild esbuild workerd sharp
