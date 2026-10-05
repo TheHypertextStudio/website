@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Regenerate the typographic § favicon set. Uses Sharp (npm) for raster
-# rendering; the SVG is hand-rolled.
+# Regenerate the bracket favicon set. Uses Sharp (npm) for raster
+# rendering; the SVG uses fixed vector paths and needs no installed fonts.
 #
 # Outputs:
 #   public/favicon.svg
@@ -20,23 +20,22 @@ cd "$REPO_ROOT"
 
 dest=public
 
-# 1. Hand-rolled SVG favicon (the § glyph in a serif).
+# 1. Fixed bracket paths. The complete mark fits inside the maskable icon's
+# central safe circle.
 cat > "$dest/favicon.svg" <<'SVG'
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
   <rect width="64" height="64" fill="#FBFBFA" />
-  <text x="32" y="46" text-anchor="middle"
-        font-family="Source Serif 4, Iowan Old Style, Charter, Georgia, serif"
-        font-size="48" font-weight="600" fill="#3157D5">§</text>
+  <path d="M27 19L11 29V35L27 45V39L16 32L27 25Z M37 19L53 29V35L37 45V39L48 32L37 25Z"
+        fill="#25231F" />
 </svg>
 SVG
 
 cat > "$dest/mask-icon.svg" <<'SVG'
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <text x="32" y="46" text-anchor="middle"
-        font-family="Source Serif 4, Iowan Old Style, Charter, Georgia, serif"
-        font-size="48" font-weight="600" fill="#000">§</text>
+  <path d="M27 19L11 29V35L27 45V39L16 32L27 25Z M37 19L53 29V35L37 45V39L48 32L37 25Z"
+        fill="#000" />
 </svg>
 SVG
 

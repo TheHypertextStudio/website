@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
   <rect width="64" height="64" fill="#FBFBFA" />
-  <text x="32" y="46" text-anchor="middle"
-        font-family="Source Serif 4, Iowan Old Style, Charter, Georgia, serif"
-        font-size="48" font-weight="600" fill="#3157D5">§</text>
+  <path d="M27 19L11 29V35L27 45V39L16 32L27 25Z M37 19L53 29V35L37 45V39L48 32L37 25Z"
+        fill="#25231F" />
 </svg>
