@@ -90,6 +90,11 @@ test('redirects bare page paths to their canonical trailing slash', async ({ req
 });
 
 test('publishes canonical discovery and well-known metadata', async ({ request }) => {
+  const standardSitemap = await request.get('/sitemap.xml');
+  expect(standardSitemap.status()).toBe(200);
+  expect(new URL(standardSitemap.url()).pathname).toBe('/sitemap-index.xml');
+  expect(await standardSitemap.text()).toContain(`${canonicalOrigin}/sitemap-0.xml`);
+
   const sitemap = await request.get('/sitemap-index.xml');
   expect(sitemap.status()).toBe(200);
   expect(await sitemap.text()).toContain(`${canonicalOrigin}/sitemap-0.xml`);
