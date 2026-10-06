@@ -124,6 +124,12 @@
   }
 }
 
+@media (max-width: 48rem) {
+  :root {
+    --layout-margin: clamp(1.25rem, 2.5vw, 2rem);
+  }
+}
+
 /* Mobile root rebases body type, per §7.1. */
 @media (max-width: 30rem) {
   :root {
