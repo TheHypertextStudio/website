@@ -104,24 +104,19 @@ const citationsCount = mentions.citations.length;
 </Base>
 
 <style>
-  /* The article grid: 1fr · main · aside · 1fr. Body lives in `main`;
-   * components carrying [data-aside] flow into `aside`; components
-   * carrying [data-bleed] span main + aside. Same affordance distill.pub
-   * uses, named in docs/mission.md §10. The pattern mirrors the .page
-   * grid in src/styles/layout.css; that grid is for the homepage, this
-   * one is the article-specific variant with tighter row rhythm and the
-   * studies-only [hidden] handling. */
+  /* Keep article text on the shared site rail and place marginalia at the
+   * outer edge; [data-bleed] spans both columns for wide figures. */
   .study-page {
+    max-inline-size: var(--layout-max);
+    margin-inline: auto;
     display: grid;
-    grid-template-columns:
-      1fr
-      min(var(--measure), calc(100% - 4rem))
-      min(var(--measure-aside), 1fr)
-      1fr;
-    grid-template-areas: '. main aside .';
+    grid-template-columns: minmax(0, var(--measure)) minmax(0, var(--measure-aside));
+    grid-template-areas: 'main aside';
+    justify-content: space-between;
     grid-auto-flow: dense;
     column-gap: var(--layout-gap);
     row-gap: 0;
+    padding-inline: var(--layout-margin);
     padding-block: var(--space-xl) var(--space-xl);
   }
 
@@ -138,6 +133,13 @@ const citationsCount = mentions.citations.length;
 
   .study-page :global([data-bleed]) {
     grid-column: main / aside;
+  }
+
+  .study-page :global(.citations),
+  .study-page :global(.post-colophon) {
+    max-inline-size: var(--measure);
+    margin-inline: 0;
+    padding-inline: 0;
   }
 
   /* The article and body wrappers don't generate boxes — they're DOM

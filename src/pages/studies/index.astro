@@ -103,7 +103,7 @@ const studyRows = studies.map((s: CollectionEntry<'studies'>, i: number) => ({
 
 <style>
   .studies-layout {
-    max-inline-size: 60rem;
+    max-inline-size: var(--layout-max);
     margin-inline: auto;
     padding-inline: var(--layout-margin);
     /* Tighter top than the project default so the first card lands above
@@ -145,6 +145,11 @@ const studyRows = studies.map((s: CollectionEntry<'studies'>, i: number) => ({
     display: grid;
     grid-template-columns: 1fr;
     gap: 0;
+  }
+
+  .studies-list,
+  .studies-empty {
+    max-inline-size: 60rem;
   }
 
   .studies-list li {
