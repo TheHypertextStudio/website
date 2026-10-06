@@ -62,10 +62,17 @@ test.describe('Every page', () => {
   test('unknown route renders the 404 page', async ({ page }) => {
     const res = await page.goto('/this-route-does-not-exist');
     expect(res?.status()).toBe(404);
-    await expect(page.getByRole('heading', { name: /not found/i })).toBeVisible();
-    // The 404 body uses rel="home" to disambiguate from the footer site-map's
-    // "Home" link.
-    await expect(page.locator('main a[rel="home"]')).toBeVisible();
+    await expect(page).toHaveTitle(/404: Page not found/);
+    await expect(page.getByRole('heading', { name: '404: Page not found' })).toBeVisible();
+    await expect(page.getByText('Better luck next time?', { exact: true })).toBeVisible();
+    await expect(page.locator('meta[name="description"]')).toHaveAttribute(
+      'content',
+      'Better luck next time?',
+    );
+
+    const homeLink = page.locator('main a[rel="home"]');
+    await expect(homeLink).toHaveText('Home');
+    await expect(homeLink).toHaveAttribute('href', '/');
   });
 
   test('every page has a meta description', async ({ page }) => {
