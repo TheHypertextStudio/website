@@ -18,7 +18,7 @@ export const PRODUCTS = [
     slug: 'docket',
     name: 'Docket',
     tagline: 'One tool for planning, scheduling, and tracking every kind of work.',
-    url: 'https://docket.hypertext.studio',
+    url: 'https://clearthedocket.com',
   },
   {
     slug: 'logdate',
