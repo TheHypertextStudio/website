@@ -163,7 +163,18 @@ test('serves the Docket asset links the way Play Services fetches them', async (
   );
 });
 
-test('preserves the not-found contract in the built artifact', async ({ request }) => {
-  const response = await request.get('/this-route-must-not-exist');
-  expect(response.status()).toBe(404);
+test('preserves the not-found contract in the built artifact', async ({ page }) => {
+  const response = await page.goto('/this-route-must-not-exist');
+  expect(response?.status()).toBe(404);
+  await expect(page).toHaveTitle(/404: Page not found/);
+  await expect(page.getByRole('heading', { name: '404: Page not found' })).toBeVisible();
+  await expect(page.getByText('Better luck next time?', { exact: true })).toBeVisible();
+  await expect(page.locator('meta[name="description"]')).toHaveAttribute(
+    'content',
+    'Better luck next time?',
+  );
+
+  const homeLink = page.locator('main a[rel="home"]');
+  await expect(homeLink).toHaveText('Home');
+  await expect(homeLink).toHaveAttribute('href', '/');
 });

@@ -48,8 +48,8 @@
     ]
   },
   "page404": {
-    "title": "Not found",
-    "body": "The document is missing. Its link back to the studio is still live.",
+    "title": "404: Page not found",
+    "body": "Better luck next time?",
     "homeLinkLabel": "Home"
   },
   "privacy": {

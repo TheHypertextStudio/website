@@ -3,7 +3,6 @@ import Base from '@/layouts/Base.astro';
 import t from '@/i18n';
 ---
 
-<!-- The missing document left one live edge: <a href="/">home</a>. -->
 <Base title={t.page404.title} description={t.page404.body} noIndex>
   <article class="prose-layout">
     <header>
@@ -11,7 +10,7 @@ import t from '@/i18n';
       <p>{t.page404.body}</p>
     </header>
     <p>
-      <a href="/" rel="home">{t.page404.homeLinkLabel} →</a>
+      <a href="/" rel="home">{t.page404.homeLinkLabel}</a>
     </p>
   </article>
 </Base>
