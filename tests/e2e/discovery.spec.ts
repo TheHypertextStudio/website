@@ -17,7 +17,7 @@ test.describe('Discovery files', () => {
       expect(body).toContain(`user-agent: ${ua}`);
     }
     expect(body).toContain('disallow: /');
-    expect(body).toContain('sitemap:');
+    expect(body).toContain('sitemap: https://hypertext.studio/sitemap.xml');
   });
 
   test('robots.txt allows on-demand retrieval agents', async ({ request }) => {

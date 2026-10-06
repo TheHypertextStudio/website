@@ -1,6 +1,9 @@
 # Cloudflare Pages redirects.
 # Format:  source  destination  [status]
 
+# Keep the standard sitemap URL as the public entrypoint.
+/sitemap.xml                 /sitemap-index.xml                301
+
 # Apex / www unification handled by DNS, but make double-sure for any www hits
 # that slip through:
 https://www.hypertext.studio/*  https://hypertext.studio/:splat  301
