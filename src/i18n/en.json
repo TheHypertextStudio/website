@@ -49,7 +49,7 @@
   },
   "page404": {
     "title": "Not found",
-    "body": "There's no page at this address.",
+    "body": "The document is missing. Its link back to the studio is still live.",
     "homeLinkLabel": "Home"
   },
   "privacy": {
