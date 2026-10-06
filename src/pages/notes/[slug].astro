@@ -112,13 +112,17 @@ const seoTitle = snippet || `${t.indieweb.post.noteLabel} · ${isoDate(data.publ
 
 <style>
   .note {
-    max-inline-size: var(--measure);
+    max-inline-size: var(--layout-max);
     margin-inline: auto;
     padding-inline: var(--layout-margin);
     padding-block: var(--space-xxl) var(--space-lg);
     display: flex;
     flex-direction: column;
     gap: var(--space-md);
+  }
+
+  .note > :not([hidden]) {
+    max-inline-size: var(--measure);
   }
 
   .note-meta {

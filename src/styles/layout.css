@@ -4,13 +4,13 @@
  * ============================================================================= */
 
 .page {
+  max-inline-size: var(--layout-max);
+  margin-inline: auto;
+  padding-inline: var(--layout-margin);
   display: grid;
-  grid-template-columns:
-    1fr
-    min(var(--measure), calc(100% - 4rem))
-    min(var(--measure-aside), 1fr)
-    1fr;
-  grid-template-areas: '. main aside .';
+  grid-template-columns: minmax(0, var(--measure)) minmax(0, var(--measure-aside));
+  grid-template-areas: 'main aside';
+  justify-content: space-between;
   column-gap: var(--layout-gap);
   /* Sections inside .page get deliberate vertical rhythm so top-level blocks
    * (thesis, mission, work, etc.) never bunch against one another. */
@@ -44,7 +44,6 @@
   .page {
     grid-template-columns: 1fr;
     grid-template-areas: 'main';
-    padding-inline: var(--layout-margin);
     padding-block: var(--space-xl);
   }
   .page > [data-aside],
@@ -53,16 +52,17 @@
   }
 }
 
-/* The custom element wrapping header/main/footer in Base.astro is unknown to
- * the UA, so it defaults to display:inline. A sticky block child of an inline
- * box has no well-defined containing block; making the wrapper a block gives
- * the sticky header the full page as its range. */
+/* The wrapper gives the sticky header a block-level range and lets main absorb
+ * spare viewport height so short pages keep the footer at the bottom. */
 hypertext-studio {
-  display: block;
+  min-block-size: 100dvh;
+  display: flex;
+  flex-direction: column;
 }
 
 main {
-  min-block-size: 70dvh;
+  flex: 1;
+  min-block-size: 0;
 }
 
 section {
@@ -98,13 +98,17 @@ section {
  * ------------------------------------------------------------------------ */
 
 .prose-layout {
-  max-inline-size: 48rem;
+  max-inline-size: var(--layout-max);
   margin-inline: auto;
   padding-inline: var(--layout-margin);
   padding-block: clamp(5rem, 12vw, 10rem);
   display: flex;
   flex-direction: column;
   gap: var(--space-lg);
+}
+
+.prose-layout > * {
+  max-inline-size: var(--measure);
 }
 
 .prose-layout section {

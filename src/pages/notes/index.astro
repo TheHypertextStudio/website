@@ -108,7 +108,7 @@ const rows = notes.map((n: CollectionEntry<'notes'>, i: number) => ({
 
 <style>
   .notes-layout {
-    max-inline-size: 60rem;
+    max-inline-size: var(--layout-max);
     margin-inline: auto;
     padding-inline: var(--layout-margin);
     padding-block: var(--space-xxl) var(--space-xl);
@@ -145,6 +145,11 @@ const rows = notes.map((n: CollectionEntry<'notes'>, i: number) => ({
     list-style: none;
     padding: 0;
     margin: 0;
+  }
+
+  .notes-list,
+  .notes-empty {
+    max-inline-size: 60rem;
   }
 
   .notes-list li {
