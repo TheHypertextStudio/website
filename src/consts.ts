@@ -24,7 +24,7 @@ export const SOCIAL = {
 } as const;
 
 export const PRODUCT_DOMAINS = [
-  'docket.hypertext.studio',
+  'clearthedocket.com',
   'logdate.app',
   'curfew.hypertext.studio',
 ] as const;
