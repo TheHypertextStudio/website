@@ -9,7 +9,7 @@ import { unified } from '@astrojs/markdown-remark';
 
 export default defineConfig({
   site: 'https://hypertext.studio',
-  trailingSlash: 'ignore',
+  trailingSlash: 'always',
   output: 'static',
   build: {
     format: 'directory',
