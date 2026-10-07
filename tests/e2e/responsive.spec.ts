@@ -102,7 +102,8 @@ test.describe('Responsive layout', () => {
     });
     expect(spacing.afterIntro).toBeGreaterThanOrEqual(48);
     expect(spacing.serviceHeight).toBeGreaterThan(300);
-    expect(spacing.workTop).toBeGreaterThanOrEqual(spacing.serviceBottom);
+    // Firefox rounds the shared section edge by a fraction of a pixel.
+    expect(spacing.workTop - spacing.serviceBottom).toBeGreaterThanOrEqual(-1);
   });
 
   test('mobile header gives the studio name and navigation their own rows', async ({ page }) => {
