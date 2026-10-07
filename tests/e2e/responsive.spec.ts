@@ -85,34 +85,27 @@ test.describe('Responsive layout', () => {
     }
   });
 
-  test('landing spacing stays compact at tablet width', async ({ page }) => {
+  test('landing separates the introduction, services, and selected work', async ({ page }) => {
     await page.setViewportSize({ width: 768, height: 1024 });
     await page.goto('/');
-
     const spacing = await page.evaluate(() => {
-      const siteHeader = document
-        .querySelector<HTMLElement>('.site-header')!
-        .getBoundingClientRect();
-      const headline = document
-        .querySelector<HTMLElement>('.home-hero h1')!
-        .getBoundingClientRect();
-      const firstMedia = document
-        .querySelector<HTMLElement>('.product-card__media')!
-        .getBoundingClientRect();
-
+      const hero = document.querySelector('.home-hero')!.getBoundingClientRect();
+      const services = document.querySelector('.home-services')!.getBoundingClientRect();
+      const work = document.querySelector('.work-heading')!.getBoundingClientRect();
+      const intro = document.querySelector('.home-intro')!.getBoundingClientRect();
       return {
-        beforeHeadline: headline.top - siteHeader.bottom,
-        afterHeadline: firstMedia.top - headline.bottom,
-        pageInset: firstMedia.left,
+        afterIntro: hero.bottom - intro.bottom,
+        serviceHeight: services.height,
+        workTop: work.top,
+        serviceBottom: services.bottom,
       };
     });
-
-    expect(spacing.beforeHeadline).toBeLessThanOrEqual(80);
-    expect(spacing.afterHeadline).toBeLessThanOrEqual(80);
-    expect(spacing.pageInset).toBeLessThanOrEqual(24);
+    expect(spacing.afterIntro).toBeGreaterThanOrEqual(48);
+    expect(spacing.serviceHeight).toBeGreaterThan(300);
+    expect(spacing.workTop).toBeGreaterThanOrEqual(spacing.serviceBottom);
   });
 
-  test('mobile header keeps navigation on one compact row', async ({ page }) => {
+  test('mobile header gives the studio name and navigation their own rows', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto('/');
 
@@ -123,7 +116,7 @@ test.describe('Responsive layout', () => {
       .locator('.site-header nav a')
       .evaluateAll((links) => links.map((link) => Math.round(link.getBoundingClientRect().top)));
 
-    expect(headerHeight).toBeLessThanOrEqual(72);
+    expect(headerHeight).toBeLessThanOrEqual(112);
     expect(new Set(linkTops).size).toBe(1);
   });
 
@@ -165,7 +158,7 @@ test.describe('Responsive layout', () => {
     expect(height).toBeLessThanOrEqual(844);
   });
 
-  test('desktop landing hands off directly from the product catalogue to a bounded footer', async ({
+  test('desktop landing separates the personal introduction from a bounded footer', async ({
     page,
   }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
@@ -173,18 +166,17 @@ test.describe('Responsive layout', () => {
     await page.goto('/');
 
     const geometry = await page.evaluate(() => {
-      const cards = [...document.querySelectorAll<HTMLElement>('.product-card')];
-      const productBottom = Math.max(...cards.map((card) => card.getBoundingClientRect().bottom));
+      const noteBottom = document.querySelector('.hx-note')!.getBoundingClientRect().bottom;
       const footer = document.querySelector<HTMLElement>('.site-footer')!.getBoundingClientRect();
 
       return {
-        transitionGap: footer.top - productBottom,
+        transitionGap: footer.top - noteBottom,
         footerHeight: footer.height,
       };
     });
 
     expect(geometry.transitionGap).toBeLessThanOrEqual(72);
-    expect(geometry.footerHeight).toBeLessThanOrEqual(520);
+    expect(geometry.footerHeight).toBeLessThanOrEqual(620);
   });
 
   test('desktop navigation and product metadata stay legible beside the display headline', async ({

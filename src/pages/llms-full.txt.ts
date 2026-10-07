@@ -16,6 +16,13 @@ export const GET: APIRoute = async () => {
     '',
     '---',
     '',
+    '## Services',
+    '',
+    'Work directly with Willie Chalmers on product and technical consulting, software redesign, AI product decisions, or custom websites, apps, and platforms.',
+    `Services: ${SITE_URL}/services/`,
+    `Find a starting point: ${SITE_URL}/work-together/`,
+    'Nonprofits, community projects, and social causes can ask about reduced rates.',
+    '',
     '## Products',
     '',
     ...productsData.map(

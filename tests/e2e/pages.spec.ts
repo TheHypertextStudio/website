@@ -88,7 +88,7 @@ test.describe('Every page', () => {
     await page.goto('/about');
     await expect(page.getByRole('link', { name: 'Willie Chalmers III' })).toHaveAttribute(
       'href',
-      'https://williecubed.me',
+      'https://willie.page',
     );
     await expect(page.getByRole('link', { name: 'Las Vegans for Better Transit' })).toHaveAttribute(
       'href',

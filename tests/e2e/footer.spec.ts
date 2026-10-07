@@ -28,6 +28,8 @@ test.describe('Footer', () => {
     }
 
     for (const [label, href, address] of [
+      ['Services', '/services/', '/services'],
+      ['Work together', '/work-together/', '/work-together'],
       ['About', '/about', '/about'],
       ['Support', '/contact', '/contact'],
       ['Privacy', '/privacy', '/privacy'],

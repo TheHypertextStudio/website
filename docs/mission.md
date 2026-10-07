@@ -2,7 +2,7 @@
 
 Hypertext Studio builds software for humans.
 
-This website is the practical company home for Docket, LogDate, Curfew, company information, support, privacy information, and future product publication.
+This website helps founders and organizations find consulting, design, and development help from Willie Chalmers. It also presents Docket, LogDate, and Curfew, which Willie owns, and provides company information, product support, and privacy information.
 
 ## Hypertext
 
