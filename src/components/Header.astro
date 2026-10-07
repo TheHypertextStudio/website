@@ -39,10 +39,6 @@ const path = Astro.url.pathname.replace(/\/$/, '');
 </header>
 
 <style>
-  :global(:root) {
-    --header-block-size: 4rem;
-  }
-
   .site-header {
     position: sticky;
     inset-block-start: 0;
@@ -193,9 +189,6 @@ const path = Astro.url.pathname.replace(/\/$/, '');
   }
 
   @media (max-width: 44rem) {
-    :global(:root) {
-      --header-block-size: 6.75rem;
-    }
     .site-header {
       display: grid;
       grid-template-columns: minmax(0, 1fr) auto;

@@ -8,8 +8,9 @@ test('serves the built public pages with their intended identity', async ({ requ
   const pages = [
     { marker: 'Hypertext Studio builds software for humans.', path: '/' },
     { marker: 'Willie Chalmers III', path: '/about/' },
-    // Every page carries "Privacy" and "Contact" in the footer site-map, so
-    // each marker has to be body copy that only its own page contains.
+    { marker: 'Product &amp; technical consulting', path: '/services/' },
+    { marker: 'What do you need help with?', path: '/work-together/' },
+    // Footer labels appear on other pages, so each marker must identify the body.
     { marker: 'What we collect when you visit hypertext.studio.', path: '/privacy/' },
     { marker: 'Press, partnership, and product feedback go to the same inbox.', path: '/contact/' },
   ];
@@ -20,6 +21,27 @@ test('serves the built public pages with their intended identity', async ({ requ
     expect(response.headers()['content-type'], page.path).toContain('text/html');
     expect(await response.text(), page.path).toContain(page.marker);
   }
+});
+
+test('mobile product navigation clears the sticky header in the built site', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/services/');
+  await page.evaluate(() => document.fonts.ready);
+  await page
+    .getByRole('navigation', { name: 'Primary' })
+    .getByRole('link', { name: 'Products' })
+    .click();
+  await expect(page).toHaveURL(/\/#products$/);
+  await page.evaluate(() => document.fonts.ready);
+  await expect
+    .poll(() =>
+      page.evaluate(() => {
+        const products = document.querySelector('.products-grid')!.getBoundingClientRect();
+        const header = document.querySelector('.site-header')!.getBoundingClientRect();
+        return products.top - header.bottom;
+      }),
+    )
+    .toBeGreaterThanOrEqual(0);
 });
 
 test('serves every same-origin asset referenced by the built homepage', async ({
