@@ -19,6 +19,8 @@ test.describe('Footer', () => {
     const productDirectory = footer.getByRole('navigation', { name: 'Products' });
     const studioDirectory = footer.getByRole('navigation', { name: 'Studio' });
 
+    await expect(studioDirectory.getByRole('link', { name: 'Brand standards' })).toHaveCount(0);
+
     for (const product of PRODUCTS) {
       const link = productDirectory.getByRole('link', { name: product.name, exact: true });
       await expect(link).toHaveAttribute('href', product.url);
