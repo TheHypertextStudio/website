@@ -5,6 +5,8 @@
 
 export const PAGES = [
   { path: '/', name: 'Home', titleIncludes: 'Hypertext Studio' },
+  { path: '/services/', name: 'Services', titleIncludes: 'Services' },
+  { path: '/work-together/', name: 'Work together', titleIncludes: 'Work together' },
   { path: '/about', name: 'About', titleIncludes: 'About' },
   { path: '/privacy', name: 'Privacy', titleIncludes: 'Privacy' },
   { path: '/colophon', name: 'Colophon', titleIncludes: 'Colophon' },

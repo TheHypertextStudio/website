@@ -6,12 +6,12 @@ test.describe('Launch products', () => {
     await page.goto('/');
   });
 
-  test('opens with the locked company tagline and no supporting copy', async ({ page }) => {
+  test('opens with the company tagline and explains the work', async ({ page }) => {
     const hero = page.locator('.home-hero');
     await expect(hero.getByRole('heading', { level: 1 })).toHaveText(
       'Hypertext Studio builds software for humans.',
     );
-    await expect(hero.locator('p')).toHaveCount(0);
+    await expect(hero.locator('p')).toContainText('solve product and technical problems');
   });
 
   test('renders exactly the three launch products', async ({ page }) => {

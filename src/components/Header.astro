@@ -14,7 +14,12 @@
       ><span class="interaction-label">Products</span></a
     >
     <a class="interaction-target" href="/about"><span class="interaction-label">About</span></a>
-    <a class="interaction-target" href="/contact"><span class="interaction-label">Support</span></a>
+    <a class="interaction-target" href="/services/"
+      ><span class="interaction-label">Services</span></a
+    >
+    <a class="interaction-target" href="/work-together/"
+      ><span class="interaction-label">Work together</span></a
+    >
   </nav>
 </header>
 
@@ -128,9 +133,13 @@
   }
 
   @media (max-width: 32rem) {
+    :global(:root) {
+      --header-block-size: 6.75rem;
+    }
     .site-header {
-      align-items: center;
-      gap: 0.5rem;
+      align-items: start;
+      flex-direction: column;
+      gap: 0;
       padding-block: 0.625rem;
     }
 
@@ -143,6 +152,9 @@
     }
 
     nav {
+      margin-inline-start: 0;
+      inline-size: 100%;
+      justify-content: space-between;
       min-inline-size: 0;
       flex-direction: row;
       align-items: center;

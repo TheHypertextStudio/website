@@ -1,5 +1,6 @@
 ---
 import Base from '@/layouts/Base.astro';
+import '@/styles/services.css';
 import HCard from '@/components/HCard.astro';
 import products from '@/data/products.json';
 import { productArt, toneForCharacter } from '@/data/productArt';
@@ -58,7 +59,33 @@ const productArtMarkup = Object.fromEntries(
   <div class="home">
     <header class="home-hero">
       <h1><span class="home-hero__mark">Hypertext Studio</span> builds software for humans.</h1>
+      <p class="home-intro">
+        I help founders and organizations solve product and technical problems, redesign software,
+        and build custom websites, apps, and platforms.
+      </p>
     </header>
+    <section class="home-services" aria-labelledby="services-heading">
+      <h2 id="services-heading">Services</h2>
+      <div>
+        <section>
+          <h3>Consulting</h3><p>
+            I can review your software, help you work through a product or technical decision, or
+            figure out where AI would be useful. We’ll work out what needs to change and how to do
+            it.
+          </p>
+        </section>
+        <section class="home-build">
+          <h3>Design &amp; development</h3><p>
+            I can redesign software you already have or build a custom website, app, or platform. If
+            your team will build it, I can work with them on the design and technical decisions.
+          </p>
+        </section>
+        <a class="hx-service-action" href="/services/"
+          >Explore services <span aria-hidden="true">↗</span></a
+        >
+      </div>
+    </section>
+    <header class="work-heading"><h2>Selected work</h2><p>These are my own products.</p></header>
 
     <section class="products-grid" id="products" aria-labelledby="products-heading">
       <h2 class="sr-only" id="products-heading">Products</h2>
@@ -92,10 +119,134 @@ const productArtMarkup = Object.fromEntries(
         ))
       }
     </section>
+    <section class="home-person" aria-labelledby="person-heading">
+      <h2 id="person-heading">Working with me</h2><p>
+        I’m Willie Chalmers. You’ll work directly with me.
+      </p><p>
+        I use Claude and Codex too. My job is to understand what you need, make the design and
+        technical decisions, and see the work through.
+      </p><a class="hx-service-action" href="https://willie.page" rel="me external noopener"
+        >More of my work <span aria-hidden="true">↗</span></a
+      >
+    </section>
+    <aside class="hx-note">
+      <h2>Nonprofits &amp; social causes</h2><p>
+        If you’re working for a nonprofit, a community project, or a social cause, <a
+          href="/work-together/?nonprofit=1">ask about reduced rates</a
+        >. Tell me who the work helps and what you need.
+      </p>
+    </aside>
   </div>
 </Base>
 
 <style>
+  .home-intro {
+    max-inline-size: 650px;
+    margin-block-start: 36px;
+    font-size: 18px;
+    line-height: 1.85;
+  }
+  .home-services {
+    display: grid;
+    grid-template-columns: minmax(150px, 0.5fr) minmax(0, 1.5fr);
+    gap: 64px;
+    border-block-start: 1px solid var(--color-rule);
+    padding-block: 56px 112px;
+  }
+  .home-services > h2 {
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--color-secondary);
+    margin-block-start: 8px;
+  }
+  .home-services h3 {
+    font-size: 30px;
+    font-weight: 560;
+    line-height: 1.2;
+    letter-spacing: -0.04em;
+    margin-block-end: 24px;
+  }
+  .home-services p {
+    max-inline-size: 580px;
+    font-size: 16px;
+    line-height: 1.85;
+  }
+  .home-build {
+    margin-block-start: 58px;
+  }
+  .home-build h3 {
+    font-size: 22px;
+    letter-spacing: -0.025em;
+    margin-block-end: 18px;
+  }
+  .work-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 24px;
+    margin-block-end: 38px;
+  }
+  .work-heading h2 {
+    font-size: 30px;
+    font-weight: 560;
+    letter-spacing: -0.04em;
+    line-height: 1.25;
+  }
+  .work-heading p {
+    font-size: 14px;
+    color: var(--color-secondary);
+  }
+  .home-person {
+    max-inline-size: 650px;
+    padding-block: 20px 80px;
+  }
+  .home-person h2 {
+    font-size: 23px;
+    font-weight: 560;
+    letter-spacing: -0.03em;
+    margin-block-end: 28px;
+  }
+  .home-person p {
+    font-size: 16px;
+    line-height: 1.85;
+  }
+  .home-person p + p {
+    margin-block-start: 24px;
+  }
+  @media (max-width: 900px) {
+    .home-services {
+      grid-template-columns: 1fr;
+      gap: 28px;
+    }
+    .home-services > h2 {
+      margin: 0;
+    }
+    .work-heading {
+      display: block;
+    }
+    .work-heading p {
+      margin-block-start: 16px;
+    }
+  }
+  @media (max-width: 540px) {
+    .home-intro {
+      font-size: 16px;
+    }
+    .home-services {
+      padding-block: 40px 80px;
+    }
+    .home-services h3,
+    .work-heading h2 {
+      font-size: 27px;
+    }
+    .home-build h3 {
+      font-size: 21px;
+    }
+    .home-person {
+      padding-block: 16px 64px;
+    }
+  }
+
   .home {
     max-inline-size: var(--layout-max);
     margin-inline: auto;
