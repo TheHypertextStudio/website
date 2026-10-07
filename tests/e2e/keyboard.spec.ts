@@ -10,14 +10,13 @@ test.describe('Primary navigation', () => {
     await expect(page).toHaveURL(/\/#products$/);
   });
 
-  test('About, Services, and Work together use ordinary links', async ({ page }) => {
+  test('About, Services, and the enquiry action use ordinary links', async ({ page }) => {
     await page.goto('/');
     const nav = page.getByRole('navigation', { name: 'Primary' });
     await expect(nav.getByRole('link', { name: 'About' })).toHaveAttribute('href', '/about');
     await expect(nav.getByRole('link', { name: 'Services' })).toHaveAttribute('href', '/services/');
-    await expect(nav.getByRole('link', { name: 'Work together' })).toHaveAttribute(
-      'href',
-      '/work-together/',
-    );
+    await expect(
+      page.getByRole('banner').getByRole('link', { name: 'Let’s talk' }),
+    ).toHaveAttribute('href', '/work-together/');
   });
 });

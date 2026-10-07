@@ -1,3 +1,7 @@
+---
+const path = Astro.url.pathname.replace(/\/$/, '');
+---
+
 <header class="site-header">
   <a
     class="site-wordmark interaction-target"
@@ -10,20 +14,35 @@
     <span class="sr-only">Hypertext Studio home</span>
   </a>
   <nav aria-label="Primary">
+    <a
+      class="interaction-target"
+      href="/services/"
+      aria-current={path === '/services' ? 'page' : undefined}
+      ><span class="interaction-label">Services</span></a
+    >
     <a class="interaction-target" href="/#products"
       ><span class="interaction-label">Products</span></a
     >
-    <a class="interaction-target" href="/about"><span class="interaction-label">About</span></a>
-    <a class="interaction-target" href="/services/"
-      ><span class="interaction-label">Services</span></a
-    >
-    <a class="interaction-target" href="/work-together/"
-      ><span class="interaction-label">Work together</span></a
+    <a
+      class="interaction-target"
+      href="/about"
+      aria-current={path === '/about' ? 'page' : undefined}
+      ><span class="interaction-label">About</span></a
     >
   </nav>
+  <a
+    class="site-enquiry"
+    href="/work-together/"
+    aria-current={path === '/work-together' ? 'page' : undefined}
+    >Let’s talk <span aria-hidden="true">→</span></a
+  >
 </header>
 
 <style>
+  :global(:root) {
+    --header-block-size: 4rem;
+  }
+
   .site-header {
     position: sticky;
     inset-block-start: 0;
@@ -34,11 +53,11 @@
     max-inline-size: var(--layout-max);
     min-inline-size: 0;
     margin-inline: auto;
-    padding: 1.25rem var(--layout-margin);
+    padding: 0.625rem var(--layout-margin);
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 1.5rem;
+    gap: clamp(1.5rem, 3vw, 2.75rem);
   }
 
   /* The scrolled panel, painted as a pseudo-element behind the bar's own
@@ -109,13 +128,20 @@
      * flex row during the home page's scroll handoff. */
     margin-inline-start: auto;
     display: flex;
-    gap: clamp(1rem, 3vw, 2rem);
+    gap: clamp(1rem, 2.5vw, 2rem);
     font-size: 0.9375rem;
   }
 
   nav a {
-    color: var(--color-text);
+    display: inline-flex;
+    align-items: center;
+    min-block-size: 2.75rem;
+    color: var(--color-secondary);
     text-decoration: none;
+  }
+
+  nav a[aria-current='page'] {
+    color: var(--color-text);
   }
 
   nav a:hover {
@@ -129,18 +155,53 @@
   }
 
   nav .interaction-label {
+    text-decoration-line: none;
     text-underline-offset: 0.25em;
   }
 
-  @media (max-width: 32rem) {
+  nav a[aria-current='page'] .interaction-label,
+  nav a:hover .interaction-label {
+    text-decoration-line: underline;
+  }
+
+  .site-enquiry {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    min-block-size: 2.75rem;
+    padding: 0.5rem 0.875rem;
+    color: var(--color-text);
+    background: var(--color-footer-bg);
+    font-size: 0.875rem;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .site-enquiry:visited {
+    color: var(--color-text);
+  }
+
+  .site-enquiry:hover {
+    background: var(--interaction-hover-bg);
+    text-decoration: none;
+  }
+
+  .site-enquiry:focus-visible {
+    color: var(--interaction-focus-ink);
+    background: var(--interaction-focus-bg);
+  }
+
+  @media (max-width: 44rem) {
     :global(:root) {
       --header-block-size: 6.75rem;
     }
     .site-header {
-      align-items: start;
-      flex-direction: column;
-      gap: 0;
-      padding-block: 0.625rem;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: center;
+      column-gap: 0.75rem;
+      row-gap: 0;
     }
 
     .site-wordmark {
@@ -152,26 +213,24 @@
     }
 
     nav {
+      grid-column: 1 / -1;
+      grid-row: 2;
       margin-inline-start: 0;
       inline-size: 100%;
-      justify-content: space-between;
+      justify-content: start;
       min-inline-size: 0;
       flex-direction: row;
       align-items: center;
+      gap: 1.75rem;
+      font-size: 0.8125rem;
+    }
+
+    .site-enquiry {
+      grid-column: 2;
+      grid-row: 1;
       gap: 0.5rem;
-      font-size: clamp(0.75rem, 3.333vw, 0.8125rem);
-    }
-
-    nav a {
-      display: inline-flex;
-      align-items: center;
-      min-block-size: 2.75rem;
-    }
-  }
-
-  @media (max-width: 21rem) {
-    nav {
-      gap: 0.25rem;
+      padding-inline: 0.625rem;
+      font-size: 0.8125rem;
     }
   }
 

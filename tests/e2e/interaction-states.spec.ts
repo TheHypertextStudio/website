@@ -43,7 +43,9 @@ test.describe('Reverse-video interaction system', () => {
         page.locator('.site-wordmark'),
         page.getByRole('navigation', { name: 'Primary' }).getByRole('link', { name: 'About' }),
         page.getByRole('link', { name: 'Willie Chalmers III' }),
-        page.getByRole('navigation', { name: 'Studio' }).getByRole('link', { name: 'Support' }),
+        page
+          .getByRole('navigation', { name: 'Help & resources' })
+          .getByRole('link', { name: 'Product support' }),
       ];
 
       for (const link of links) {
