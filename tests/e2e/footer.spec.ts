@@ -9,15 +9,16 @@ test.describe('Footer', () => {
   test('closes the site frame and exposes the launch essentials', async ({ page }) => {
     const footer = page.getByRole('contentinfo');
     await expect(footer.locator('.closing-tag')).toHaveText('</hypertext-studio>');
-    for (const label of ['About', 'Support', 'Privacy']) {
+    for (const label of ['Services', 'About', 'Let’s talk', 'Product support', 'Privacy']) {
       await expect(footer.getByRole('link', { name: label, exact: true })).toBeVisible();
     }
   });
 
-  test('presents product and studio destinations as a hypertext directory', async ({ page }) => {
+  test('separates studio enquiries, products, and product help', async ({ page }) => {
     const footer = page.getByRole('contentinfo');
     const productDirectory = footer.getByRole('navigation', { name: 'Products' });
     const studioDirectory = footer.getByRole('navigation', { name: 'Studio' });
+    const helpDirectory = footer.getByRole('navigation', { name: 'Help & resources' });
 
     await expect(studioDirectory.getByRole('link', { name: 'Brand standards' })).toHaveCount(0);
 
@@ -27,17 +28,26 @@ test.describe('Footer', () => {
       await expect(link.locator('.footer-link__address')).toHaveText(new URL(product.url).host);
     }
 
-    for (const [label, href, address] of [
-      ['Services', '/services/', '/services'],
-      ['Work together', '/work-together/', '/work-together'],
-      ['About', '/about', '/about'],
-      ['Support', '/contact', '/contact'],
-      ['Privacy', '/privacy', '/privacy'],
-      ['GitHub', 'https://github.com/TheHypertextStudio', 'github.com/TheHypertextStudio'],
+    for (const [label, href] of [
+      ['Services', '/services/'],
+      ['About', '/about'],
+      ['Let’s talk', '/work-together/'],
     ] as const) {
       const link = studioDirectory.getByRole('link', { name: label, exact: true });
       await expect(link).toHaveAttribute('href', href);
-      await expect(link.locator('.footer-link__address')).toHaveText(address);
+    }
+    await expect(
+      studioDirectory.getByRole('link', { name: /support|privacy|github/i }),
+    ).toHaveCount(0);
+    for (const [label, href] of [
+      ['Product support', '/contact'],
+      ['Privacy', '/privacy'],
+      ['GitHub', 'https://github.com/TheHypertextStudio'],
+    ] as const) {
+      await expect(helpDirectory.getByRole('link', { name: label, exact: true })).toHaveAttribute(
+        'href',
+        href,
+      );
     }
   });
 

@@ -34,6 +34,23 @@ function wordmarkState(page: Page) {
 }
 
 test.describe('Sticky app bar', () => {
+  test('identifies the current service page and keeps the enquiry distinct', async ({ page }) => {
+    await page.goto('/services/');
+    const header = page.getByRole('banner');
+    const primary = header.getByRole('navigation', { name: 'Primary' });
+    await expect(primary.getByRole('link', { name: 'Services' })).toHaveAttribute(
+      'aria-current',
+      'page',
+    );
+    await header.getByRole('link', { name: 'Let’s talk' }).click();
+    await expect(page).toHaveURL(/\/work-together\/$/);
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('What do you need help with?');
+    await expect(header.getByRole('link', { name: 'Let’s talk' })).toHaveAttribute(
+      'aria-current',
+      'page',
+    );
+  });
+
   test('pins the bar to the top of the viewport as the page scrolls', async ({ page }) => {
     await page.goto('/');
     const header = page.getByRole('banner');

@@ -2,15 +2,16 @@
 import products from '@/data/products.json';
 
 const studioLinks = [
-  { label: 'Services', href: '/services/', address: '/services' },
-  { label: 'Work together', href: '/work-together/', address: '/work-together' },
-  { label: 'About', href: '/about', address: '/about' },
-  { label: 'Support', href: '/contact', address: '/contact' },
-  { label: 'Privacy', href: '/privacy', address: '/privacy' },
+  { label: 'Services', href: '/services/' },
+  { label: 'About', href: '/about' },
+  { label: 'Let’s talk', href: '/work-together/' },
+];
+const helpLinks = [
+  { label: 'Product support', href: '/contact' },
+  { label: 'Privacy', href: '/privacy' },
   {
     label: 'GitHub',
     href: 'https://github.com/TheHypertextStudio',
-    address: 'github.com/TheHypertextStudio',
     external: true,
   },
 ];
@@ -21,7 +22,23 @@ const studioLinks = [
     <div class="closing-tag" aria-hidden="true" translate="no">&lt;/hypertext-studio&gt;</div>
     <div class="footer-directory">
       <section class="footer-group">
-        <h2 aria-label="Products">products/</h2>
+        <h2>Studio</h2>
+        <nav aria-label="Studio">
+          <ul>
+            {
+              studioLinks.map((link) => (
+                <li>
+                  <a class="footer-link" href={link.href}>
+                    <span class="footer-link__label">{link.label}</span>
+                  </a>
+                </li>
+              ))
+            }
+          </ul>
+        </nav>
+      </section>
+      <section class="footer-group footer-group--products">
+        <h2>Products</h2>
         <nav aria-label="Products">
           <ul>
             {
@@ -44,11 +61,11 @@ const studioLinks = [
         </nav>
       </section>
       <section class="footer-group">
-        <h2 aria-label="Studio">studio/</h2>
-        <nav aria-label="Studio">
+        <h2>Help &amp; resources</h2>
+        <nav aria-label="Help & resources">
           <ul>
             {
-              studioLinks.map((link) => (
+              helpLinks.map((link) => (
                 <li>
                   <a
                     class="footer-link"
@@ -56,9 +73,6 @@ const studioLinks = [
                     rel={link.external ? 'external noopener' : undefined}
                   >
                     <span class="footer-link__label">{link.label}</span>
-                    <span class="footer-link__address" aria-hidden="true">
-                      {link.address}
-                    </span>
                   </a>
                 </li>
               ))
@@ -101,8 +115,8 @@ const studioLinks = [
   .footer-directory {
     grid-row: 3;
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: clamp(2rem, 5vw, 6rem);
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.3fr) minmax(0, 0.8fr);
+    gap: clamp(2rem, 5vw, 5rem);
   }
 
   .footer-group h2 {
@@ -113,7 +127,6 @@ const studioLinks = [
     font-weight: 400;
     line-height: 1.4;
     letter-spacing: 0;
-    text-transform: lowercase;
   }
 
   ul {
@@ -207,8 +220,16 @@ const studioLinks = [
 
   @media (max-width: 44rem) {
     .footer-directory {
-      grid-template-columns: 1fr;
-      gap: 1.5rem;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 2rem;
+    }
+    .footer-group--products {
+      grid-column: 1 / -1;
+      grid-row: 2;
+    }
+    .footer-group:last-child {
+      grid-column: 2;
+      grid-row: 1;
     }
   }
 

@@ -523,6 +523,13 @@ const productArtMarkup = Object.fromEntries(
         animation: none;
       }
 
+      @media (max-width: 44rem) {
+        .site-wordmark {
+          inset-block-start: 0.625rem;
+          block-size: 2.75rem;
+        }
+      }
+
       .home-hero__mark {
         /* Fades as it slides under the bar, not before — a hole in the
          * headline while the name is still on screen reads as a bug. */
