@@ -116,6 +116,19 @@ The site has a real typographic scale. Use semantic levels and let the scale do 
 
 ---
 
+## Text spacing
+
+Page authors should use `.flow` for prose containers. It separates paragraphs and other
+prose blocks with `--space-md` (16px). Headings, actions, and section boundaries keep
+their own spacing.
+
+Keep prose in block layout so adjacent margins collapse instead of adding together.
+The `section` element does not apply layout or spacing. Use the stack utilities or
+a component's grid when the content needs those layouts. Do not combine a container
+gap with margins on its text children.
+
+---
+
 ## Links
 
 - **External links** get `rel="external noopener"` and a `title`. The `↗` arrow after them is automatic via CSS.

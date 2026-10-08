@@ -14,14 +14,14 @@ const channels = resolveSocialLinks(t.contact.channels, { bluesky: SOCIAL.bluesk
       <p class="lede">{t.contact.intro}</p>
     </header>
 
-    <section class="contact-card">
+    <section class="contact-card flow">
       <a class="email" href={`mailto:${t.contact.email}`} title={`Email ${t.contact.email}`}>
         {t.contact.email}
       </a>
       <p>{t.contact.body}</p>
     </section>
 
-    <section>
+    <section class="flow">
       <h2 id="mail">
         <a class="anchor" href="#mail" aria-label="Permalink to Mail">#</a>
         {t.contact.mailing.heading}
@@ -38,7 +38,7 @@ const channels = resolveSocialLinks(t.contact.channels, { bluesky: SOCIAL.bluesk
       </address>
     </section>
 
-    <section>
+    <section class="flow">
       <h2 id="also">
         <a class="anchor" href="#also" aria-label="Permalink to Also">#</a>
         Also

@@ -65,12 +65,6 @@ main {
   min-block-size: 0;
 }
 
-section {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-lg);
-}
-
 .stack-sm {
   display: flex;
   flex-direction: column;
@@ -87,7 +81,11 @@ section {
   gap: var(--space-lg);
 }
 
-.flow > * + * {
+.flow {
+  display: block;
+}
+
+.flow > * + :is(p, ul, ol, dl, blockquote, figure, address) {
   margin-block-start: var(--space-md);
 }
 
@@ -111,12 +109,6 @@ section {
   max-inline-size: var(--measure);
 }
 
-.prose-layout section {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-md);
-}
-
 .prose-layout h1 {
   font-family: var(--font-sans);
   font-size: 2rem;
@@ -135,7 +127,6 @@ section {
   font-family: var(--font-sans);
   font-size: var(--font-size-body);
   line-height: var(--leading-body);
-  margin: 0;
   text-wrap: pretty;
 }
 

@@ -67,14 +67,14 @@ const productArtMarkup = Object.fromEntries(
     <section class="home-services" aria-labelledby="services-heading">
       <h2 id="services-heading">Services</h2>
       <div>
-        <section>
+        <section class="flow">
           <h3>Consulting</h3><p>
             I can review your software, help you work through a product or technical decision, or
             figure out where AI would be useful. We’ll work out what needs to change and how to do
             it.
           </p>
         </section>
-        <section class="home-build">
+        <section class="home-build flow">
           <h3>Design &amp; development</h3><p>
             I can redesign software you already have or build a custom website, app, or platform. If
             your team will build it, I can work with them on the design and technical decisions.
@@ -119,7 +119,7 @@ const productArtMarkup = Object.fromEntries(
         ))
       }
     </section>
-    <section class="home-person" aria-labelledby="person-heading">
+    <section class="home-person flow" aria-labelledby="person-heading">
       <h2 id="person-heading">Working with me</h2><p>
         I’m Willie Chalmers. You’ll work directly with me.
       </p><p>
@@ -209,9 +209,6 @@ const productArtMarkup = Object.fromEntries(
   .home-person p {
     font-size: 16px;
     line-height: 1.85;
-  }
-  .home-person p + p {
-    margin-block-start: 24px;
   }
   @media (max-width: 900px) {
     .home-services {

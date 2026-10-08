@@ -10,7 +10,7 @@ import t from '@/i18n';
       <p class="lede">{t.colophon.intro}</p>
     </header>
 
-    <section>
+    <section class="flow">
       <h2>Stack</h2>
       <dl>
         {
@@ -24,7 +24,7 @@ import t from '@/i18n';
       </dl>
     </section>
 
-    <section>
+    <section class="flow">
       <h2>Source</h2>
       <p>
         Every page on this site is open source. Read it, fork it, learn from it.
@@ -56,10 +56,5 @@ import t from '@/i18n';
   .prose .lede {
     color: var(--color-secondary);
     margin-block-end: var(--space-md);
-  }
-  .prose section {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-md);
   }
 </style>
