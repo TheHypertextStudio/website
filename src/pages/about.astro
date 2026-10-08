@@ -5,7 +5,7 @@ import Base from '@/layouts/Base.astro';
 <Base title="About" description="About Hypertext Studio and its founder, Willie Chalmers III.">
   <article class="prose-layout">
     <h1>About</h1>
-    <div class="about-copy">
+    <div class="about-copy flow">
       <p>
         <a href="https://willie.page" rel="me external noopener">Willie Chalmers III</a>{' '}
         started Hypertext Studio as a home for his apps that didn’t really fit anywhere else.
@@ -25,8 +25,6 @@ import Base from '@/layouts/Base.astro';
 
 <style>
   .about-copy {
-    display: grid;
-    gap: 1.25rem;
     font-size: clamp(1.25rem, 2.3vw, 1.75rem);
     line-height: 1.45;
     letter-spacing: -0.025em;
