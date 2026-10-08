@@ -155,6 +155,9 @@
   font-size: 23px;
   margin-block-end: 24px;
 }
+.hx-service-next p + p {
+  margin-block-start: 24px;
+}
 .hx-note {
   max-inline-size: 760px;
   padding-block: 40px 75px;

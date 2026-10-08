@@ -7,7 +7,7 @@ test('each service starts the enquiry with the chosen situation', async ({ page 
     ['Discuss a redesign', 'redesign'],
     ['Work out where AI fits', 'ai'],
     ['Discuss something to build', 'build'],
-    ['Find a place to start', 'unsure'],
+    ['start here', 'unsure'],
   ]) {
     await page.goto('/services/');
     await page.getByRole('link', { name: label }).click();
