@@ -44,3 +44,9 @@ Exact package metadata, the temporary frozen lock, source package-manifest diges
 ## Remaining release gates
 
 The reviewed shared 0.0.1 packages are published and shared registry consumers are verified. Verify each product repository's package access, regenerate its real frozen lock, and pass hosted CI. Provision isolated supporting resources and a sandbox Micropub repository/token; staging must not write to the company website repository. Capture complete live routing and recovery identities, verify the provider candidate and critical journeys, then promote the approved immutable candidate. Retain the prior host through the plan's observation and recovery periods.
+
+## Native dependency build policy
+
+Fresh source acceptance exposed the missing checked-in pnpm11 native build approvals. The repository now declares only `esbuild`, `sharp` and `workerd`, matching its existing bootstrap hook. The focused setup contract failed with the missing policy before implementation and passes with the three-entry allowlist. Canonical registry lock regeneration and fresh authenticated product install remain required; the policy alone does not prove those gates.
+
+A fresh disposable source clone copied this exact policy (SHA-256 `368fd9e50a46d5ca8af48e7eb08751063280a5d933be56ed5eed91e304cda90e`) and installed the approved `0.0.1` shipping tarball. Install, frozen replay, peers, `./run setup`, `./run doctor`, and native Wrangler `4.127.1` passed. Evidence is retained in `.superpowers/sdd/2026-10-10-company-website-standardization/acceptance/root-shipping-001-checked-policy/summary.json`. This used a temporary shipping-tarball override; canonical files remained unchanged and authenticated product registry acceptance is still pending.

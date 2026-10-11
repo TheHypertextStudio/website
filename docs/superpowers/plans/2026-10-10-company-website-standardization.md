@@ -132,7 +132,7 @@ Shared element transitions are supported by the standard; adoption on each produ
 - [x] Add configuration fixtures for Curfew and Docket. Verify product overrides preserve navigation, redirects, branding, and base paths; generated config is deterministic and stale generated files fail `docs:config:check`.
 - [x] Build the Astro and Next.js examples with product theme overrides. Keep interactive React islands optional for Astro content pages.
 - [x] Implement the sign-in motion examples with URL/history, direct-navigation, keyboard, reduced-motion, and animation-fallback scenarios.
-- [ ] Publish an initial immutable package release. Prove clean consumer installation and builds in both framework profiles using scoped read-only package access.
+- [x] Publish an initial immutable package release. Prove clean consumer installation and builds in both framework profiles using scoped read-only package access. Approved `0.0.1` candidate `38116243716-1` was promoted without rebuilding in `38116605945`; read-only registry acceptance `38116980056` passed frozen installs, peers and both framework builds with all four shipping integrities verified.
 
 **Acceptance:** Both reference apps consume the same package release and pass the shared accessibility/navigation scenarios. Curfew and Docket config fixtures pass the same docs commands. Product themes retain their own typography and appearance; a fresh checkout can follow the shared setup and documentation without a global Mintlify installation.
 
