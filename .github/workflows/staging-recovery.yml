@@ -1,0 +1,91 @@
+name: Recover Studio staging website
+
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: Capture the serving candidate or restore a retained capture
+        type: choice
+        options: [capture, restore]
+        required: true
+      candidate_id:
+        description: Retained candidate run-id-attempt
+        type: string
+        required: true
+      manifest_sha256:
+        description: Exact candidate.json SHA-256
+        type: string
+        required: true
+      recovery_id:
+        description: Successful capture run-id-attempt (restore only)
+        type: string
+      record_sha256:
+        description: Retained stage.json file SHA-256 (restore only)
+        type: string
+      expected_version:
+        description: Reviewed currently serving Worker version (restore only)
+        type: string
+      expected_routing_sha256:
+        description: Reviewed current routing digest (restore only)
+        type: string
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: studio-website-staging-provider
+  cancel-in-progress: false
+
+jobs:
+  recovery:
+    if: ${{ github.repository == 'TheHypertextStudio/website' && github.ref == 'refs/heads/main' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment: staging
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: '3.13'
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '24.20.0'
+      - name: Prepare the immutable release runtime
+        env:
+          STUDIO_ENGINE: ${{ runner.temp }}/studio.pyz
+        run: |
+          curl --fail --location --silent --show-error --connect-timeout 20 --max-time 120 \
+            https://github.com/TheHypertextStudio/release-engineering/releases/download/v0.1.8/studio.pyz \
+            --output "$STUDIO_ENGINE"
+          printf '%s  %s\n' 61f746429fc0ffc7826df2bde61ee4d41323fb5fa0c9f8661255040e7838afd4 "$STUDIO_ENGINE" | sha256sum --check
+          if command -v corepack >/dev/null 2>&1; then
+            corepack enable
+            corepack prepare pnpm@11.9.0 --activate
+          else
+            npm install --global pnpm@11.9.0
+          fi
+      - name: Run the artifact-bound staging recovery command
+        env:
+          GH_TOKEN: ${{ github.token }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          STUDIO_ENGINE: ${{ runner.temp }}/studio.pyz
+          RECOVERY_ACTION: ${{ inputs.action }}
+          CANDIDATE_ID: ${{ inputs.candidate_id }}
+          MANIFEST_SHA256: ${{ inputs.manifest_sha256 }}
+          RECOVERY_ID: ${{ inputs.recovery_id }}
+          RECORD_SHA256: ${{ inputs.record_sha256 }}
+          EXPECTED_VERSION: ${{ inputs.expected_version }}
+          EXPECTED_ROUTING_SHA256: ${{ inputs.expected_routing_sha256 }}
+        run: python scripts/ci/staging-recovery.py
+      - name: Retain the recovery record and journal
+        if: ${{ always() }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: staging-recovery-${{ github.run_id }}-${{ github.run_attempt }}
+          path: .studio/staging-recovery/
+          if-no-files-found: warn
+          retention-days: 90
