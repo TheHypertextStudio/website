@@ -8,6 +8,8 @@ The shared frontend configuration package is pinned to `@thehypertextstudio/web-
 
 `pnpm-workspace.yaml` explicitly permits install scripts only for `esbuild`, `sharp`, and `workerd`, the same native dependencies already rebuilt by `scripts/bootstrap-worktree`. This checked-in policy lets fresh pnpm 11 installs prepare those tools without relying on machine-local build approvals. Dependency scripts outside this allowlist remain blocked.
 
+pnpm 11's default 24-hour release-age policy remains active. The only immediate-install exception is the exact reviewed internal version `@thehypertextstudio/web-config@0.0.1`, approved as candidate `38116243716-1` with its shipping integrity verified against the registry and pinned in the lock. New package versions require their own review; no organization-wide age exception is configured.
+
 CI uses each repository's short-lived `GITHUB_TOKEN` with `packages: read` and explicit package read grants. Install authentication uses a temporary trusted pnpm user configuration containing only an environment placeholder; the install step removes it on exit. Keep credentials outside repository files and build artifacts.
 
 Use workload identity federation wherever the provider supports it. Do not create classic personal access tokens as a package-access workaround. A repository that cannot receive a native package grant needs a reviewed secret-free access design before its authenticated setup can be accepted. Local setup likewise needs an approved authentication method; hosted token access does not establish local registry access.
