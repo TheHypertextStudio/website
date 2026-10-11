@@ -4,9 +4,9 @@ This records source and hosted registry acceptance for the Studio frontend migra
 
 ## Tooling and artifact
 
-The lifecycle now pins published release-engineering v0.1.8, revision `878260def7229cd3df7f752b32e5581230c5db2d`, archive SHA-256 `61f746429fc0ffc7826df2bde61ee4d41323fb5fa0c9f8661255040e7838afd4`. The native pin updater verified the actual published archive and tag; `./run doctor` passed all declared tool/version checks, and `./run build` produced the eleven-page native Workers artifact using the existing local dependency graph. The original artifact acceptance below used v0.1.7, Node 24.20.0, pnpm 11.9.0 and Wrangler 4.127.1 in an isolated source consumer. Full registry-backed checkout acceptance remains dependent on ordinary CI for the adopted registry lock; the actual 0.0.1 tarball acceptance below uses v0.1.8.
+The lifecycle now pins published release-engineering v0.1.8, revision `878260def7229cd3df7f752b32e5581230c5db2d`, archive SHA-256 `61f746429fc0ffc7826df2bde61ee4d41323fb5fa0c9f8661255040e7838afd4`. The native pin updater verified the actual published archive and tag; `./run doctor` passed all declared tool/version checks, and `./run build` produced the eleven-page native Workers artifact using the existing local dependency graph. The original artifact acceptance below used v0.1.7, Node 24.20.0, pnpm 11.9.0 and Wrangler 4.127.1 in an isolated source consumer. Full hosted registry-backed checkout acceptance is recorded below; the actual 0.0.1 tarball acceptance also uses v0.1.8.
 
-The original shared frontend config acceptance used its reviewed local 0.1.0 tarball. The initial 0.0.1 packages are now published, and shared registry verification passed for all four exact package integrities. The actual 0.0.1 shipping acceptance below supersedes the historical tarball input. The registry-lock acceptance below records actual repository access and lock regeneration. Ordinary full CI on that adopted lock remains required before claiming full registry-checkout acceptance.
+The original shared frontend config acceptance used its reviewed local 0.1.0 tarball. The initial 0.0.1 packages are now published, and shared registry verification passed for all four exact package integrities. The actual 0.0.1 shipping acceptance below supersedes the historical tarball input. The registry-lock acceptance below records actual repository access and lock regeneration. Subsequent full hosted CI accepts that adopted lock, as recorded below.
 
 ## Observed local acceptance
 
@@ -27,7 +27,7 @@ Broad lint now excludes the isolated tooling checkouts (`.superpowers`, `.studio
 
 With the selected backend installed locally, the normal root `pnpm check` passed: formatting, broad lint, Astro and TypeScript checks, all 149 unit tests and nine supporting Worker tests. Astro reported 43 files with zero errors, warnings or hints. Nine inventory-capture Node tests also passed separately. The canonical lock was restored byte-for-byte after temporary native tarball installation; no workspace override remains. Its historical optional-peer receipts still require replacement by a fresh registry graph before frozen-checkout acceptance.
 
-Context7 documentation retrieval remains blocked by its monthly quota; the compatibility evidence uses exact published registry metadata and package source. The dependency source issue is resolved, while product registry access, canonical registry lock regeneration, and fresh hosted acceptance remain pending. No fabricated registry entry or local tarball override is committed.
+Context7 documentation retrieval remains blocked by its monthly quota; the compatibility evidence uses exact published registry metadata and package source. At this historical checkpoint, product registry access, canonical registry lock regeneration and fresh hosted acceptance were pending; the full hosted acceptance below supersedes those gates. No fabricated registry entry or local tarball override is committed.
 
 ## Actual 0.0.1 shipping acceptance
 
@@ -43,7 +43,7 @@ Exact package metadata, the temporary frozen lock, source package-manifest diges
 
 ## Remaining release gates
 
-The reviewed shared 0.0.1 packages are published and shared registry consumers are verified. Studio, Curfew, and Docket have verified Actions Read grants for all four packages. Studio's native-token registry lock is adopted below; require its ordinary full hosted CI. Curfew and Docket still need genuine registry locks and hosted acceptance. LogDate needs a reviewed secret-free package access arrangement. Provision isolated supporting resources and a sandbox Micropub repository/token; staging must not write to the company website repository. Capture complete live routing and recovery identities, verify the provider candidate and critical journeys, then promote the approved immutable candidate. Retain the prior host through the plan's observation and recovery periods.
+The reviewed shared 0.0.1 packages are published and shared registry consumers are verified. Studio, Curfew, and Docket have verified Actions Read grants for all four packages. Studio's genuine registry lock and full hosted CI are accepted below. Curfew's genuine registry lock and full website/docs checks passed in `38120078658`; its provider and Mintlify publishing gates remain open. Docket's native registry resolution and frozen install passed, but peer conflicts prevent lock adoption. LogDate needs a reviewed secret-free package access arrangement. Provision isolated supporting resources and sandbox Micropub repository access with short-lived credentials; staging must not write to the company website repository. Capture complete live routing and recovery identities, verify the provider candidate and critical journeys, then promote the approved immutable candidate. Retain the prior host through the plan's observation and recovery periods.
 
 ## Native dependency build policy
 
@@ -61,4 +61,18 @@ Fresh resolution also updated dependencies within existing manifest ranges, incl
 
 Evidence and independent source review are retained under `.superpowers/sdd/2026-10-10-company-website-standardization/acceptance/registry-lock-38118654678/`. No classic token was created. All twelve private package Read grants for the three Studio-owned consumer repositories were verified, while source Admin access, inheritance, and private visibility were preserved. LogDate's personal-account repository still requires a supported secret-free access design; no transfer is authorized by this checkpoint.
 
-The first ordinary CI run on the adopted graph, `38119074350`, failed setup because pnpm's default 24-hour release-age check rejected the just-published internal `web-config@0.0.1`. Its log names no other violating package. The workspace now records an exact package-and-version exception for that already approved immutable release; every other package and future version retains the default age policy. [pnpm documents version-specific exclusions](https://pnpm.io/settings/dependency-resolution#minimumreleaseageexclude). Full ordinary CI after this policy change remains required.
+The first ordinary CI run on the adopted graph, `38119074350`, failed setup because pnpm's default 24-hour release-age check rejected the just-published internal `web-config@0.0.1`. Its log names no other violating package. The workspace now records an exact package-and-version exception for that already approved immutable release; every other package and future version retains the default age policy. [pnpm documents version-specific exclusions](https://pnpm.io/settings/dependency-resolution#minimumreleaseageexclude). The subsequent full ordinary CI below accepts this policy change.
+
+## Full hosted registry acceptance
+
+[CI38119479270](https://github.com/TheHypertextStudio/website/actions/runs/38119479270) passed every enabled job on reviewed head `ecf398f287b1ecf3cd20d6944465ff5760745e77`: quality, unit/Worker checks, build, browsers, artifact validation and the final report. Ordinary installation used the repository's native short-lived package-read token and the adopted frozen lock. The browser job passed 821 scenarios with one recorded skip and zero flake budget; the retained Worker artifact passed all ten scenarios. The skipped case is not accepted as covered.
+
+GitHub checked out pull-request merge SHA `bfa44aa9142f07f59b5dd6824d2fc5dbeb92592b`; its Git tree and the reviewed head both equal `003d37c5a74a258c6082141e01387afd5b4bdfb3`. Artifact `11694772012` has digest `sha256:d2231bc6ac202e5f0920f14f0bfb7da32adc856fdf56c579024e56ac7d35689a`. These identities describe the CI artifact, not an approved production promotion candidate. Production and provider inventory jobs were skipped; no frontend hosting changed.
+
+Logs, run/artifact metadata and the acceptance summary are retained in `.superpowers/sdd/2026-10-10-company-website-standardization/acceptance/studio-native-registry-ci-38119479270/`.
+
+## Production source reconciliation
+
+Read-only provider metadata confirmed Studio Pages production `181825c` is included in this branch. Curfew Pages production had advanced to `3efbd4f`; its migration was rebased onto that source before registry lock adoption. Docket's canonical alias resolves to READY deployment `dpl_BMZ9vBNqkEutvxGwLcLB73Fknakf`, source `ee15b735`; the migration now includes that production source and subsequent main documentation commit `096a6d8`. The newer canceled deployment is not its canonical source.
+
+LogDate's private Vercel project deploys `main`, while GitHub defaults to stale `develop`. Its original migration omitted thirty shipped commits. The replacement port starts at actual deployed main `488add9`, preserving public utility pages, artwork, native associations, passkey changes and waitlist source. Historical acceptance on the stale branch does not accept this replacement. Registry/peer, runtime, ownership and main/develop release-policy gates remain open.
