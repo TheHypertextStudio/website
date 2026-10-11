@@ -19,7 +19,7 @@ The static site and its protocol endpoints are separate Workers. `wrangler.jsonc
 
 | Worker       | Responsibility                                             |
 | ------------ | ---------------------------------------------------------- |
-| Site         | Serve static Astro files and candidate release metadata    |
+| Site         | Serve static Astro files through Workers Static Assets     |
 | `www`        | Preserve path/query and redirect to the apex origin        |
 | `poem`       | Read the optional `studio:` DNS TXT value                  |
 | `webmention` | Validate and store verified Webmentions in the existing D1 |
@@ -38,4 +38,4 @@ Micropub content is committed to `src/content/notes/*.md` through GitHub's Conte
 
 `scripts/build.sh` generates public metadata and images, then builds Astro into `dist/`. Wrangler deploys that output directly through Workers Static Assets using `wrangler.jsonc`. There is no custom site entrypoint, archive assembly or release identity endpoint.
 
-The release workflow and route cutover are pending integration. See [deployment and recovery](deployment.md) for the candidate contract and outstanding provider gates.
+The release workflow and route cutover are pending integration. See [deployment and recovery](deployment.md) for native deployment and outstanding provider gates.
