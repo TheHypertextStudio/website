@@ -106,7 +106,7 @@ test: ## vitest unit tests
 test-workers: ## Vitest inside workerd for all five Workers
 	@$(PNPM) run test:workers
 
-test-artifact: ## Playwright checks against the exact built dist directory
+test-artifact: ## Playwright checks against the prebuilt Workers candidate
 	@$(PNPM) run test:artifact
 
 test-e2e: ## Playwright browser, responsive, and accessibility checks
@@ -130,7 +130,9 @@ screenshots: ## capture every page state into .hypertext/screenshots/
 quality: ## local quality gate
 	@./run check
 
-ci: quality build test-artifact ## portable repository CI contract
+ci: quality ## portable repository CI contract
+	@$(PNPM) run build:candidate
+	@$(PNPM) run test:artifact
 
 # ----------------------------------------------------------------------------
 # Audits (built site)

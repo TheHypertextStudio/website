@@ -99,9 +99,12 @@ describe('portable CI policy', () => {
       /\n  report:\n[\s\S]*needs: \[quality, test, browser, build, artifact, production\]/,
     );
     expect(artifactPlaywright).toContain("testDir: './tests/artifact'");
-    // The artifact gate must serve through the real Pages runtime, or it cannot
-    // see _headers / _redirects and silently validates less than its name claims.
-    expect(artifactPlaywright).toContain('wrangler pages dev');
+    // Validate the downloaded Worker module and Static Assets together.
+    expect(artifactPlaywright).toContain(
+      'wrangler dev --config build/site-candidate/wrangler.site.json',
+    );
+    expect(ci).toContain('pnpm run build:candidate');
+    expect(ci.match(/path: build\/site-candidate\//g)).toHaveLength(2);
     expect(packageJson.scripts['test:artifact']).toContain('playwright.artifact.config.ts');
     expect(playwright).toContain("'**/artifact/**'");
   });

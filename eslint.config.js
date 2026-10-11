@@ -1,4 +1,4 @@
-import studioBase from '@thehypertextstudio/web-config/eslint';
+import studioBase from '@thehypertextstudio/web-config/eslint/node';
 import eslintPluginAstro from 'eslint-plugin-astro';
 import tsParser from '@typescript-eslint/parser';
 
@@ -26,6 +26,11 @@ export default [
     ],
   },
   {
+    // Playwright serializes these callbacks into the browser.
+    files: ['scripts/screenshots.mjs'],
+    languageOptions: { globals: { window: 'readonly' } },
+  },
+  {
     rules: {
       'no-console': ['warn', { allow: ['warn', 'error'] }],
       'no-unused-vars': ['warn', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
@@ -35,5 +40,9 @@ export default [
       // Safari drops the implicit list role. The explicit role restores it.
       'astro/jsx-a11y/no-redundant-roles': 'off',
     },
+  },
+  {
+    files: ['**/*.{ts,mts,cts,tsx}'],
+    rules: { 'no-unused-vars': 'off' },
   },
 ];

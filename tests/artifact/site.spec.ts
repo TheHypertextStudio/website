@@ -70,7 +70,7 @@ test('serves every same-origin asset referenced by the built homepage', async ({
 });
 
 // Adding a file to the fixture extends this suite automatically. The content
-// types come from dist/_headers, which only the Pages runtime applies.
+// types come from the candidate's _headers through Workers Static Assets.
 test('serves every static file the site declares, with its declared type', async ({ request }) => {
   for (const file of STATIC_FILES) {
     const response = await request.get(file.path);
@@ -106,9 +106,17 @@ test('long-caches immutable build assets and fonts', async ({ page, request }) =
 });
 
 test('redirects bare page paths to their canonical trailing slash', async ({ request }) => {
-  const response = await request.get('/about', { maxRedirects: 0 });
-  expect(response.status()).toBe(308);
-  expect(response.headers()['location']).toBe('/about/');
+  for (const [source, destination] of [
+    ['/about', '/about/'],
+    [
+      '/about?from=sign-in&next=%2Fwork-together%2F',
+      '/about/?from=sign-in&next=%2Fwork-together%2F',
+    ],
+  ]) {
+    const response = await request.get(source!, { maxRedirects: 0 });
+    expect(response.status()).toBe(308);
+    expect(response.headers()['location']).toBe(destination);
+  }
 });
 
 test('publishes canonical discovery and well-known metadata', async ({ request }) => {
