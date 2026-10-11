@@ -10,7 +10,7 @@ The shared frontend configuration package is pinned to `@thehypertextstudio/web-
 
 For local installs, configure pnpm's user-level GitHub Packages credential using a read-only token with access to `TheHypertextStudio/web-platform`. CI supplies its scoped read token to the install step. Keep the credential outside repository files and build artifacts.
 
-The manual **CI** workflow option **Resolve a proposed dependency lock with repository package access** resolves `pnpm-lock.yaml` with the selected branch's declared toolchain and this repository's read-only Actions package access. It uploads only the proposed lockfile for review. Adopt that artifact in source, then require ordinary frozen-install CI before merging. The workflow does not commit its output or deploy a website.
+The manual **CI** workflow option **Resolve a proposed dependency lock with repository package access** resolves a fresh `pnpm-lock.yaml` from the selected branch's manifests with its declared toolchain and this repository's read-only Actions package access. A script-disabled frozen install and peer check must pass before it uploads only the proposed lockfile. Review the entire diff, since dependency ranges can select newer versions. Adopt the reviewed artifact in source, then require ordinary frozen-install CI before merging. The workflow does not commit its output or deploy a website.
 
 ## Website Worker
 
