@@ -1,12 +1,12 @@
 # Website standardization source checkpoint
 
-This records local acceptance for the Studio frontend migration. Production remains on Pages; this checkpoint does not authorize a hosting cutover.
+This records source and hosted registry acceptance for the Studio frontend migration. Production remains on Pages; this checkpoint does not authorize a hosting cutover.
 
 ## Tooling and artifact
 
-The lifecycle now pins published release-engineering v0.1.8, revision `878260def7229cd3df7f752b32e5581230c5db2d`, archive SHA-256 `61f746429fc0ffc7826df2bde61ee4d41323fb5fa0c9f8661255040e7838afd4`. The native pin updater verified the actual published archive and tag; `./run doctor` passed all declared tool/version checks, and `./run build` produced the eleven-page native Workers artifact using the existing local dependency graph. The original artifact acceptance below used v0.1.7, Node 24.20.0, pnpm 11.9.0 and Wrangler 4.127.1 in an isolated source consumer. Fresh registry-backed checkout acceptance remains dependent on product package access and the real registry lock; the actual 0.0.1 tarball acceptance below uses v0.1.8.
+The lifecycle now pins published release-engineering v0.1.8, revision `878260def7229cd3df7f752b32e5581230c5db2d`, archive SHA-256 `61f746429fc0ffc7826df2bde61ee4d41323fb5fa0c9f8661255040e7838afd4`. The native pin updater verified the actual published archive and tag; `./run doctor` passed all declared tool/version checks, and `./run build` produced the eleven-page native Workers artifact using the existing local dependency graph. The original artifact acceptance below used v0.1.7, Node 24.20.0, pnpm 11.9.0 and Wrangler 4.127.1 in an isolated source consumer. Full registry-backed checkout acceptance remains dependent on ordinary CI for the adopted registry lock; the actual 0.0.1 tarball acceptance below uses v0.1.8.
 
-The original shared frontend config acceptance used its reviewed local 0.1.0 tarball. The initial 0.0.1 packages are now published, and shared registry verification passed for all four exact package integrities. The actual 0.0.1 shipping acceptance below supersedes the historical tarball input. The repository lock has not been regenerated from that registry release; product package access, the real lock, and hosted CI remain required before claiming fresh registry-checkout acceptance.
+The original shared frontend config acceptance used its reviewed local 0.1.0 tarball. The initial 0.0.1 packages are now published, and shared registry verification passed for all four exact package integrities. The actual 0.0.1 shipping acceptance below supersedes the historical tarball input. The registry-lock acceptance below records actual repository access and lock regeneration. Ordinary full CI on that adopted lock remains required before claiming full registry-checkout acceptance.
 
 ## Observed local acceptance
 
@@ -43,10 +43,20 @@ Exact package metadata, the temporary frozen lock, source package-manifest diges
 
 ## Remaining release gates
 
-The reviewed shared 0.0.1 packages are published and shared registry consumers are verified. Verify each product repository's package access, regenerate its real frozen lock, and pass hosted CI. Provision isolated supporting resources and a sandbox Micropub repository/token; staging must not write to the company website repository. Capture complete live routing and recovery identities, verify the provider candidate and critical journeys, then promote the approved immutable candidate. Retain the prior host through the plan's observation and recovery periods.
+The reviewed shared 0.0.1 packages are published and shared registry consumers are verified. Studio, Curfew, and Docket have verified Actions Read grants for all four packages. Studio's native-token registry lock is adopted below; require its ordinary full hosted CI. Curfew and Docket still need genuine registry locks and hosted acceptance. LogDate needs a reviewed secret-free package access arrangement. Provision isolated supporting resources and a sandbox Micropub repository/token; staging must not write to the company website repository. Capture complete live routing and recovery identities, verify the provider candidate and critical journeys, then promote the approved immutable candidate. Retain the prior host through the plan's observation and recovery periods.
 
 ## Native dependency build policy
 
 Fresh source acceptance exposed the missing checked-in pnpm11 native build approvals. The repository now declares only `esbuild`, `sharp` and `workerd`, matching its existing bootstrap hook. The focused setup contract failed with the missing policy before implementation and passes with the three-entry allowlist. Canonical registry lock regeneration and fresh authenticated product install remain required; the policy alone does not prove those gates.
 
 A fresh disposable source clone copied this exact policy (SHA-256 `368fd9e50a46d5ca8af48e7eb08751063280a5d933be56ed5eed91e304cda90e`) and installed the approved `0.0.1` shipping tarball. Install, frozen replay, peers, `./run setup`, `./run doctor`, and native Wrangler `4.127.1` passed. Evidence is retained in `.superpowers/sdd/2026-10-10-company-website-standardization/acceptance/root-shipping-001-checked-policy/summary.json`. This used a temporary shipping-tarball override; canonical files remained unchanged and authenticated product registry acceptance is still pending.
+
+## Native repository registry lock
+
+The manual dependency-lock job in [run38118654678](https://github.com/TheHypertextStudio/website/actions/runs/38118654678) used only this repository's short-lived `GITHUB_TOKEN` with package-read permission. Fresh resolution, a script-disabled frozen install of the actual registry package, and `pnpm peers check` passed. The enclosing workflow's ordinary jobs still failed against the previous source lock; only the dependency-lock job is accepted here.
+
+The adopted lockfile SHA-256 is `ed08c874c4d9a0b745b8c3a6b434e02862e4b1f63c4b06fdcb0f2b1eb5cbe5b7`. Artifact `11694438343` has digest `sha256:d8f04e94d808afa98af0164129aa14adf92a3594d699a8dd1b1eb76a9f68df66`. Independent review verified all direct manifest specifiers and exact pins, every retained package integrity, the approved web-config shipping integrity, and the absence of local overrides and obsolete legacy accessibility peer receipts.
+
+Fresh resolution also updated dependencies within existing manifest ranges, including Astro `7.2.9` to `7.3.8`, markdown-remark `7.2.4` to `7.3.2`, TypeScript parser `8.68.0` to `8.71.1`, Node types `26.4.0` to `26.6.5`, and sharp `0.35.4` to `0.35.5`. Exact Node, pnpm, Wrangler, Playwright, ESLint, Prettier and shared package declarations remain unchanged. Earlier local build results do not accept this newer graph: ordinary full frozen-install CI on the adopted lock is still required.
+
+Evidence and independent source review are retained under `.superpowers/sdd/2026-10-10-company-website-standardization/acceptance/registry-lock-38118654678/`. No classic token was created. All twelve private package Read grants for the three Studio-owned consumer repositories were verified, while source Admin access, inheritance, and private visibility were preserved. LogDate's personal-account repository still requires a supported secret-free access design; no transfer is authorized by this checkpoint.
