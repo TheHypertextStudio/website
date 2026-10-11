@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Production build pipeline. This script is the single build owner used by
-# package scripts, Make, CI, previews, and break-glass deployments.
+# package scripts, Make, CI, and previews.
 
 set -euo pipefail
 

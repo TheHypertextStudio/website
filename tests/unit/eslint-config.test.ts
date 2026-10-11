@@ -6,7 +6,7 @@ const eslint = new ESLint();
 describe('product lint configuration', () => {
   it('excludes tooling checkouts from broad lint', async () => {
     for (const path of [
-      'build/site-candidate/assets/app.js',
+      'dist/assets/app.js',
       '.superpowers/sdd/example/repos/app/src/page.ts',
       '.studio-engine/tests/fixture.ts',
       '.studio-source/apps/web/page.tsx',

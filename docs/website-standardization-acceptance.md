@@ -1,5 +1,7 @@
 # Website standardization source checkpoint
 
+> Historical migration evidence. On 2026-10-11 the custom lifecycle, candidate/promotion, packaging and staging recovery machinery was retired at the user's request. Commands below describe earlier runs and are not current operating instructions. See [deployment](deployment.md) and [development](development.md) for the supported commands.
+
 This records source and hosted registry acceptance for the Studio frontend migration. Production remains on Pages; this checkpoint does not authorize a hosting cutover.
 
 ## Tooling and artifact

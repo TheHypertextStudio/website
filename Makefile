@@ -2,7 +2,7 @@
 # Hypertext Studio — canonical task surface
 #
 # Every key task runs through `make`. Run `make help` for the categorised list.
-# Targets group into: setup, dev, quality, audits, content, and explicit deploy.
+# Targets group into setup, dev, quality, audits, and content.
 # =============================================================================
 
 SHELL := /usr/bin/env bash
@@ -22,7 +22,6 @@ PNPM := $(shell command -v pnpm 2>/dev/null || echo "corepack pnpm")
 ##@ Quality
 ##@ Audits
 ##@ Content
-##@ Deploy
 
 .PHONY: help
 help: ## show this help (the default)
@@ -34,15 +33,12 @@ help: ## show this help (the default)
 # Setup
 # ----------------------------------------------------------------------------
 
-.PHONY: bootstrap setup doctor install
+.PHONY: bootstrap setup install
 
-bootstrap: ## prepare the pinned local lifecycle toolchain and dependencies
-	@./run setup
+bootstrap: ## prepare the checkout using the shared worktree bootstrap
+	@./bootstrap worktree prepare
 
 setup: bootstrap ## alias for bootstrap
-
-doctor: ## non-mutating health check (versions, files, deps)
-	@./run doctor
 
 install: ## install or refresh pnpm dependencies
 	@$(PNPM) install
@@ -54,7 +50,7 @@ install: ## install or refresh pnpm dependencies
 .PHONY: dev dev-workers dev-all build preview clean nuke
 
 dev: ## start the site only via Portless (https://hypertext.localhost)
-	@./run dev
+	@$(PNPM) run dev
 
 dev-astro: ## raw astro dev (no Portless) on http://localhost:4321
 	@$(PNPM) run dev:astro
@@ -63,7 +59,7 @@ dev-all: ## site + all five workers via Portless (subdomains on .localhost)
 	@bash scripts/dev.sh
 
 build: ## production build (generated metadata + Astro)
-	@./run build
+	@$(PNPM) run build
 
 preview: build ## preview the production build locally
 	@$(PNPM) run preview
@@ -106,7 +102,7 @@ test: ## vitest unit tests
 test-workers: ## Vitest inside workerd for all five Workers
 	@$(PNPM) run test:workers
 
-test-artifact: ## Playwright checks against the prebuilt Workers candidate
+test-artifact: ## Playwright checks against the built site through Workers Static Assets
 	@$(PNPM) run test:artifact
 
 test-e2e: ## Playwright browser, responsive, and accessibility checks
@@ -128,10 +124,10 @@ screenshots: ## capture every page state into .hypertext/screenshots/
 	@node scripts/screenshots.mjs
 
 quality: ## local quality gate
-	@./run check
+	@$(PNPM) run check
 
 ci: quality ## portable repository CI contract
-	@$(PNPM) run build:candidate
+	@$(PNPM) run build
 	@$(PNPM) run test:artifact
 
 # ----------------------------------------------------------------------------
@@ -174,18 +170,6 @@ icons: ## regenerate § favicon set
 
 og: ## regenerate templated OG images
 	@bash scripts/og.sh
-
-# ----------------------------------------------------------------------------
-# Deploy
-# ----------------------------------------------------------------------------
-
-.PHONY: deploy-preview deploy-break-glass
-
-deploy-preview: ## blocked until shared Workers candidate workflow is connected
-	@bash scripts/deploy.sh preview
-
-deploy-break-glass: ## blocked until candidate-based recovery is connected
-	@bash scripts/deploy.sh break-glass
 
 # ----------------------------------------------------------------------------
 # Convenience

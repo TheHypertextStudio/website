@@ -211,11 +211,15 @@ export function renderWorkflowReport(data) {
     { name: 'Browsers and accessibility', outcome: data.browser },
     { name: 'Build', outcome: data.build },
     { name: 'Deployable artifact validation', outcome: data.artifact },
-    {
-      name: 'Production',
-      outcome: data.production,
-      details: PRODUCTION_DETAILS[state] ?? 'Not run',
-    },
+    ...(data.production
+      ? [
+          {
+            name: 'Production',
+            outcome: data.production,
+            details: PRODUCTION_DETAILS[state] ?? 'Not run',
+          },
+        ]
+      : []),
   ];
   const lines = [
     '## Workflow receipt',
