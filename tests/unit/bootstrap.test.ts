@@ -11,12 +11,4 @@ describe('common setup entrypoint', () => {
     const bootstrap = readFileSync('scripts/bootstrap-worktree', 'utf8');
     expect(bootstrap).toContain('exec pnpm rebuild esbuild workerd sharp');
   });
-
-  test('bootstrap delegates local setup to the pinned shared lifecycle only', () => {
-    const bootstrap = readFileSync('scripts/bootstrap.sh', 'utf8');
-    expect(bootstrap).toContain('exec "$REPO_ROOT/run" setup');
-    expect(bootstrap).not.toContain('wrangler');
-    expect(bootstrap).not.toContain('CLOUDFLARE_PAGES_PROJECT');
-    expect(bootstrap).not.toContain('secret put');
-  });
 });

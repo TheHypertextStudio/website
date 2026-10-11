@@ -1,35 +1,7 @@
-import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
-import { execFileSync } from 'node:child_process';
-import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { readFileSync } from 'node:fs';
 import { describe, expect, test } from 'vitest';
 
 describe('developer command contracts', () => {
-  test('Workers preparation preserves exact rules and adds permanent page redirects once', () => {
-    const assets = mkdtempSync(join(tmpdir(), 'studio-assets-'));
-    try {
-      mkdirSync(join(assets, 'about'));
-      mkdirSync(join(assets, 'notes', 'entry'), { recursive: true });
-      writeFileSync(join(assets, 'index.html'), 'home');
-      writeFileSync(join(assets, '404.html'), 'missing');
-      writeFileSync(join(assets, 'about', 'index.html'), 'about');
-      writeFileSync(join(assets, 'notes', 'entry', 'index.html'), 'entry');
-      writeFileSync(join(assets, '_redirects'), '/about /existing/ 301\n');
-      const prepare = () =>
-        execFileSync(process.execPath, ['scripts/prepare-workers-assets.mjs', assets]);
-      prepare();
-      const first = readFileSync(join(assets, '_redirects'), 'utf8');
-      expect(first).toContain('/about /existing/ 301');
-      expect(first).not.toContain('/about /about/');
-      expect(first).toContain('/notes/entry /notes/entry/ 308');
-      expect(first).not.toContain('/404');
-      prepare();
-      expect(readFileSync(join(assets, '_redirects'), 'utf8')).toBe(first);
-    } finally {
-      rmSync(assets, { recursive: true, force: true });
-    }
-  });
-
   test('build generation has one owner and one Astro invocation', () => {
     const pkg = JSON.parse(readFileSync('package.json', 'utf8')) as {
       scripts: Record<string, string>;
@@ -58,24 +30,10 @@ describe('developer command contracts', () => {
     expect(dev).not.toContain('cd "$dir"');
   });
 
-  test('production deployment stays blocked until the shared candidate lifecycle is connected', () => {
-    const bootstrap = readFileSync('scripts/bootstrap.sh', 'utf8');
-    const deploy = readFileSync('scripts/deploy.sh', 'utf8');
-    const ci = readFileSync('.github/workflows/ci.yml', 'utf8');
-    expect(bootstrap).toContain('exec "$REPO_ROOT/run" setup');
-    expect(bootstrap).not.toContain('wrangler');
-    expect(deploy).toContain(
-      'Deployment is unavailable until the shared Workers candidate workflow is connected.',
-    );
-    expect(ci).toContain('if: ${{ false }}');
-    expect(ci).not.toContain('wrangler pages deploy');
-    expect(ci).not.toContain('bash scripts/migrate-d1.sh remote hypertext-studio');
-  });
-
-  test('Make exposes CI and blocked preview/recovery targets without a broken release target', () => {
+  test('Make exposes the existing checks without a broken release target', () => {
     const makefile = readFileSync('Makefile', 'utf8');
     expect(makefile).toContain('ci:');
-    expect(makefile).toContain('deploy-break-glass:');
+    expect(makefile).not.toContain('scripts/deploy.sh');
     expect(makefile).not.toContain('scripts/release.sh');
     expect(makefile).not.toMatch(/^release:/m);
   });

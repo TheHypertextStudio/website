@@ -16,9 +16,9 @@ const packageJson = JSON.parse(readFileSync('package.json', 'utf8')) as {
 };
 
 describe('portable CI policy', () => {
-  test('uses read-only package access and keeps production blocked pending candidate integration', () => {
+  test('uses read-only package access and does not deploy from validation', () => {
     expect(ci).toContain('permissions:\n  contents: read\n  packages: read');
-    expect(ci).toContain('if: ${{ false }}');
+    expect(ci).not.toContain('wrangler deploy');
     expect(ci).not.toContain('environment:\n      name: production');
     expect(ci).toContain('upload-artifact');
     expect(ci).toContain('download-artifact');
@@ -48,12 +48,6 @@ describe('portable CI policy', () => {
 
   test('keeps well-known metadata in the immutable production artifact', () => {
     expect(ci).toContain('include-hidden-files: true');
-  });
-
-  test('does not deploy while the candidate promotion workflow is pending', () => {
-    expect(ci).toMatch(/\n  production:\n[\s\S]*?\n    if: \$\{\{ false \}\}/);
-    expect(ci).toContain('Production promotion is pending shared lifecycle integration.');
-    expect(ci).not.toContain('paths:');
   });
 
   test('publishes rich job summaries without masking failed gates', () => {
@@ -87,24 +81,16 @@ describe('portable CI policy', () => {
     expect(ci.match(/overwrite: true/g)).toHaveLength(3);
   });
 
-  test('validates the downloaded immutable artifact while production remains blocked', () => {
+  test('validates the downloaded build through Workers Static Assets', () => {
     expect(ci).toMatch(/\n  artifact:\n/);
     expect(ci).toContain('name: site-${{ github.sha }}');
     expect(ci).toContain('pnpm run test:artifact');
-    expect(ci).toMatch(
-      /\n  production:\n[\s\S]*needs: \[quality, test, browser, build, artifact\]/,
-    );
-    expect(ci).toMatch(/\n  production:\n[\s\S]*if: \$\{\{ false \}\}/);
-    expect(ci).toMatch(
-      /\n  report:\n[\s\S]*needs: \[quality, test, browser, build, artifact, production\]/,
-    );
+    expect(ci).toMatch(/\n  report:\n[\s\S]*needs: \[quality, test, browser, build, artifact\]/);
     expect(artifactPlaywright).toContain("testDir: './tests/artifact'");
-    // Validate the downloaded Worker module and Static Assets together.
-    expect(artifactPlaywright).toContain(
-      'wrangler dev --config build/site-candidate/wrangler.site.json',
-    );
-    expect(ci).toContain('pnpm run build:candidate');
-    expect(ci.match(/path: build\/site-candidate\//g)).toHaveLength(2);
+    // Serve the downloaded Astro output using the deployment configuration.
+    expect(artifactPlaywright).toContain('wrangler dev --config wrangler.jsonc');
+    expect(ci).toContain('pnpm run build');
+    expect(ci.match(/path: dist\//g)).toHaveLength(2);
     expect(packageJson.scripts['test:artifact']).toContain('playwright.artifact.config.ts');
     expect(playwright).toContain("'**/artifact/**'");
   });
@@ -127,10 +113,7 @@ describe('portable CI policy', () => {
   test('exposes artifact evidence to an always-run workflow receipt', () => {
     expect(ci).toContain('artifact-url: ${{ steps.site_artifact.outputs.artifact-url }}');
     expect(ci).toContain('artifact-digest: ${{ steps.site_artifact.outputs.artifact-digest }}');
-    expect(ci).toMatch(
-      /\n  report:\n[\s\S]*needs: \[quality, test, browser, build, artifact, production\]/,
-    );
-    expect(ci).toContain('PRODUCTION_RESULT: ${{ needs.production.result }}');
+    expect(ci).toMatch(/\n  report:\n[\s\S]*needs: \[quality, test, browser, build, artifact\]/);
   });
 
   test('uses the aggregate Worker runner instead of short-circuiting chained suites', () => {

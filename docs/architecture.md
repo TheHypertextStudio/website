@@ -15,7 +15,7 @@ Blank values publish nothing.
 
 ## Workers
 
-The static site and its protocol endpoints are separate Workers. `wrangler.site.json` configures the Astro assets Worker; each supporting service has an independent `workers/<service>/wrangler.toml` with `staging` and `production` environments:
+The static site and its protocol endpoints are separate Workers. `wrangler.jsonc` configures the Astro assets Worker; each supporting service has an independent `workers/<service>/wrangler.toml` with `staging` and `production` environments:
 
 | Worker       | Responsibility                                             |
 | ------------ | ---------------------------------------------------------- |
@@ -36,6 +36,6 @@ Micropub content is committed to `src/content/notes/*.md` through GitHub's Conte
 
 ## Build and release
 
-`scripts/build.sh` creates the static Astro output. `scripts/build-candidate.sh` packages that output with the site Worker entrypoint and reviewed Wrangler configuration under `build/site-candidate/`. Release identity values are injected by the deployment adapter after the candidate digest is computed.
+`scripts/build.sh` generates public metadata and images, then builds Astro into `dist/`. Wrangler deploys that output directly through Workers Static Assets using `wrangler.jsonc`. There is no custom site entrypoint, archive assembly or release identity endpoint.
 
 The release workflow and route cutover are pending integration. See [deployment and recovery](deployment.md) for the candidate contract and outstanding provider gates.
