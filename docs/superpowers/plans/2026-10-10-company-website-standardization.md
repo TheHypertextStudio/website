@@ -232,6 +232,7 @@ Tasks 1–3 are in progress; no task or production migration is complete.
 - The shared repository now delegates setup/doctor/dev/check/build to checksum-pinned release-engineering v0.1.6. Setup, doctor under the declared Node runtime, checks, and builds pass. CI runs both production-reference browser suites. Documentation records package use, framework boundaries, and the demonstration form's lack of an authentication backend.
 - The pinned Mintlify CLI's missing matching ReactDOM dependency is reconciled with an exact package extension. Astro's Vite React plugin is pinned to its declared compiler peer. Peer checks pass without suppressed warnings; actual Curfew and Docket native Mintlify validation, links, and accessibility pass again with the reconciled graph.
 - Initial immutable package publication and clean read-only registry consumers remain open. Task 3 is still in progress. Product adoption, Workers framework adaptations/previews, production rollout/observation, and old-host retention/retirement remain open.
+- Native tarball inspection now checks exported UI files and every source-map target. The UI package includes the referenced sources; all 28 tooling checks and browser/Node test typechecks pass. A fresh consumer installs exact local config/tokens/UI tarballs without workspace source links, passes frozen installation and peer checks, and typechecks/builds both framework references. Registry access is still a separate pending gate. Hosted foundation CI passed at `ca91879`; the packaging follow-up is `b196586`.
 
 ## Documentation references
 
