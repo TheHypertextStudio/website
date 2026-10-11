@@ -59,9 +59,9 @@ jobs:
           STUDIO_ENGINE: ${{ runner.temp }}/studio.pyz
         run: |
           curl --fail --location --silent --show-error --connect-timeout 20 --max-time 120 \
-            https://github.com/TheHypertextStudio/release-engineering/releases/download/v0.1.8/studio.pyz \
+            https://github.com/TheHypertextStudio/release-engineering/releases/download/v0.1.9/studio.pyz \
             --output "$STUDIO_ENGINE"
-          printf '%s  %s\n' 61f746429fc0ffc7826df2bde61ee4d41323fb5fa0c9f8661255040e7838afd4 "$STUDIO_ENGINE" | sha256sum --check
+          printf '%s  %s\n' 292d2186715aa18f720133ccea2c2ab7c571fd9710834ceb240c7803b1301307 "$STUDIO_ENGINE" | sha256sum --check
           if command -v corepack >/dev/null 2>&1; then
             corepack enable
             corepack prepare pnpm@11.9.0 --activate
