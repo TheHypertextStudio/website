@@ -10,6 +10,8 @@ The shared frontend configuration package is pinned to `@thehypertextstudio/web-
 
 For local installs, configure pnpm's user-level GitHub Packages credential using a read-only token with access to `TheHypertextStudio/web-platform`. CI supplies its scoped read token to the install step. Keep the credential outside repository files and build artifacts.
 
+The manual **CI** workflow option **Resolve a proposed dependency lock with repository package access** resolves `pnpm-lock.yaml` with the selected branch's declared toolchain and this repository's read-only Actions package access. It uploads only the proposed lockfile for review. Adopt that artifact in source, then require ordinary frozen-install CI before merging. The workflow does not commit its output or deploy a website.
+
 ## Website Worker
 
 `studio.yaml` declares the Astro candidate as a `static-site` deployed to Workers. `wrangler.site.json` declares the account, asset binding, Worker names, environments, and release metadata route. Candidate assembly injects `STUDIO_SOURCE_SHA`, `STUDIO_ARTIFACT_SHA256`, and `STUDIO_CANDIDATE_ID` after hashing. Those values are runtime configuration and must not be written into the asset archive.
