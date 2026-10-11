@@ -57,7 +57,7 @@ No deployment, provider configuration change or production publication is part o
 - [ ] Confirm Curfew Mintlify Git publishing uses `curfew/main/web/docs`, including the `/docs/mcp` guide alias, navigation and accessible theme.
 - [ ] Reconcile Docket's Mintlify custom domain through the pending provider confirmation.
 
-Studio cleanup is integrated at `831d36d`, LogDate at `7cf747e`, web-platform at `e2dea20` and release-engineering at `37fe36f`. Their ordinary default-branch CI passed. Curfew's website/docs CI passed; native capture CI and integration remain pending. Docket cleanup is reviewed and committed at `397e6284`, with integration still held for the backend baseline.
+Studio cleanup is integrated at `831d36d`, LogDate at `7cf747e`, web-platform at `e2dea20` and release-engineering at `37fe36f`. Their ordinary default-branch CI passed. Curfew is integrated at `2058af92`: its reviewed website/docs and full native capture CI passed, and ordinary main website/docs CI passed; main native capture CI remains running. Docket cleanup is reviewed and committed at `397e6284`, with integration still held for the backend baseline. Curfew's Mintlify dashboard confirms successful publication of docs-changing commit `04a86a3b`; its docs tree matches current main, and the renamed `/docs/mcp-guide` serves the expected content. Public `/docs/mcp` alias acceptance remains open through the old host.
 
 ## Phase 3: Complete isolated staging
 
@@ -69,7 +69,7 @@ Studio cleanup is integrated at `831d36d`, LogDate at `7cf747e`, web-platform at
 - [ ] Reauthenticate Google when the user returns, then read Docket's existing backend deployment baseline before integration. Do not deploy a backend as part of this frontend migration.
 - [ ] Check native rollback on staging; retain prior version IDs and independent route/DNS baselines.
 
-Studio already has its single-Worker staging token in the main-only GitHub `staging` environment. Its existing staging custom domain is now protected by Access application `79db268c-2596-45e7-a69f-8c8a445d799c`, using the existing Studio Google Workspace provider and reusable staff preview policy `2fddfb97-c128-4226-b4e6-8e7e97a0d07e`. Anonymous requests redirect to Access; authenticated website acceptance remains open. A conventional staging deployment workflow is prepared to consume successful main CI output and invoke native Wrangler. Its actual hosted provider use remains pending.
+Studio already has its single-Worker staging token in the main-only GitHub `staging` environment. Its existing staging custom domain is now protected by Access application `79db268c-2596-45e7-a69f-8c8a445d799c`, using the existing Studio Google Workspace provider and reusable staff preview policy `2fddfb97-c128-4226-b4e6-8e7e97a0d07e`. Anonymous requests redirect to Access. Chrome's Studio profile opened the existing staging homepage, with an allowed Google Workspace event in the native Access log; this does not accept the pending new deployment. PR61 is merged at `c0cca1dd`, providing conventional staging deployment from successful main CI output through native Wrangler. Its actual hosted provider use remains pending. All four GitHub staging environments permit only the `main` branch.
 
 ## Phase 4: Approved production cutovers
 
