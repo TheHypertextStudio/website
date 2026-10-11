@@ -57,7 +57,12 @@ jobs:
           # shellcheck disable=SC2016
           printf '%s\n' '//npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}' > "$registry_config"
           export NPM_CONFIG_USERCONFIG="$registry_config"
+          # Resolve from source to discard obsolete optional-peer receipts.
+          # Only this disposable checkout is changed; review the entire proposed lock.
+          rm -f pnpm-lock.yaml
           pnpm install --lockfile-only --ignore-scripts --no-frozen-lockfile
+          pnpm install --frozen-lockfile --ignore-scripts
+          pnpm peers check
       - name: Retain proposed lock for source review
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
