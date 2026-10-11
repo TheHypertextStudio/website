@@ -4,6 +4,8 @@ build
 .astro
 .wrangler
 .superpowers
+.studio-engine
+.studio-source
 .claude/worktrees
 pnpm-lock.yaml
 public/fonts
