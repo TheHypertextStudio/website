@@ -12,7 +12,8 @@ import sys
 import zipfile
 
 REPOSITORY = 'TheHypertextStudio/website'
-TOOLING = '878260def7229cd3df7f752b32e5581230c5db2d'
+# Retained candidate producers still use v0.1.8; the recovery executor is v0.1.9.
+CANDIDATE_TOOLING = '878260def7229cd3df7f752b32e5581230c5db2d'
 ACCOUNT = '2500680a3b2b0fe6a011c1c25fed5008'
 WORKER = 'hypertext-studio-site-staging'
 
@@ -81,7 +82,7 @@ def main():
     bundle = Path(os.environ['RUNNER_TEMP']) / 'recovery-candidate'
     run = retained_bundle(identifier, '.github/workflows/candidate.yml', 'candidate-' + identifier, bundle)
     candidate = load_candidate(bundle / 'candidate.json', expected_product='website',
-                               expected_repository=REPOSITORY, expected_tooling_revision=TOOLING,
+                               expected_repository=REPOSITORY, expected_tooling_revision=CANDIDATE_TOOLING,
                                expected_digest=os.environ['MANIFEST_SHA256'])
     require(candidate.data['id'] == identifier and candidate.data['source_sha'] == run['head_sha']
             and candidate.data['trigger_event'] == 'push'
