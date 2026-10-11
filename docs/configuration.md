@@ -24,6 +24,10 @@ The manual **CI** workflow option **Resolve a proposed dependency lock with repo
 
 The staging host is `staging.hypertext.studio`; the production host is `hypertext.studio`. Provider-side route creation and validation are separate operations. The route for `/__studio/release` runs through the Worker before static asset lookup.
 
+Staging routing is provisioned separately and deliberately omitted from the upload configuration. Both `workers_dev` and `preview_urls` are false in staging. [Wrangler preserves dashboard-managed routes when route declarations are omitted](https://developers.cloudflare.com/workers/wrangler/deprecations/); this prevents routine staging uploads from needing zone-wide route-write permission. Production retains its explicit apex route for the reviewed cutover. Retain the actual staging route/domain baseline separately for recovery.
+
+Cloudflare supports an account-owned token with [Editor access to one existing Worker](https://developers.cloudflare.com/workers/authorization/workers/). Bootstrap the staging Worker and connection before selecting that credential. Keep it confined to the trusted deployment step; the frontend runtime receives only ASSETS and its release identity variables. A successful scoped upload remains a provider acceptance gate. The existing hosted Studio Actions token was identified by account verification and dashboard metadata as having account-wide and all-zone write permissions; it is not a staging-only credential. No replacement token has been created.
+
 ## Supporting Workers
 
 Each service owns `workers/<service>/wrangler.toml`. The only named environments are `staging` and `production`; service names are component configuration, not Wrangler environment names.
