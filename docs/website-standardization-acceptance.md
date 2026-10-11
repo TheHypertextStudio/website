@@ -6,7 +6,7 @@ This records local acceptance for the Studio frontend migration. Production rema
 
 The lifecycle now pins published release-engineering v0.1.8, revision `878260def7229cd3df7f752b32e5581230c5db2d`, archive SHA-256 `61f746429fc0ffc7826df2bde61ee4d41323fb5fa0c9f8661255040e7838afd4`. The native pin updater verified the actual published archive and tag; `./run doctor` passed all declared tool/version checks, and `./run build` produced the eleven-page native Workers artifact using the existing local dependency graph. The original artifact acceptance below used v0.1.7, Node 24.20.0, pnpm 11.9.0 and Wrangler 4.127.1 in an isolated source consumer. Full fresh-checkout v0.1.8 acceptance remains dependent on the real registry lock.
 
-The shared frontend config was installed from its reviewed local tarball. Frozen installation succeeded for that overlay. The repository lock intentionally does not claim an unpublished registry resolution; regenerate it from the actual registry release before merging or claiming fresh-checkout CI acceptance.
+The shared frontend config was installed from its reviewed local 0.1.0 tarball. Current declarations target the initial 0.0.1 registry release; the historical tarball acceptance is not fresh 0.0.1 registry acceptance. Frozen installation succeeded for that overlay. The repository lock intentionally does not claim an unpublished registry resolution; regenerate it from the actual registry release before merging or claiming fresh-checkout CI acceptance.
 
 ## Observed local acceptance
 
