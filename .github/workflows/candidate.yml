@@ -1,0 +1,22 @@
+name: Build website candidate
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+  actions: read
+  packages: read
+  id-token: write
+
+jobs:
+  candidate:
+    # Inactive until isolated staging credentials, resources and protections are verified.
+    if: ${{ github.repository == 'TheHypertextStudio/website' && vars.STUDIO_WORKERS_CANDIDATES_ENABLED == 'true' }}
+    uses: TheHypertextStudio/release-engineering/.github/workflows/candidate.yml@878260def7229cd3df7f752b32e5581230c5db2d
+    with:
+      tooling_revision: 878260def7229cd3df7f752b32e5581230c5db2d
+      product_root: '.'
+      runner: ubuntu-latest
+    secrets: inherit

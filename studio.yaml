@@ -34,4 +34,8 @@ release:
   channels: [direct]
   next_version: 0.1.0
   required_checks: [website]
-  required_evidence: []
+  required_evidence:
+    - staging-journeys
+    - supporting-route-isolation
+    - production-recovery
+    - public-identity
