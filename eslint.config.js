@@ -14,6 +14,11 @@ export default [
   },
   {
     ignores: [
+      'build/**',
+      '.superpowers/**',
+      '.studio-engine/**',
+      '.studio-source/**',
+      '.claude/worktrees/**',
       '.astro/**',
       '.hypertext/**',
       '.wrangler/**',
