@@ -12,7 +12,7 @@ import sys
 import zipfile
 
 REPOSITORY = 'TheHypertextStudio/website'
-# Retained candidate producers still use v0.1.8; the recovery executor is v0.1.9.
+# Retained candidate producers still use v0.1.8; the recovery executor is v0.1.10.
 CANDIDATE_TOOLING = '878260def7229cd3df7f752b32e5581230c5db2d'
 ACCOUNT = '2500680a3b2b0fe6a011c1c25fed5008'
 WORKER = 'hypertext-studio-site-staging'

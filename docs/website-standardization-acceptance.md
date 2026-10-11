@@ -157,8 +157,50 @@ LogDate full [Quality38162517992](https://github.com/TheHypertextStudio/logdate-
 
 ### Staging recovery operation
 
-`Recover Studio staging website` runs only on owner main in the existing staging environment. Its executor pins published lifecycle v0.1.9 at revision `d59c5ed117013a59edd97f6e9e766896188a6a76`, archive SHA-256 `292d2186715aa18f720133ccea2c2ab7c571fd9710834ceb240c7803b1301307`, and uses the existing Worker-scoped credential. Candidate producers remain pinned to immutable v0.1.8; their exact provenance requirement is unchanged. Capture takes an exact successful default-branch candidate ID and manifest digest; it verifies GitHub's artifact digest and the candidate's full shipping digests before invoking the shared staging capture command. Restore additionally requires the successful capture run ID, retained record file digest, expected live version and expected routing digest. The shared command enforces the saved account/Worker/environment, retained archive, routing and version identities before restoring. Candidate upload and recovery share a non-cancelling concurrency group.
+`Recover Studio staging website` runs only on owner main in the existing staging environment. Its executor pins published lifecycle v0.1.10 at revision `a13ccabcda7a2c3b7321fe412d2397f25df04d29`, archive SHA-256 `704ba2748c540e36293677a50244184a93c5da6febecdad41650609b8bc6eb2f`, and uses the existing Worker-scoped credential. Candidate producers remain pinned to immutable v0.1.8; their exact provenance requirement is unchanged. Capture takes an exact successful default-branch candidate ID and manifest digest; it verifies GitHub's artifact digest and the candidate's full shipping digests before invoking the shared staging capture command. Restore additionally requires the successful capture run ID, retained record file digest, expected live version and expected routing digest. The shared command enforces the saved account/Worker/environment, retained archive, routing and version identities before restoring. Candidate upload and recovery share a non-cancelling concurrency group.
 
-PR57 passed protected CI38164892049 and integrated with the reviewed tree as main `86a406e535a8607f4f9e2c71f4101b03690f883a`; main CI38165729259 also passed. The first [capture38165763297](https://github.com/TheHypertextStudio/website/actions/runs/38165763297) failed before writes because v0.1.8's deployment reader did not unwrap Cloudflare's deployment result when pagination metadata was present. A fresh native Cloudflare read still showed version `3075a528-6b2f-4e05-8b01-6be5ddb10a2a` at 100%. Shared v0.1.9 changes only that deployment reader and recovery notes. Source CI38166711109, PR CI38166719528, main CI38166830177 and [release38167027824](https://github.com/TheHypertextStudio/release-engineering/actions/runs/38167027824) succeeded; both public release assets and all archived Studio source bytes match the tag. New S3 transport work remains a separate draft and is absent from this release. Real capture and restoration remain unexercised.
+PR57 passed protected CI38164892049 and integrated with the reviewed tree as main `86a406e535a8607f4f9e2c71f4101b03690f883a`; main CI38165729259 also passed. The first [capture38165763297](https://github.com/TheHypertextStudio/website/actions/runs/38165763297) failed before writes because v0.1.8's deployment reader did not unwrap Cloudflare's deployment result when pagination metadata was present. A fresh native Cloudflare read still showed version `3075a528-6b2f-4e05-8b01-6be5ddb10a2a` at 100%. Shared v0.1.9 changes only that deployment reader and recovery notes. Source CI38166711109, PR CI38166719528, main CI38166830177 and [release38167027824](https://github.com/TheHypertextStudio/release-engineering/actions/runs/38167027824) succeeded; both public release assets and all archived Studio source bytes match the tag. New S3 transport work remains a separate draft and is absent from this release. Successful capture and restoration remain unproven.
 
 Pause the candidate activation variable before integrating or performing a recovery exercise, reconcile in-flight publishers, capture serving candidate A, stage reviewed candidate B, then restore A and compare its live release/asset/routing identities. A-to-A reconciliation is not a restoration exercise. Retain both artifacts, the record, journal and before/after provider observations. The workflow has no production mode; production recovery and promotion remain separate.
+
+## October 11 recovery authorization and Mintlify connection checkpoint
+
+PR58 passed protected CI38167485981 and CodeQL, then rebase integrated as main
+`bdf0a81c0692450968e5c6a8f6a699b5fff3952a` with the reviewed source tree unchanged.
+The single [v0.1.9 capture38168366416](https://github.com/TheHypertextStudio/website/actions/runs/38168366416)
+verified the published executor checksum, then failed with HTTP403 before retaining
+any recovery artifact. The denied API endpoint is unknown from its generic error.
+This does not establish a missing permission or authorize wider access. Candidate
+activation remains paused; no candidate B or restore was attempted. The original
+staging candidate was confirmed at 100% immediately before capture.
+
+The user approved replacing Curfew's Mintlify-hosted content with its reviewed Git
+source. Saved provider settings now confirm `TheHypertextStudio/curfew`, `main`,
+`web/docs`. The first manual update succeeded and reports four pages, but its details
+expose no source SHA or deployment ID. Three public HTML pages, sampled JS/CSS and
+`/docs/llms.txt` deliver correctly with the approved accessible orange. `/docs/mcp`
+returns405 on both the public proxy and upstream. Mintlify
+[reserves `/mcp` for its search server](https://www.mintlify.com/docs/ai/model-context-protocol);
+source and proxy correction is being prepared to preserve the existing guide URL.
+Full proxy, search and recovery acceptance remain open. The earlier Pages repair
+review must be refreshed because its default HTML-guide mode would replace the
+now-working Mintlify pages. No Pages production rebuild occurred.
+
+Docket's public docs still canonicalize to the old Studio alias. Its correct existing
+address, `clearthedocket.com/docs`, is drafted in the provider form, but Save remains
+disabled despite a valid editable field; the reason is not exposed. No setting save
+or DNS change occurred. Its compatibility branch must not be pushed wholesale to
+main without resolving existing automatic image/backend/Vercel publication. The
+current source gate remains separate from Mintlify publication acceptance.
+
+### Recovery diagnostic executor
+
+Published [v0.1.10](https://github.com/TheHypertextStudio/release-engineering/releases/tag/v0.1.10)
+adds fixed, nonsecret API operation labels to recovery HTTP errors. Its release
+workflow38169296538 passed; independently downloaded public assets, checksums and
+all22 archived Studio sources match the reviewed tag. It contains no S3 transport.
+This checkpoint changes only the recovery executor URL/checksum and its explanatory
+comment; retained candidate provenance remains immutable v0.1.8. A fresh main-only
+capture must identify the denied operation before any permission correction is
+proposed. No diagnostic capture or successful recovery is claimed by this source
+update.
