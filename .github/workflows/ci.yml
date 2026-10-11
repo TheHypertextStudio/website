@@ -7,6 +7,10 @@ on:
     branches: [main]
   workflow_dispatch:
     inputs:
+      refresh_dependency_lock:
+        description: Resolve a proposed dependency lock with repository package access
+        type: boolean
+        default: false
       cloudflare_recovery_inventory:
         description: Capture read-only Studio Cloudflare route and domain recovery metadata
         type: boolean
@@ -21,6 +25,47 @@ permissions:
   packages: read
 
 jobs:
+  dependency_lock:
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.refresh_dependency_lock == true && github.repository == 'TheHypertextStudio/website' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out selected source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Set up declared Node
+        uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+        with:
+          node-version-file: .nvmrc
+          package-manager-cache: false
+      - name: Enable declared pnpm
+        shell: bash
+        run: |
+          package_manager=$(node --input-type=module -e 'import fs from "node:fs"; const value = JSON.parse(fs.readFileSync("package.json", "utf8")).packageManager; if (!/^pnpm@\d+\.\d+\.\d+$/.test(value)) throw new Error("Exact pnpm version required"); process.stdout.write(value);')
+          corepack enable
+          corepack prepare "$package_manager" --activate
+      - name: Resolve lock with repository package access
+        shell: bash
+        env:
+          NODE_AUTH_TOKEN: ${{ github.token }}
+        run: |
+          registry_config=$(mktemp "$RUNNER_TEMP/studio-registry.XXXXXX")
+          trap 'rm -f "$registry_config"' EXIT
+          chmod 600 "$registry_config"
+          # Keep the placeholder literal; pnpm expands it from trusted user config.
+          # shellcheck disable=SC2016
+          printf '%s\n' '//npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}' > "$registry_config"
+          export NPM_CONFIG_USERCONFIG="$registry_config"
+          pnpm install --lockfile-only --ignore-scripts --no-frozen-lockfile
+      - name: Retain proposed lock for source review
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: dependency-lock-${{ github.sha }}
+          path: pnpm-lock.yaml
+          if-no-files-found: error
+          retention-days: 7
+
   cloudflare_inventory:
     if: ${{ github.event_name == 'workflow_dispatch' && inputs.cloudflare_recovery_inventory == true && github.repository == 'TheHypertextStudio/website' }}
     runs-on: ubuntu-latest
