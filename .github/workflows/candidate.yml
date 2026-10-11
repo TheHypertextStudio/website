@@ -12,6 +12,9 @@ permissions:
 
 jobs:
   candidate:
+    concurrency:
+      group: studio-website-staging-provider
+      cancel-in-progress: false
     # Inactive until isolated staging credentials, resources and protections are verified.
     if: ${{ github.repository == 'TheHypertextStudio/website' && vars.STUDIO_WORKERS_CANDIDATES_ENABLED == 'true' }}
     uses: TheHypertextStudio/release-engineering/.github/workflows/candidate.yml@878260def7229cd3df7f752b32e5581230c5db2d
