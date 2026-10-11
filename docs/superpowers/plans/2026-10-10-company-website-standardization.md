@@ -38,12 +38,14 @@ Private package CI authentication uses repository access grants and short-lived 
 
 ## Phase 1: Remove custom migration machinery
 
-- [ ] Studio: remove candidate/promote/staging-recovery workflows and helpers, one-off CI modes, website lifecycle runner/config, custom identity Worker and assembly scripts. Build directly into `dist/`; retain redirects, headers and existing browser/artifact checks.
-- [ ] Curfew: remove parity snapshot gate, public asset copier, candidate assembler, lifecycle runner/config and temporary lock CI. Put static assets in Astro `public/`; preserve native appcast publication through a normal build output.
-- [ ] LogDate: remove lifecycle/candidate/promote/assembly/identity layers. Use official OpenNext commands and one Wrangler config. Preserve isolated waitlist, auth and backend selection.
-- [ ] Docket: remove equivalent lifecycle/repackaging layers, duplicate prebuilt config, one-off CI modes and temporary migration holds. Preserve application compatibility code and existing backend release checks.
-- [ ] Shared tooling: remove website-specific adapter/recovery/cache extensions after all website callers are gone. Preserve existing unrelated package/native release tooling and published tags.
-- [ ] Update current documentation and existing checks that reference removed tooling. Preserve historical evidence with an explicit superseded notice.
+- [x] Studio: remove candidate/promote/staging-recovery workflows and helpers, one-off CI modes, website lifecycle runner/config, custom identity Worker and assembly scripts. Build directly into `dist/`; retain redirects, headers and existing browser/artifact checks.
+- [x] Curfew: remove parity snapshot gate, public asset copier, candidate assembler, lifecycle runner/config and temporary lock CI. Put static assets in Astro `public/`; preserve native appcast publication through a normal build output.
+- [x] LogDate: remove lifecycle/candidate/promote/assembly/identity layers. Use official OpenNext commands and one Wrangler config. Preserve isolated waitlist, auth and backend selection.
+- [x] Docket: remove equivalent lifecycle/repackaging layers, duplicate prebuilt config, one-off CI modes and temporary migration holds. Preserve application compatibility code and existing backend release checks.
+- [x] Shared tooling: remove website-specific adapter/recovery/cache extensions after all website callers are gone. Preserve existing unrelated package/native release tooling and published tags.
+- [x] Update current documentation and existing checks that reference removed tooling. Preserve historical evidence with an explicit superseded notice.
+
+- [x] Web platform: remove lifecycle/candidate/promotion and one-off registry consumer tooling; use ordinary package scripts, a native Astro preview and a manual GitHub Packages workflow. Update shared repository documentation templates.
 
 No deployment, provider configuration change or production publication is part of this cleanup phase. Existing source branches remain reviewable before integration.
 

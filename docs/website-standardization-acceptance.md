@@ -1,5 +1,26 @@
 # Website standardization source checkpoint
 
+## Source cleanup on 2026-10-11
+
+The user requested removal of ad hoc or unconventional migration workflows/scripts. Cleanup is committed locally in all six repositories; it has not been pushed, integrated, published or deployed.
+
+| Repository          | Cleanup commit                     | Static evidence                                                                                                                                                                            |
+| ------------------- | ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Studio              | `00cb8cf`, documentation `f8a5090` | ESLint, Astro/TypeScript, formatting, workflow lint and native Wrangler dry run passed; Astro built 11 pages into `dist/`                                                                  |
+| Curfew              | `da487ee`                          | Astro checks/build, affected ESLint/formatting and website workflow lint passed; 14 public files moved without byte changes; release workflow retains two pre-existing ShellCheck findings |
+| LogDate             | `28db410`                          | Affected ESLint/formatting, workflow lint, native Wrangler types and Worker TypeScript passed                                                                                              |
+| Docket              | `397e6284`                         | Root/web TypeScript, affected lint/formatting, workflow lint, shell syntax and existing CI gate policy passed                                                                              |
+| Web platform        | `933b621`, documentation `7ccbb7d` | ESLint, workspace and acceptance-source TypeScript, formatting and workflow lint passed                                                                                                    |
+| Release engineering | `b8ca109`                          | Python compilation, undefined-name/syntax lint and workflow lint passed; native provider functions and legacy site adapters preserved                                                      |
+
+Existing required commit hooks ran normally. No manual tests, dependency installations, lockfile changes, provider mutations or production publication occurred in this cleanup. Studio and Curfew builds were local; the Next apps still require their ordinary hosted validation and actual staging acceptance.
+
+Custom lifecycle/candidate/promotion, archive assembly, release identity endpoints, recovery/cache adapters and one-off investigation jobs are removed. Shared private packages, Mintlify generation/content, application guards and existing backend/native release behavior remain. Published packages and tooling tags are unchanged.
+
+Studio and web-platform cross review found two stale documentation references; both were corrected. Current operations are in [deployment](deployment.md); source integration and provider work remain in the [revised plan](superpowers/plans/2026-10-10-company-website-standardization.md).
+
+## Earlier migration evidence
+
 > Historical migration evidence. On 2026-10-11 the custom lifecycle, candidate/promotion, packaging and staging recovery machinery was retired at the user's request. Commands below describe earlier runs and are not current operating instructions. See [deployment](deployment.md) and [development](development.md) for the supported commands.
 
 This records source and hosted registry acceptance for the Studio frontend migration. Production remains on Pages; this checkpoint does not authorize a hosting cutover.
