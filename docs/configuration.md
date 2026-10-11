@@ -1,10 +1,12 @@
 # Configuration
 
-`studio.yaml` is the product lifecycle declaration. `studio.lock.json` pins the shared lifecycle runner to release-engineering `v0.1.7` and its SHA-256. Keep that pin exact; update it only with a reviewed lifecycle change.
+`studio.yaml` is the product lifecycle declaration. `studio.lock.json` pins the shared lifecycle runner to release-engineering `v0.1.8` and its SHA-256. Keep that pin exact; update it only with a reviewed lifecycle change.
 
 The declared toolchain is Python 3.11+, Node 24.20.0, pnpm 11.9.0, and Wrangler 4.127.1. `.nvmrc` pins the Node patch. The runner and `pnpm-lock.yaml` are the setup/build owners; do not add global package managers or unpinned setup scripts.
 
 The shared frontend configuration package is pinned to `@thehypertextstudio/web-config` `0.0.1` in `package.json`. That immutable GitHub Packages release is published; fresh shared registry consumers passed in [run38116980056](https://github.com/TheHypertextStudio/web-platform/actions/runs/38116980056). The product lockfile intentionally has no registry resolution for it: verify this repository's package-read access, regenerate that entry from the real registry, then prove a clean frozen install using read-only access. Setup and CI remain gated until then. Never convert a local tarball checksum into a purported registry resolution or commit a local package override.
+
+`pnpm-workspace.yaml` explicitly permits install scripts only for `esbuild`, `sharp`, and `workerd`, the same native dependencies already rebuilt by `scripts/bootstrap-worktree`. This checked-in policy lets fresh pnpm 11 installs prepare those tools without relying on machine-local build approvals. Dependency scripts outside this allowlist remain blocked.
 
 For local installs, configure pnpm's user-level GitHub Packages credential using a read-only token with access to `TheHypertextStudio/web-platform`. CI supplies its scoped read token to the install step. Keep the credential outside repository files and build artifacts.
 
