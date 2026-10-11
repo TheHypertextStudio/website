@@ -51,11 +51,13 @@ No deployment, provider configuration change or production publication is part o
 
 ## Phase 2: Integrate and accept ordinary builds
 
-- [ ] Review cleanup diffs for each repository, preserving unrelated work and accepted dependency locks.
+- [x] Review cleanup diffs for each repository, preserving unrelated work and accepted dependency locks.
 - [ ] Require existing hosted CI and mandatory checks on reviewed source; do not introduce migration-only probe suites.
 - [ ] Integrate each repository using the established linear Git workflow. Keep Docket integration pending its production backend baseline and publication decision.
 - [ ] Confirm Curfew Mintlify Git publishing uses `curfew/main/web/docs`, including the `/docs/mcp` guide alias, navigation and accessible theme.
 - [ ] Reconcile Docket's Mintlify custom domain through the pending provider confirmation.
+
+Studio cleanup is integrated at `831d36d`, LogDate at `7cf747e`, web-platform at `e2dea20` and release-engineering at `37fe36f`. Their ordinary default-branch CI passed. Curfew's website/docs CI passed; native capture CI and integration remain pending. Docket cleanup is reviewed and committed at `397e6284`, with integration still held for the backend baseline.
 
 ## Phase 3: Complete isolated staging
 
@@ -66,6 +68,8 @@ No deployment, provider configuration change or production publication is part o
 - [ ] Review real LogDate/Docket runtime, auth/cookies, API destinations, caching/revalidation, docs, forms and application journeys. Use isolated staging forms and backends.
 - [ ] Reauthenticate Google when the user returns, then read Docket's existing backend deployment baseline before integration. Do not deploy a backend as part of this frontend migration.
 - [ ] Check native rollback on staging; retain prior version IDs and independent route/DNS baselines.
+
+Studio already has its single-Worker staging token in the main-only GitHub `staging` environment. Its existing staging custom domain is now protected by Access application `79db268c-2596-45e7-a69f-8c8a445d799c`, using the existing Studio Google Workspace provider and reusable staff preview policy `2fddfb97-c128-4226-b4e6-8e7e97a0d07e`. Anonymous requests redirect to Access; authenticated website acceptance remains open. A conventional staging deployment workflow is prepared to consume successful main CI output and invoke native Wrangler. Its actual hosted provider use remains pending.
 
 ## Phase 4: Approved production cutovers
 

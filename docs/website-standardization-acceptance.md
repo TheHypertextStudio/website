@@ -2,7 +2,7 @@
 
 ## Source cleanup on 2026-10-11
 
-The user requested removal of ad hoc or unconventional migration workflows/scripts. Cleanup is committed locally in all six repositories; it has not been pushed, integrated, published or deployed.
+The user requested removal of ad hoc or unconventional migration workflows/scripts. Cleanup is reviewed and committed in all six repositories. Studio, LogDate, web-platform and release-engineering are integrated by normal rebase merges; their default-branch CI passed. Curfew's website/docs CI passed and native capture CI remains running. Docket integration remains pending the existing Google production backend baseline. Published package versions and production hosting are unchanged.
 
 | Repository          | Cleanup commit                     | Static evidence                                                                                                                                                                            |
 | ------------------- | ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -15,9 +15,19 @@ The user requested removal of ad hoc or unconventional migration workflows/scrip
 
 Existing required commit hooks ran normally. No manual tests, dependency installations, lockfile changes, provider mutations or production publication occurred in this cleanup. Studio and Curfew builds were local; the Next apps still require their ordinary hosted validation and actual staging acceptance.
 
+Subsequent hosted checks passed for Studio PR60/main `831d36d` (CI38172264808 and38172898951, CodeQL38172264805 and38172898905; 821 browser cases plus one existing skip), LogDate PR6/main `7cf747e` (Quality38172239434 and38172788249; 204 browser cases), web-platform PR6/main `e2dea20` (CI38172267111 and38172638232), and release-engineering PR9/main `37fe36f` (CI38172208964,38172277545 and38172621046). Curfew website/docs38172208197 passed at `da487ee4`; native38172208207 remains pending. These are the repositories' existing suites, not new migration probes. LogDate's retained Vercel alias still serves `dpl_Dve3XKcjzFVmCghUHW7pvGBnxYZL`; Studio Pages remains at `c7365ead-0505-46f5-85c0-0eb87db22725`.
+
 Custom lifecycle/candidate/promotion, archive assembly, release identity endpoints, recovery/cache adapters and one-off investigation jobs are removed. Shared private packages, Mintlify generation/content, application guards and existing backend/native release behavior remain. Published packages and tooling tags are unchanged.
 
 Studio and web-platform cross review found two stale documentation references; both were corrected. Current operations are in [deployment](deployment.md); source integration and provider work remain in the [revised plan](superpowers/plans/2026-10-10-company-website-standardization.md).
+
+## Native staging follow-through
+
+Studio's scoped staging token remains saved in the GitHub `staging` environment, restricted to main deployments. No credential value was read. Fresh provider inspection found its existing `staging.hypertext.studio` custom domain and disabled workers.dev/preview URLs, but no Access application protected the hostname. The account's existing Google Workspace identity provider is `b2bfca5e-37a4-4f76-8583-a4a0007b19ff` for `hypertext.studio`.
+
+Created reusable Access policy `2fddfb97-c128-4226-b4e6-8e7e97a0d07e`, allowing authenticated Studio email addresses, and attached it to self-hosted staging application `79db268c-2596-45e7-a69f-8c8a445d799c`. The application permits only that existing Workspace provider with a 24-hour session and HttpOnly cookie. A fresh anonymous request now receives HTTP302 to the Studio Access login instead of website HTML. Production hosts and DNS/routes were not changed. Authenticated staff access and rendered staging acceptance remain unproved.
+
+The prepared ordinary `Deploy staging` workflow consumes the successful main CI run's existing site artifact and native Wrangler configuration. It has no production path, custom manifest, packaging script or recovery runner. Full hosted deployment using the saved single-Worker token remains the next acceptance gate.
 
 ## Earlier migration evidence
 
