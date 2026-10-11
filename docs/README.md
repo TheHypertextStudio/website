@@ -9,9 +9,9 @@ Everything you need to build, run, and write for `hypertext.studio`.
 ## Setup & operations
 
 - [`architecture.md`](architecture.md) — how the site is put together
-- [`configuration.md`](configuration.md) — pinned toolchain, lifecycle config, Worker bindings, and secrets
+- [`configuration.md`](configuration.md) — pinned toolchain, shared packages, Worker bindings, and secrets
 - [`development.md`](development.md) — local setup, site, supporting Workers, and checks
-- [`deployment.md`](deployment.md) — Workers candidate lifecycle, cutover gates, and recovery
+- [`deployment.md`](deployment.md) — native Workers deployment, production cutover, and rollback
 - [`operations.md`](operations.md) — rotating the DNS poem, status panel keys, webmention runbooks, manual VoiceOver checklist
 - [`indieweb.md`](indieweb.md) — IndieWeb tier 3 conformance, posture, and parser choice
 

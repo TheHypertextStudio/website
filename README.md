@@ -40,7 +40,7 @@ The Workers migration is in progress. Production cutover and domain changes rema
 - [Configuration](docs/configuration.md)
 - [Local development](docs/development.md)
 - [Architecture](docs/architecture.md)
-- [Deployment and recovery](docs/deployment.md)
+- [Deployment and rollback](docs/deployment.md)
 - [Operations](docs/operations.md)
 - [Content](docs/content.md)
 - [IndieWeb endpoints](docs/indieweb.md)
