@@ -16,6 +16,8 @@ database_id = "00000000-0000-0000-0000-000000000001"
 migrations_dir = "../../migrations"
 
 [env.production]
+workers_dev = false
+preview_urls = false
 name = "hypertext-studio-webmention"
 routes = [{ pattern = "hypertext.studio/webmention*", zone_name = "hypertext.studio" }]
 

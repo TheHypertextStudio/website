@@ -15,9 +15,10 @@ export default defineConfig({
   projects: [{ name: 'artifact-chromium', use: { ...devices['Desktop Chrome'] } }],
   webServer: {
     ...sharedWebServer,
-    // The real Pages runtime, so _headers, _redirects, trailing-slash 308s and
-    // 404.html are exercised by the same code path that serves production.
-    command: `pnpm exec wrangler pages dev ${process.env.DIST_DIR || 'dist'} --port 4323 --ip 127.0.0.1`,
+    // Serve the prebuilt candidate through Workers Static Assets so metadata,
+    // headers, redirects and the custom 404 use the planned deployment path.
+    command:
+      'pnpm exec wrangler dev --config build/site-candidate/wrangler.site.json --env staging --env-file /dev/null --port 4323 --ip 127.0.0.1 --inspector-port 9433',
     url: baseURL,
     timeout: 120_000,
   },

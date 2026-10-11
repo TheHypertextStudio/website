@@ -6,6 +6,7 @@ toolchain:
   python: '>=3.11'
   node: '24.20.0'
   pnpm: '11.9.0'
+  wrangler: '4.127.1'
 components:
   - id: website
     kind: static-site
@@ -19,6 +20,7 @@ components:
       output: build/site-candidate
     deploy:
       provider: workers
+      account_id: '2500680a3b2b0fe6a011c1c25fed5008'
       config: wrangler.site.json
       entrypoint: worker.js
       assets: assets

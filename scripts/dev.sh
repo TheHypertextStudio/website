@@ -31,7 +31,7 @@ rm -rf "$RUNTIME_PID_DIR"
 mkdir -p "$RUNTIME_PID_DIR"
 
 log::step "applying local D1 migrations"
-CI=1 bash "$REPO_ROOT/scripts/migrate-d1.sh" local hypertext-studio \
+CI=1 bash "$REPO_ROOT/scripts/migrate-d1.sh" local DB \
   --env-file /dev/null \
   --persist-to ".wrangler/state/webmention"
 

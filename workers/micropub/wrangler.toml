@@ -10,12 +10,14 @@ name = "hypertext-studio-micropub-staging"
 workers_dev = true
 
 [env.staging.vars]
-GITHUB_REPO = "TheHypertextStudio/website"
+GITHUB_REPO = ""
 NOTES_PATH = "src/content/notes"
 DEFAULT_BRANCH = "main"
 INDIEAUTH_ENDPOINT = "https://tokens.indieauth.com/token"
 
 [env.production]
+workers_dev = false
+preview_urls = false
 name = "hypertext-studio-micropub"
 routes = [{ pattern = "hypertext.studio/micropub*", zone_name = "hypertext.studio" }]
 

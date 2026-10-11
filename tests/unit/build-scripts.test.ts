@@ -1,7 +1,35 @@
-import { readFileSync } from 'node:fs';
+import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { execFileSync } from 'node:child_process';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import { describe, expect, test } from 'vitest';
 
 describe('developer command contracts', () => {
+  test('Workers preparation preserves exact rules and adds permanent page redirects once', () => {
+    const assets = mkdtempSync(join(tmpdir(), 'studio-assets-'));
+    try {
+      mkdirSync(join(assets, 'about'));
+      mkdirSync(join(assets, 'notes', 'entry'), { recursive: true });
+      writeFileSync(join(assets, 'index.html'), 'home');
+      writeFileSync(join(assets, '404.html'), 'missing');
+      writeFileSync(join(assets, 'about', 'index.html'), 'about');
+      writeFileSync(join(assets, 'notes', 'entry', 'index.html'), 'entry');
+      writeFileSync(join(assets, '_redirects'), '/about /existing/ 301\n');
+      const prepare = () =>
+        execFileSync(process.execPath, ['scripts/prepare-workers-assets.mjs', assets]);
+      prepare();
+      const first = readFileSync(join(assets, '_redirects'), 'utf8');
+      expect(first).toContain('/about /existing/ 301');
+      expect(first).not.toContain('/about /about/');
+      expect(first).toContain('/notes/entry /notes/entry/ 308');
+      expect(first).not.toContain('/404');
+      prepare();
+      expect(readFileSync(join(assets, '_redirects'), 'utf8')).toBe(first);
+    } finally {
+      rmSync(assets, { recursive: true, force: true });
+    }
+  });
+
   test('build generation has one owner and one Astro invocation', () => {
     const pkg = JSON.parse(readFileSync('package.json', 'utf8')) as {
       scripts: Record<string, string>;
@@ -21,7 +49,7 @@ describe('developer command contracts', () => {
       expect(dev).toContain(`start ${worker}`);
     }
     expect(dev).toContain('wrangler dev --config "$1" --env staging');
-    expect(dev).toContain('scripts/migrate-d1.sh" local hypertext-studio');
+    expect(dev).toContain('scripts/migrate-d1.sh" local DB');
     expect(migrations).toContain('d1 migrations apply "$DATABASE_NAME"');
     expect(migrations).toContain('ALTER TABLE webmentions ADD COLUMN mention_type');
     expect(dev).toContain('--persist-to ".wrangler/state/webmention"');

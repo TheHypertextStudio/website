@@ -8,6 +8,7 @@
   "assets": {
     "directory": "./assets",
     "binding": "ASSETS",
+    "not_found_handling": "404-page",
     "run_worker_first": ["/__studio/release"]
   },
   "env": {

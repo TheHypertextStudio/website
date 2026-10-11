@@ -1,10 +1,10 @@
 # Configuration
 
-`studio.yaml` is the product lifecycle declaration. `studio.lock.json` pins the shared lifecycle runner to release-engineering `v0.1.6` and its SHA-256. Keep that pin exact; update it only with a reviewed lifecycle change.
+`studio.yaml` is the product lifecycle declaration. `studio.lock.json` pins the shared lifecycle runner to release-engineering `v0.1.7` and its SHA-256. Keep that pin exact; update it only with a reviewed lifecycle change.
 
-The declared toolchain is Python 3.11+, Node 24.20.0, and pnpm 11.9.0. `.nvmrc` pins the Node patch. The runner and `pnpm-lock.yaml` are the setup/build owners; do not add global package managers or unpinned setup scripts.
+The declared toolchain is Python 3.11+, Node 24.20.0, pnpm 11.9.0, and Wrangler 4.127.1. `.nvmrc` pins the Node patch. The runner and `pnpm-lock.yaml` are the setup/build owners; do not add global package managers or unpinned setup scripts.
 
-The shared frontend configuration package is pinned to `@thehypertextstudio/web-config` `0.1.0` in `package.json` and `pnpm-lock.yaml`. That immutable GitHub Packages release is not published yet, so a clean install and CI build remain gated on its publication and read-only registry access. Do not substitute a local tarball or a floating package range in a committed build.
+The shared frontend configuration package is pinned to `@thehypertextstudio/web-config` `0.1.0` in `package.json`. That immutable GitHub Packages release is not published yet. The lockfile intentionally has no registry resolution for it: regenerate that entry from the real registry after publication, then prove a clean frozen install using read-only access. Setup and CI remain gated until then. Never convert a local tarball checksum into a purported registry resolution or commit a local package override.
 
 For local installs, configure pnpm's user-level GitHub Packages credential using a read-only token with access to `TheHypertextStudio/web-platform`. CI supplies its scoped read token to the install step. Keep the credential outside repository files and build artifacts.
 
@@ -26,7 +26,7 @@ Each service owns `workers/<service>/wrangler.toml`. The only named environments
 | `micropub`   | `workers/micropub/wrangler.toml`   | `GITHUB_TOKEN` secret only on the Micropub Worker |
 | `oembed`     | `workers/oembed/wrangler.toml`     | None                                              |
 
-The staging Webmention binding uses a distinct placeholder identity for local/staging configuration. Never replace the production database ID or point preview workloads at the production database. Do not put Micropub's token in `.env`, site configuration, workflow artifacts, or local candidate files. Local Micropub development may use the ignored `.dev.vars.micropub` file.
+The staging Webmention binding uses a distinct placeholder identity for local configuration; remote staging deployment requires an explicitly provisioned database and a reviewed config update. Local migrations select the `DB` binding in the staging configuration. Never replace the production database ID or point preview workloads at the production database. Do not put Micropub's token in `.env`, site configuration, workflow artifacts, or local candidate files. Local Micropub development may use the ignored `.dev.vars.micropub` file. Its staging `GITHUB_REPO` is deliberately unset until an isolated repository and restricted token are provisioned. Production supporting Workers explicitly disable `workers.dev` and preview URLs, matching their existing provider visibility.
 
 ## Optional public identity
 
