@@ -1,0 +1,29 @@
+name = "hypertext-studio-oembed-staging"
+main = "index.ts"
+account_id = "2500680a3b2b0fe6a011c1c25fed5008"
+compatibility_date = "2026-08-22"
+compatibility_flags = ["nodejs_compat"]
+workers_dev = true
+
+[vars]
+SITE_URL = "https://hypertext.studio"
+SITE_NAME = "Hypertext Studio"
+
+[env.staging]
+name = "hypertext-studio-oembed-staging"
+workers_dev = true
+
+[env.staging.vars]
+SITE_URL = "https://hypertext.studio"
+SITE_NAME = "Hypertext Studio"
+
+[env.production]
+name = "hypertext-studio-oembed"
+routes = [{ pattern = "hypertext.studio/oembed*", zone_name = "hypertext.studio" }]
+
+[env.production.vars]
+SITE_URL = "https://hypertext.studio"
+SITE_NAME = "Hypertext Studio"
+
+[env.production.observability]
+enabled = true

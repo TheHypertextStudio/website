@@ -1,7 +1,9 @@
+import studioBase from '@thehypertextstudio/web-config/eslint';
 import eslintPluginAstro from 'eslint-plugin-astro';
 import tsParser from '@typescript-eslint/parser';
 
 export default [
+  ...studioBase,
   ...eslintPluginAstro.configs.recommended,
   ...eslintPluginAstro.configs['jsx-a11y-recommended'],
   {

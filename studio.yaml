@@ -1,0 +1,35 @@
+schema: 1
+product: website
+repository: TheHypertextStudio/website
+owner_repository: TheHypertextStudio/website
+toolchain:
+  python: '>=3.11'
+  node: '24.20.0'
+  pnpm: '11.9.0'
+components:
+  - id: website
+    kind: static-site
+    path: .
+    checks:
+      - name: website
+        argv: [pnpm, run, check]
+    dev: [pnpm, run, dev]
+    build:
+      script: build:candidate
+      output: build/site-candidate
+    deploy:
+      provider: workers
+      config: wrangler.site.json
+      entrypoint: worker.js
+      assets: assets
+      environments:
+        staging: staging
+        production: production
+      health_urls:
+        staging: https://staging.hypertext.studio/__studio/release
+        production: https://hypertext.studio/__studio/release
+release:
+  channels: [direct]
+  next_version: 0.1.0
+  required_checks: [website]
+  required_evidence: []

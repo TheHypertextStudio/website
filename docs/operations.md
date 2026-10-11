@@ -2,7 +2,7 @@
 
 ## Local services
 
-`make dev-all` starts the site plus all five Worker environments from the repository root:
+`make dev-all` starts the site plus all five staging Worker configurations from the repository root:
 
 | URL                            | Service                           |
 | ------------------------------ | --------------------------------- |
@@ -20,35 +20,35 @@ The supervisor gives every Worker its own inspector port and persistence directo
 ## Health and logs
 
 ```sh
-make doctor
-make ci
-pnpm exec wrangler tail --env webmention
-pnpm exec wrangler tail --env micropub
+./run doctor
+./run check
+pnpm exec wrangler tail --config workers/webmention/wrangler.toml --env production
+pnpm exec wrangler tail --config workers/micropub/wrangler.toml --env production
 BASE_URL=https://hypertext.studio bash scripts/smoke.sh
 ```
 
-Worker observability is enabled in `wrangler.toml` for each deployed environment.
+Worker observability is enabled on the production configuration for each supporting service.
 
 ## Webmention moderation
 
 Only verified mentions persist after automated verification. To hide a verified mention:
 
 ```sh
-pnpm exec wrangler d1 execute hypertext-studio --env webmention --remote \
+pnpm exec wrangler d1 execute hypertext-studio --config workers/webmention/wrangler.toml --env production --remote \
   --command "UPDATE webmentions SET status = 'rejected' WHERE id = <id>"
 ```
 
 To inspect recent verified mentions:
 
 ```sh
-pnpm exec wrangler d1 execute hypertext-studio --env webmention --remote \
+pnpm exec wrangler d1 execute hypertext-studio --config workers/webmention/wrangler.toml --env production --remote \
   --command "SELECT id, source, target, mention_type, received_at FROM webmentions WHERE status = 'verified' ORDER BY received_at DESC LIMIT 100"
 ```
 
 ## Credentials
 
-- Rotate Micropub publishing: `pnpm exec wrangler secret put GITHUB_TOKEN --env micropub`.
-- Refresh local Cloudflare authentication through the repository's named Wrangler profile, then rerun `make bootstrap`.
+- Rotate Micropub publishing: `pnpm exec wrangler secret put GITHUB_TOKEN --config workers/micropub/wrangler.toml --env production`.
+- Refresh local Cloudflare authentication through the repository's named Wrangler profile. Provider setup is separate from `./run setup` and must not create or update routes without an approved release operation.
 - Never place provider tokens in `.env`, generated types, command arguments, or committed documentation.
 
 ## Optional identities

@@ -13,6 +13,7 @@ concurrency:
 
 permissions:
   contents: read
+  packages: read
 
 jobs:
   quality:
@@ -198,74 +199,13 @@ jobs:
         run: node scripts/ci/report.mjs artifact
 
   production:
-    if: >-
-      github.ref == 'refs/heads/main' &&
-      (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+    # The old Pages release is retired. Re-enable production only after the
+    # shared immutable-candidate promotion workflow is connected and reviewed.
+    if: ${{ false }}
     needs: [quality, test, browser, build, artifact]
     runs-on: ubuntu-latest
-    timeout-minutes: 20
-    environment:
-      name: production
-      url: https://hypertext.studio
-    env:
-      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
     steps:
-      - id: checkout
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - id: setup
-        uses: ./.github/actions/setup
-      - name: Download the verified site artifact
-        id: download_artifact
-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
-        with:
-          name: site-${{ github.sha }}
-          path: dist/
-      - name: Apply remote D1 migrations
-        id: migrate
-        run: bash scripts/migrate-d1.sh remote hypertext-studio
-      # One step per Worker, sequential, on purpose: the production report renders
-      # a row per Worker from steps.deploy_*.outcome. Backgrounding them in a single
-      # step would save ~40-80s and lose those per-Worker receipts.
-      - name: Deploy www Worker
-        id: deploy_www
-        run: pnpm exec wrangler deploy --env www
-      - name: Deploy poem Worker
-        id: deploy_poem
-        run: pnpm exec wrangler deploy --env poem
-      - name: Deploy webmention Worker
-        id: deploy_webmention
-        run: pnpm exec wrangler deploy --env webmention
-      - name: Deploy micropub Worker
-        id: deploy_micropub
-        run: pnpm exec wrangler deploy --env micropub
-      - name: Deploy oEmbed Worker
-        id: deploy_oembed
-        run: pnpm exec wrangler deploy --env oembed
-      - name: Deploy the verified Pages artifact
-        id: deploy_pages
-        run: pnpm exec wrangler pages deploy dist --project-name=hypertext-studio --branch=main
-      - name: Smoke-test production
-        id: smoke
-        env:
-          SMOKE_REPORT_FILE: ${{ runner.temp }}/smoke.tsv
-        run: bash scripts/smoke.sh
-      - name: Publish production report
-        if: ${{ always() }}
-        env:
-          ARTIFACT_DOWNLOAD_RESULT: ${{ steps.download_artifact.outcome }}
-          CHECKOUT_RESULT: ${{ steps.checkout.outcome }}
-          MICROPUB_RESULT: ${{ steps.deploy_micropub.outcome }}
-          MIGRATION_RESULT: ${{ steps.migrate.outcome }}
-          OEMBED_RESULT: ${{ steps.deploy_oembed.outcome }}
-          PAGES_RESULT: ${{ steps.deploy_pages.outcome }}
-          POEM_RESULT: ${{ steps.deploy_poem.outcome }}
-          SMOKE_REPORT_FILE: ${{ runner.temp }}/smoke.tsv
-          SMOKE_RESULT: ${{ steps.smoke.outcome }}
-          SETUP_RESULT: ${{ steps.setup.outcome }}
-          WEBMENTION_RESULT: ${{ steps.deploy_webmention.outcome }}
-          WWW_RESULT: ${{ steps.deploy_www.outcome }}
-        run: node scripts/ci/report.mjs production
+      - run: echo "Production promotion is pending shared lifecycle integration."
 
   report:
     needs: [quality, test, browser, build, artifact, production]

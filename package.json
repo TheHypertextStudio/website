@@ -10,26 +10,28 @@
     "url": "git@github.com:TheHypertextStudio/website.git"
   },
   "license": "MIT",
-  "packageManager": "pnpm@10.33.3",
+  "packageManager": "pnpm@11.9.0",
   "engines": {
-    "node": ">=24",
-    "pnpm": ">=10"
+    "node": ">=24 <25",
+    "pnpm": ">=11.9.0"
   },
   "scripts": {
     "predev": "bash scripts/portless-reset.sh",
     "dev": "portless run astro dev",
     "dev:astro": "astro dev",
     "build": "bash scripts/build.sh",
+    "build:candidate": "bash scripts/build-candidate.sh",
     "preview": "astro preview",
     "astro": "astro",
-    "check": "astro check",
+    "check:astro": "astro check",
+    "check": "pnpm run format:check && pnpm run lint && pnpm run typecheck && pnpm run typecheck:workers && pnpm run test && pnpm run test:workers",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "lint": "eslint . --max-warnings=0",
     "lint:fix": "eslint . --fix",
     "pretypecheck": "astro sync",
     "typecheck": "astro check && tsc --noEmit",
-    "types:workers": "wrangler types workers/generated/www.d.ts --env www --env-interface WwwEnv --env-file /dev/null --include-runtime false && wrangler types workers/generated/poem.d.ts --env poem --env-interface PoemEnv --env-file /dev/null --include-runtime false && wrangler types workers/generated/webmention.d.ts --env webmention --env-interface WebmentionEnv --env-file /dev/null --include-runtime false && wrangler types workers/generated/micropub.d.ts --env micropub --env-interface MicropubEnv --env-file /dev/null --include-runtime false && wrangler types workers/generated/oembed.d.ts --env oembed --env-interface OembedEnv --env-file /dev/null --include-runtime false",
+    "types:workers": "wrangler types workers/generated/www.d.ts --config workers/www/wrangler.toml --env staging --env-interface WwwEnv --env-file /dev/null --include-runtime false && wrangler types workers/generated/poem.d.ts --config workers/poem/wrangler.toml --env staging --env-interface PoemEnv --env-file /dev/null --include-runtime false && wrangler types workers/generated/webmention.d.ts --config workers/webmention/wrangler.toml --env staging --env-interface WebmentionEnv --env-file /dev/null --include-runtime false && wrangler types workers/generated/micropub.d.ts --config workers/micropub/wrangler.toml --env staging --env-interface MicropubEnv --env-file /dev/null --include-runtime false && wrangler types workers/generated/oembed.d.ts --config workers/oembed/wrangler.toml --env staging --env-interface OembedEnv --env-file /dev/null --include-runtime false",
     "typecheck:workers": "pnpm run types:workers && tsc -p workers/tsconfig.json",
     "test": "vitest run",
     "test:workers": "node scripts/ci/run-worker-tests.mjs",
@@ -40,7 +42,7 @@
     "test:a11y": "playwright test --project=chromium --grep @a11y",
     "test:install": "playwright install --with-deps",
     "screenshots": "node scripts/screenshots.mjs",
-    "doctor": "bash scripts/doctor.sh"
+    "doctor": "./run doctor"
   },
   "dependencies": {
     "@astrojs/markdown-remark": "^7.2.4",
@@ -51,6 +53,7 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
+    "@thehypertextstudio/web-config": "0.1.0",
     "@cloudflare/vitest-pool-workers": "^0.22.0",
     "@cloudflare/workers-types": "^5.20260830.1",
     "@playwright/test": "^1.62.1",

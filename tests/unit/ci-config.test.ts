@@ -16,13 +16,15 @@ const packageJson = JSON.parse(readFileSync('package.json', 'utf8')) as {
 };
 
 describe('portable CI policy', () => {
-  test('uses least privilege, protected production, one artifact, migrations, and smoke checks', () => {
-    expect(ci).toContain('permissions:\n  contents: read');
-    expect(ci).toContain('environment:\n      name: production');
+  test('uses read-only package access and keeps production blocked pending candidate integration', () => {
+    expect(ci).toContain('permissions:\n  contents: read\n  packages: read');
+    expect(ci).toContain('if: ${{ false }}');
+    expect(ci).not.toContain('environment:\n      name: production');
     expect(ci).toContain('upload-artifact');
     expect(ci).toContain('download-artifact');
-    expect(ci).toContain('bash scripts/migrate-d1.sh remote hypertext-studio');
-    expect(ci).toContain('bash scripts/smoke.sh');
+    expect(ci).not.toContain('bash scripts/migrate-d1.sh remote hypertext-studio');
+    expect(ci).not.toContain('bash scripts/smoke.sh');
+    expect(ci).not.toContain('wrangler pages deploy');
   });
 
   test('pins every external action to an immutable commit SHA', () => {
@@ -48,21 +50,21 @@ describe('portable CI policy', () => {
     expect(ci).toContain('include-hidden-files: true');
   });
 
-  test('deploys only from main push or an explicit main dispatch', () => {
-    expect(ci).toContain("github.ref == 'refs/heads/main'");
-    expect(ci).toContain("github.event_name == 'push' || github.event_name == 'workflow_dispatch'");
+  test('does not deploy while the candidate promotion workflow is pending', () => {
+    expect(ci).toMatch(/\n  production:\n[\s\S]*?\n    if: \$\{\{ false \}\}/);
+    expect(ci).toContain('Production promotion is pending shared lifecycle integration.');
     expect(ci).not.toContain('paths:');
   });
 
   test('publishes rich job summaries without masking failed gates', () => {
     expect(ci).toContain('node scripts/ci/report.mjs quality');
     expect(ci).toContain('node scripts/ci/report.mjs build');
-    expect(ci).toContain('node scripts/ci/report.mjs production');
+    expect(ci).not.toContain('node scripts/ci/report.mjs production');
     expect(ci).toContain('node scripts/ci/report.mjs workflow');
     expect(ci).toContain('node scripts/ci/report.mjs test');
     expect(ci).toContain('node scripts/ci/report.mjs browser');
     expect(ci).toContain('node scripts/ci/report.mjs artifact');
-    expect(ci.match(/if: \$\{\{ always\(\) \}\}/g)?.length).toBeGreaterThanOrEqual(7);
+    expect(ci.match(/if: \$\{\{ always\(\) \}\}/g)?.length).toBeGreaterThanOrEqual(6);
     expect(codeql).toContain('node scripts/ci/report.mjs codeql');
   });
 
@@ -85,13 +87,14 @@ describe('portable CI policy', () => {
     expect(ci.match(/overwrite: true/g)).toHaveLength(3);
   });
 
-  test('validates the downloaded immutable artifact before production can use it', () => {
+  test('validates the downloaded immutable artifact while production remains blocked', () => {
     expect(ci).toMatch(/\n  artifact:\n/);
     expect(ci).toContain('name: site-${{ github.sha }}');
     expect(ci).toContain('pnpm run test:artifact');
     expect(ci).toMatch(
       /\n  production:\n[\s\S]*needs: \[quality, test, browser, build, artifact\]/,
     );
+    expect(ci).toMatch(/\n  production:\n[\s\S]*if: \$\{\{ false \}\}/);
     expect(ci).toMatch(
       /\n  report:\n[\s\S]*needs: \[quality, test, browser, build, artifact, production\]/,
     );
@@ -112,22 +115,10 @@ describe('portable CI policy', () => {
     expect(packageJson.scripts.typecheck).toContain('astro check');
   });
 
-  test('reports each fail-closed production stage separately', () => {
-    for (const id of [
-      'checkout',
-      'setup',
-      'download_artifact',
-      'migrate',
-      'deploy_www',
-      'deploy_poem',
-      'deploy_webmention',
-      'deploy_micropub',
-      'deploy_oembed',
-      'deploy_pages',
-      'smoke',
-    ]) {
-      expect(ci).toContain(`id: ${id}`);
-    }
+  test('does not retain old Pages or support Worker deploy steps', () => {
+    expect(ci).not.toContain('id: deploy_www');
+    expect(ci).not.toContain('id: deploy_pages');
+    expect(ci).not.toContain('Deploy the verified Pages artifact');
   });
 
   test('exposes artifact evidence to an always-run workflow receipt', () => {

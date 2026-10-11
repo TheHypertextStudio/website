@@ -68,6 +68,7 @@ trap cleanup EXIT INT TERM
 start() {
   local name="$1"
   local inspector_port="$2"
+  local config="workers/$name/wrangler.toml"
   local pid_file="$RUNTIME_PID_DIR/$name.pid"
   local env_file="/dev/null"
   if [[ -f ".dev.vars.$name" ]]; then
@@ -79,8 +80,8 @@ start() {
     # that environment variable itself, so the child shell forwards it as an
     # explicit CLI flag after Portless has populated it.
     pnpm exec portless "$name" bash -c \
-      'printf "%s\n" "$$" > "$5"; exec pnpm exec wrangler dev --env "$1" --env-file "$2" --port "$PORT" --inspector-port "$3" --persist-to "$4"' \
-      _ "$name" "$env_file" "$inspector_port" ".wrangler/state/$name" "$pid_file"
+      'printf "%s\n" "$$" > "$6"; exec pnpm exec wrangler dev --config "$1" --env staging --env-file "$2" --port "$PORT" --inspector-port "$3" --persist-to "$4"' \
+      _ "$config" "$env_file" "$inspector_port" ".wrangler/state/$name" "$name" "$pid_file"
   ) &
   pids+=("$!")
 }

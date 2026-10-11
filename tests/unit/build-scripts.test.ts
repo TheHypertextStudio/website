@@ -14,13 +14,13 @@ describe('developer command contracts', () => {
     expect(build).not.toContain('words.sh');
   });
 
-  test('dev-all starts the site and all five explicit Worker environments', () => {
+  test('dev-all starts the site and all five independent staging Worker configs', () => {
     const dev = readFileSync('scripts/dev.sh', 'utf8');
     const migrations = readFileSync('scripts/migrate-d1.sh', 'utf8');
     for (const worker of ['www', 'poem', 'webmention', 'micropub', 'oembed']) {
       expect(dev).toContain(`start ${worker}`);
     }
-    expect(dev).toContain('wrangler dev --env "$1"');
+    expect(dev).toContain('wrangler dev --config "$1" --env staging');
     expect(dev).toContain('scripts/migrate-d1.sh" local hypertext-studio');
     expect(migrations).toContain('d1 migrations apply "$DATABASE_NAME"');
     expect(migrations).toContain('ALTER TABLE webmentions ADD COLUMN mention_type');
@@ -30,18 +30,21 @@ describe('developer command contracts', () => {
     expect(dev).not.toContain('cd "$dir"');
   });
 
-  test('bootstrap and every deployment path use pinned tooling and the shared migration runner', () => {
+  test('production deployment stays blocked until the shared candidate lifecycle is connected', () => {
     const bootstrap = readFileSync('scripts/bootstrap.sh', 'utf8');
     const deploy = readFileSync('scripts/deploy.sh', 'utf8');
     const ci = readFileSync('.github/workflows/ci.yml', 'utf8');
-    expect(bootstrap).toContain('local wrangler_cmd="pnpm exec wrangler"');
-    expect(bootstrap).not.toContain('pnpm dlx wrangler');
-    expect(bootstrap).toContain('remote "$CLOUDFLARE_D1_DATABASE"');
-    expect(deploy).toContain('scripts/migrate-d1.sh remote hypertext-studio');
-    expect(ci).toContain('bash scripts/migrate-d1.sh remote hypertext-studio');
+    expect(bootstrap).toContain('exec "$REPO_ROOT/run" setup');
+    expect(bootstrap).not.toContain('wrangler');
+    expect(deploy).toContain(
+      'Deployment is unavailable until the shared Workers candidate workflow is connected.',
+    );
+    expect(ci).toContain('if: ${{ false }}');
+    expect(ci).not.toContain('wrangler pages deploy');
+    expect(ci).not.toContain('bash scripts/migrate-d1.sh remote hypertext-studio');
   });
 
-  test('Make exposes CI and explicit break-glass deployment without a broken release target', () => {
+  test('Make exposes CI and blocked preview/recovery targets without a broken release target', () => {
     const makefile = readFileSync('Makefile', 'utf8');
     expect(makefile).toContain('ci:');
     expect(makefile).toContain('deploy-break-glass:');
