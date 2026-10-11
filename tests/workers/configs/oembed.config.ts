@@ -2,6 +2,10 @@ import { cloudflareTest } from '@cloudflare/vitest-pool-workers';
 import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
-  plugins: [cloudflareTest({ wrangler: { configPath: './wrangler.toml', environment: 'oembed' } })],
+  plugins: [
+    cloudflareTest({
+      wrangler: { configPath: './workers/oembed/wrangler.toml', environment: 'staging' },
+    }),
+  ],
   test: { include: ['tests/workers/oembed.test.ts'] },
 });

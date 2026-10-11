@@ -1,0 +1,33 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "hypertext-studio-site-staging",
+  "main": "worker.js",
+  "account_id": "2500680a3b2b0fe6a011c1c25fed5008",
+  "compatibility_date": "2026-08-22",
+  "compatibility_flags": ["nodejs_compat"],
+  "assets": {
+    "directory": "./assets",
+    "binding": "ASSETS",
+    "run_worker_first": ["/__studio/release"]
+  },
+  "env": {
+    "staging": {
+      "name": "hypertext-studio-site-staging",
+      "routes": [
+        {
+          "pattern": "staging.hypertext.studio/*",
+          "zone_name": "hypertext.studio"
+        }
+      ]
+    },
+    "production": {
+      "name": "hypertext-studio-site",
+      "routes": [
+        {
+          "pattern": "hypertext.studio/*",
+          "zone_name": "hypertext.studio"
+        }
+      ]
+    }
+  }
+}

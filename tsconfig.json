@@ -1,5 +1,5 @@
 {
-  "extends": "astro/tsconfigs/strict",
+  "extends": "@thehypertextstudio/web-config/tsconfig/browser.json",
   "compilerOptions": {
     "baseUrl": ".",
     "ignoreDeprecations": "6.0",

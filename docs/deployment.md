@@ -1,82 +1,39 @@
-# Deployment
+# Deployment and recovery
 
-## Canonical path
+## Candidate lifecycle
 
-GitHub Actions is the only automated production deployment owner. Do not connect the Cloudflare Pages project to Cloudflare's Git build integration; a second build owner creates duplicate releases and can publish a commit that did not pass the repository's complete checks.
+GitHub Actions remains the intended release owner. The product declaration packages the Astro output and a small Worker module into a `static-site` candidate. The Worker serves `assets/` and answers `GET /__studio/release` with the source SHA, artifact SHA-256, and candidate ID using `Cache-Control: no-store`.
 
-Run the turnkey setup from an authenticated workstation:
+The deployment adapter must deploy the built candidate without rebuilding. The staging and production overlays select separate Worker names and routes; production uses `hypertext.studio/*`, while the existing more-specific protocol routes continue to point at their independent Workers. A candidate must pass its identity probes before it can be considered for promotion.
 
-```sh
-make bootstrap
-```
+The candidate workflow and its exact CI dispatch are not connected in this source change. Use the shared release-engineering workflow when that integration is available. Do not use the retired Pages deployment commands or deploy a local build as a substitute for an approved candidate.
 
-Bootstrap discovers safe values, creates missing Pages and D1 resources, applies migrations, configures domains and GitHub Actions, and prompts only for credentials it cannot derive. Before each prompt it prints the provider URL, resource owner, repository or account scope, required permissions, and storage destination.
-
-## Required provider state
+## Current provider resources
 
 - Cloudflare zone: `hypertext.studio`
-- Pages project: `hypertext-studio`, production branch `main`
-- D1 database: `hypertext-studio`
+- Existing Webmention D1: `hypertext-studio`
+- Existing supporting Workers: `hypertext-studio-www`, `hypertext-studio-poem`, `hypertext-studio-webmention`, `hypertext-studio-micropub`, and `hypertext-studio-oembed`
+- Candidate site Workers: `hypertext-studio-site-staging` and `hypertext-studio-site`
 - GitHub repository: `TheHypertextStudio/website`
-- GitHub environment: `production`
 
-Cloudflare custom-domain setup owns the apex DNS records. Do not create placeholder A or AAAA records. Keep `www.hypertext.studio` proxied so the `www` Worker route can issue the canonical redirect.
+Provisioning, route changes, secret writes, and D1 migration are separate provider operations. The source configuration does not prove that the staging hostname, production route, credentials, bindings, or prior versions are provisioned correctly.
 
-## GitHub Actions credentials
+## Recovery
 
-Repository Actions secrets:
+Before cutover, record the previous complete site release, the versions of all five supporting Workers, and every route/domain binding. Recovery must restore the prior site artifact and its route state together; do not rebuild a previous source revision and assume it is byte-identical. D1 migrations remain forward-only and are not rolled back as part of a frontend restore.
 
-| Name                    | Purpose                               |
-| ----------------------- | ------------------------------------- |
-| `CLOUDFLARE_ACCOUNT_ID` | Select the Hypertext Studio account   |
-| `CLOUDFLARE_API_TOKEN`  | Pages, Workers, routes, and D1 deploy |
+Production cutover and recovery have not been exercised for the real Hypertext Studio site. The Task 2 test-resource recovery fixtures are isolated acceptance resources and do not establish production recovery. Do not move the apex route until the candidate has provider acceptance and the release record identifies the prior deployment and route state.
 
-The Cloudflare token should be restricted to the Hypertext Studio account and `hypertext.studio` zone. Bootstrap prints the exact current permission checklist.
+## Required candidate acceptance
 
-Optional repository Actions variables:
+Before promotion, verify the exact candidate on its isolated staging host:
 
-| Name             | Effect when non-empty                        |
-| ---------------- | -------------------------------------------- |
-| `BLUESKY_HANDLE` | Public Bluesky profile and syndication links |
-| `BLUESKY_DID`    | `/.well-known/atproto-did`                   |
+- `www` redirects preserve the full path and query string.
+- `/api/poem`, `/webmention`, `/webmentions`, `/micropub`, and `/oembed` remain served by their existing independent Workers.
+- Micropub's write token is present only on the production Micropub Worker and is not available to site builds or previews.
+- The existing Webmention D1 database and stored records are retained; staging uses separate data.
+- Draft studies remain unpublished, and feeds, sitemaps, canonicals, and association files match current public behavior.
+- Unknown routes return the custom 404 without a general SPA fallback; static cache headers are appropriate.
+- The release probe reports the approved source, archive digest, and candidate ID, with `Cache-Control: no-store`.
 
-## Worker secret
-
-Micropub requires one fine-grained GitHub token:
-
-```sh
-pnpm exec wrangler secret put GITHUB_TOKEN --env micropub
-```
-
-Use repository access for `TheHypertextStudio/website` only, with Contents set to Read and write. Bootstrap walks through token creation and stores the value directly in Cloudflare.
-
-## Database
-
-Local migrations:
-
-```sh
-bash scripts/migrate-d1.sh local hypertext-studio
-```
-
-Remote migrations:
-
-```sh
-bash scripts/migrate-d1.sh remote hypertext-studio
-```
-
-Production CI applies remote migrations before deploying Workers.
-
-## Normal release
-
-Merge an approved change to `main` and follow the `CI` workflow. The workflow validates the repository, deploys one verified artifact, and runs `scripts/smoke.sh`. A green local build is not production evidence; the production workflow and live smoke job are the release record.
-
-## Manual recovery
-
-Use only when GitHub Actions is unavailable and an operator has selected the exact commit to restore:
-
-```sh
-git switch --detach <verified-commit>
-make deploy-break-glass
-```
-
-The command warns before building, applies migrations, deploys all Workers and Pages, and smoke-tests production. Database rollback is intentionally manual because migrations are forward-only.
+These checks and provider promotion are pending. A local build, test fixture, or successful HTTP response alone is not production acceptance.

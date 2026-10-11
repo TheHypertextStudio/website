@@ -1,0 +1,29 @@
+name = "hypertext-studio-webmention-staging"
+main = "index.ts"
+account_id = "2500680a3b2b0fe6a011c1c25fed5008"
+compatibility_date = "2026-08-22"
+compatibility_flags = ["nodejs_compat"]
+workers_dev = true
+
+[env.staging]
+name = "hypertext-studio-webmention-staging"
+workers_dev = true
+
+[[env.staging.d1_databases]]
+binding = "DB"
+database_name = "hypertext-studio-staging"
+database_id = "00000000-0000-0000-0000-000000000001"
+migrations_dir = "../../migrations"
+
+[env.production]
+name = "hypertext-studio-webmention"
+routes = [{ pattern = "hypertext.studio/webmention*", zone_name = "hypertext.studio" }]
+
+[[env.production.d1_databases]]
+binding = "DB"
+database_name = "hypertext-studio"
+database_id = "b1ea6c3b-1315-4bbc-ac9b-5751c4253883"
+migrations_dir = "../../migrations"
+
+[env.production.observability]
+enabled = true

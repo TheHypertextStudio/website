@@ -15,15 +15,16 @@ Blank values publish nothing.
 
 ## Workers
 
-`wrangler.toml` contains five named environments:
+The static site and its protocol endpoints are separate Workers. `wrangler.site.json` configures the Astro assets Worker; each supporting service has an independent `workers/<service>/wrangler.toml` with `staging` and `production` environments:
 
-| Environment  | Responsibility                                      |
-| ------------ | --------------------------------------------------- |
-| `www`        | Preserve path/query and redirect to the apex origin |
-| `poem`       | Read the optional `studio:` DNS TXT value           |
-| `webmention` | Validate and store verified Webmentions in D1       |
-| `micropub`   | Authenticate and publish safe Markdown notes        |
-| `oembed`     | Return embed metadata for canonical site URLs       |
+| Worker       | Responsibility                                             |
+| ------------ | ---------------------------------------------------------- |
+| Site         | Serve static Astro files and candidate release metadata    |
+| `www`        | Preserve path/query and redirect to the apex origin        |
+| `poem`       | Read the optional `studio:` DNS TXT value                  |
+| `webmention` | Validate and store verified Webmentions in the existing D1 |
+| `micropub`   | Authenticate and publish safe Markdown notes               |
+| `oembed`     | Return embed metadata for canonical site URLs              |
 
 Public write endpoints use bounded bodies, time-bounded upstream fetches, canonical target validation, and non-executable storage. Pure unit tests cover parsing and failures; `tests/workers/` executes every environment in workerd.
 
@@ -35,6 +36,6 @@ Micropub content is committed to `src/content/notes/*.md` through GitHub's Conte
 
 ## Build and release
 
-`scripts/build.sh` is the single production-build owner. It generates optional public identity, refreshes the Open Graph image, and invokes Astro once.
+`scripts/build.sh` creates the static Astro output. `scripts/build-candidate.sh` packages that output with the site Worker entrypoint and reviewed Wrangler configuration under `build/site-candidate/`. Release identity values are injected by the deployment adapter after the candidate digest is computed.
 
-`.github/workflows/ci.yml` validates every pull request and `main` commit. Only a successful `main` run may enter the protected production environment. The build job uploads the exact `dist` artifact later deployed by the production job. See `docs/deployment.md` for provider setup.
+The release workflow and route cutover are pending integration. See [deployment and recovery](deployment.md) for the candidate contract and outstanding provider gates.

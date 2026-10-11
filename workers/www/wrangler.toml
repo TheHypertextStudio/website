@@ -1,0 +1,17 @@
+name = "hypertext-studio-www-staging"
+main = "index.ts"
+account_id = "2500680a3b2b0fe6a011c1c25fed5008"
+compatibility_date = "2026-08-22"
+compatibility_flags = ["nodejs_compat"]
+workers_dev = true
+
+[env.staging]
+name = "hypertext-studio-www-staging"
+workers_dev = true
+
+[env.production]
+name = "hypertext-studio-www"
+routes = [{ pattern = "www.hypertext.studio/*", zone_name = "hypertext.studio" }]
+
+[env.production.observability]
+enabled = true

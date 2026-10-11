@@ -36,13 +36,13 @@ help: ## show this help (the default)
 
 .PHONY: bootstrap setup doctor install
 
-bootstrap: ## one-shot setup: prereqs, deps, env, optional cloud + github
-	@bash scripts/bootstrap.sh
+bootstrap: ## prepare the pinned local lifecycle toolchain and dependencies
+	@./run setup
 
 setup: bootstrap ## alias for bootstrap
 
 doctor: ## non-mutating health check (versions, files, deps)
-	@bash scripts/doctor.sh
+	@./run doctor
 
 install: ## install or refresh pnpm dependencies
 	@$(PNPM) install
@@ -54,7 +54,7 @@ install: ## install or refresh pnpm dependencies
 .PHONY: dev dev-workers dev-all build preview clean nuke
 
 dev: ## start the site only via Portless (https://hypertext.localhost)
-	@$(PNPM) run dev
+	@./run dev
 
 dev-astro: ## raw astro dev (no Portless) on http://localhost:4321
 	@$(PNPM) run dev:astro
@@ -63,7 +63,7 @@ dev-all: ## site + all five workers via Portless (subdomains on .localhost)
 	@bash scripts/dev.sh
 
 build: ## production build (generated metadata + Astro)
-	@$(PNPM) run build
+	@./run build
 
 preview: build ## preview the production build locally
 	@$(PNPM) run preview
@@ -127,7 +127,8 @@ test-install: ## install Playwright browsers (run once after bootstrap)
 screenshots: ## capture every page state into .hypertext/screenshots/
 	@node scripts/screenshots.mjs
 
-quality: format-check lint typecheck typecheck-workers test test-workers ## local quality gate
+quality: ## local quality gate
+	@./run check
 
 ci: quality build test-artifact ## portable repository CI contract
 
@@ -178,10 +179,10 @@ og: ## regenerate templated OG images
 
 .PHONY: deploy-preview deploy-break-glass
 
-deploy-preview: ## explicitly deploy a Pages preview
+deploy-preview: ## blocked until shared Workers candidate workflow is connected
 	@bash scripts/deploy.sh preview
 
-deploy-break-glass: ## manual production recovery; normal releases use GitHub Actions
+deploy-break-glass: ## blocked until candidate-based recovery is connected
 	@bash scripts/deploy.sh break-glass
 
 # ----------------------------------------------------------------------------

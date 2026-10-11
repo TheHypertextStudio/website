@@ -10,14 +10,13 @@ set -euo pipefail
 readonly REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$REPO_ROOT"
 
-readonly ENVIRONMENT="webmention"
 readonly MODE="${1:-}"
 readonly DATABASE_NAME="${2:-}"
 shift 2 || true
 
 case "$MODE" in
-  remote) location=(--remote) ;;
-  local) location=(--local) ;;
+  remote) environment=production; location=(--remote) ;;
+  local) environment=staging; location=(--local) ;;
   *)
     printf 'usage: %s remote|local <database> [wrangler flags...]\n' "${BASH_SOURCE[0]}" >&2
     exit 64
@@ -46,7 +45,7 @@ has_column() {
 
 schema_json="$(
   pnpm exec wrangler d1 execute "$DATABASE_NAME" \
-    --env "$ENVIRONMENT" "${location[@]}" \
+    --config workers/webmention/wrangler.toml --env "$environment" "${location[@]}" \
     --command "PRAGMA table_info(webmentions)" --json --yes "$@"
 )"
 
@@ -54,10 +53,10 @@ schema_json="$(
 # Upgrade that known legacy shape before migrations create the related index.
 if has_column "$schema_json" id && ! has_column "$schema_json" mention_type; then
   pnpm exec wrangler d1 execute "$DATABASE_NAME" \
-    --env "$ENVIRONMENT" "${location[@]}" \
+    --config workers/webmention/wrangler.toml --env "$environment" "${location[@]}" \
     --command "ALTER TABLE webmentions ADD COLUMN mention_type TEXT NOT NULL DEFAULT 'mention'" \
     --yes "$@"
 fi
 
 pnpm exec wrangler d1 migrations apply "$DATABASE_NAME" \
-  --env "$ENVIRONMENT" "${location[@]}" "$@"
+  --config workers/webmention/wrangler.toml --env "$environment" "${location[@]}" "$@"

@@ -2,72 +2,55 @@
 
 The company website for Hypertext Studio: Docket, LogDate, Curfew, company information, and the studio's publishing endpoints.
 
-The site is static Astro deployed to Cloudflare Pages. Five Cloudflare Workers provide the `www` redirect, footer poem API, Webmention receiver, Micropub publisher, and oEmbed endpoint. D1 stores verified webmentions.
-
-## Start
+## Start here
 
 ```sh
-make bootstrap
-make dev
+./run setup
+./run doctor
+./run dev
 ```
 
-`make bootstrap` checks prerequisites, installs dependencies, discovers the repository and Cloudflare resources, applies D1 migrations, configures GitHub Actions, and explains every credential it cannot derive.
+The shared lifecycle is pinned in [`studio.lock.json`](studio.lock.json). Setup installs the declared local toolchain and dependencies; it does not create provider resources, change routes, apply remote database migrations, or request secrets. See [configuration](docs/configuration.md) before setting optional values.
 
-## Commands
+## Common commands
 
-| Command                   | Purpose                                                   |
-| ------------------------- | --------------------------------------------------------- |
-| `make dev`                | Start the Astro site through Portless                     |
-| `make dev-astro`          | Start Astro directly on `127.0.0.1:4321`                  |
-| `make dev-all`            | Start the site and all five Workers                       |
-| `make build`              | Generate optional metadata and build `dist/` once         |
-| `make quality`            | Run formatting, lint, types, unit tests, and Worker tests |
-| `make ci`                 | Run the portable CI contract locally                      |
-| `make test-e2e-all`       | Run Chromium, Firefox, and WebKit                         |
-| `make deploy-preview`     | Explicitly create a Cloudflare Pages preview              |
-| `make deploy-break-glass` | Manual production recovery; normal releases use CI        |
-| `make doctor`             | Inspect the local toolchain without changing it           |
+| Command             | Purpose                                             |
+| ------------------- | --------------------------------------------------- |
+| `./run setup`       | Prepare the pinned local toolchain and dependencies |
+| `./run doctor`      | Check local tools, config, and repository readiness |
+| `./run dev`         | Start Astro through Portless                        |
+| `./run check`       | Run formatting, lint, type, unit, and Worker checks |
+| `./run build`       | Build the immutable website candidate input         |
+| `make dev-all`      | Start the site and five supporting Workers locally  |
+| `make test-e2e-all` | Run Chromium, Firefox, and WebKit browser checks    |
 
-Run `make help` for the complete task list.
+Read [local development](docs/development.md) for the site and support-service workflows.
 
-## Release model
+## Hosting and services
 
-GitHub Actions is the only automated production deployment owner. A successful `main` workflow:
+Astro outputs static files. The website Worker serves that output through Cloudflare Workers Static Assets and reports candidate identity at `/__studio/release`. The five supporting Workers remain independent services: `www`, `poem`, `webmention`, `micropub`, and `oembed`. Their Wrangler configs live beside their source code and distinguish `staging` from `production`.
 
-1. Runs static, unit, workerd, browser, responsive, and accessibility checks.
-2. Builds one immutable `dist` artifact.
-3. Applies versioned D1 migrations.
-4. Deploys all five Workers.
-5. Deploys the verified Pages artifact without rebuilding it.
-6. Smoke-tests the live endpoints.
+The existing Webmention D1 database remains bound only to the production Webmention Worker. Micropub's GitHub write token remains a secret on the production Micropub Worker; it is not included in the site Worker, candidate assets, or previews.
 
-Cloudflare's Git build integration should remain disabled. `make deploy-break-glass` exists only for an operator-directed recovery.
+## Release status
+
+Local candidate construction and source configuration are in progress. Production cutover is not authorized by this checkout. Candidate workflow integration, complete route/version recovery evidence, provider preview acceptance, and production promotion remain pending. See [deployment and recovery](docs/deployment.md).
 
 ## Documentation
 
+- [Configuration](docs/configuration.md)
+- [Local development](docs/development.md)
 - [Architecture](docs/architecture.md)
-- [Deployment](docs/deployment.md)
+- [Deployment and recovery](docs/deployment.md)
 - [Operations](docs/operations.md)
 - [Content](docs/content.md)
 - [IndieWeb endpoints](docs/indieweb.md)
 - [Site principles](docs/mission.md)
 
+## Worktree setup
+
+For a fresh checkout, run `./bootstrap worktree prepare`. The pinned Studio bootstrap engine reuses native dependency caches and keeps installed dependencies and mutable build outputs local to this checkout. This command does not build applications or start services. Continue using `./run` for the product lifecycle.
+
 ## License
 
 [MIT](LICENSE)
-
-## Worktree setup
-
-Run `./bootstrap worktree prepare` after creating a checkout. Codex runs this
-command through the checked-in local environment. The pinned Studio engine
-reuses native dependency caches and keeps installed dependencies and mutable
-build outputs inside this checkout. Setup does not build applications or start
-services. The first engine download requires GitHub CLI authentication with
-access to the private `TheHypertextStudio/bootstrap` repository.
-
-Run `./bootstrap worktree plan --json` to inspect proposed actions or
-`./bootstrap worktree check` to inspect readiness. Use `--no-install` to configure
-cache reuse without resolving dependencies. Use `--offline` only when the engine
-and dependency artifacts already exist locally; missing artifacts are reported.
-Preserve shared caches when cleaning a checkout. Continue using the repository's
-existing build and test commands.

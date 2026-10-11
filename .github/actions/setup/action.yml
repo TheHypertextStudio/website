@@ -14,4 +14,8 @@ runs:
       run: corepack enable
     - name: Install dependencies
       shell: bash
-      run: pnpm install --frozen-lockfile
+      env:
+        NODE_AUTH_TOKEN: ${{ github.token }}
+      run: |
+        pnpm config set //npm.pkg.github.com/:_authToken "$NODE_AUTH_TOKEN"
+        pnpm install --frozen-lockfile

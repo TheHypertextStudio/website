@@ -1,0 +1,29 @@
+name = "hypertext-studio-micropub-staging"
+main = "index.ts"
+account_id = "2500680a3b2b0fe6a011c1c25fed5008"
+compatibility_date = "2026-08-22"
+compatibility_flags = ["nodejs_compat"]
+workers_dev = true
+
+[env.staging]
+name = "hypertext-studio-micropub-staging"
+workers_dev = true
+
+[env.staging.vars]
+GITHUB_REPO = "TheHypertextStudio/website"
+NOTES_PATH = "src/content/notes"
+DEFAULT_BRANCH = "main"
+INDIEAUTH_ENDPOINT = "https://tokens.indieauth.com/token"
+
+[env.production]
+name = "hypertext-studio-micropub"
+routes = [{ pattern = "hypertext.studio/micropub*", zone_name = "hypertext.studio" }]
+
+[env.production.vars]
+GITHUB_REPO = "TheHypertextStudio/website"
+NOTES_PATH = "src/content/notes"
+DEFAULT_BRANCH = "main"
+INDIEAUTH_ENDPOINT = "https://tokens.indieauth.com/token"
+
+[env.production.observability]
+enabled = true
