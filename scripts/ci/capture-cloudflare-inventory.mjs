@@ -101,10 +101,14 @@ export async function captureInventory({
   now = () => new Date(),
 } = {}) {
   const token = validateContext(env); // Must precede every provider request.
+  const credentialKind = env.CLOUDFLARE_CREDENTIAL_KIND || 'none';
+  if (!['none', 'user', 'account'].includes(credentialKind))
+    fail('Invalid credential metadata kind.');
   const deadline = AbortSignal.timeout(180_000);
   let requests = 0;
   const request = async (path, label, query = {}) => {
-    if (++requests > MAX_ZONES + MAX_PAGES + 2) fail('Inventory request limit exceeded.');
+    if (++requests > MAX_ZONES + MAX_PAGES + 2 + (credentialKind === 'none' ? 0 : 2))
+      fail('Inventory request limit exceeded.');
     const url = new URL(`https://api.cloudflare.com/client/v4${path}`);
     for (const [key, value] of Object.entries(query)) url.searchParams.set(key, String(value));
     try {
@@ -215,6 +219,77 @@ export async function captureInventory({
     }),
     'domain',
   );
+  const credential = credentialKind === 'none' ? undefined : { kind: credentialKind };
+  if (credential) {
+    const prefix =
+      credentialKind === 'user' ? '/user/tokens' : `/accounts/${EXPECTED_ACCOUNT_ID}/tokens`;
+    try {
+      const verification = (await request(`${prefix}/verify`, 'token verification')).result;
+      if (
+        !validId(verification?.id) ||
+        !['active', 'disabled', 'expired'].includes(verification.status)
+      )
+        fail('Invalid token verification metadata.');
+      credential.id = verification.id;
+      credential.status = verification.status;
+      for (const key of ['expires_on', 'not_before']) {
+        if (verification[key] == null) continue;
+        const value = verification[key];
+        if (
+          typeof value !== 'string' ||
+          value.length > 64 ||
+          !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})$/.test(value) ||
+          !Number.isFinite(Date.parse(value))
+        )
+          fail('Invalid token validity metadata.');
+        credential[key] = value;
+      }
+      const details = (await request(`${prefix}/${verification.id}`, 'token details')).result;
+      if (
+        details?.id !== verification.id ||
+        !Array.isArray(details.policies) ||
+        details.policies.length > 50
+      )
+        fail('Invalid token policy metadata.');
+      const policies = details.policies.map((policy) => {
+        if (
+          !validId(policy?.id) ||
+          !['allow', 'deny'].includes(policy.effect) ||
+          !Array.isArray(policy.permission_groups) ||
+          policy.permission_groups.length > 50 ||
+          !policy.resources ||
+          typeof policy.resources !== 'object' ||
+          Array.isArray(policy.resources) ||
+          Object.keys(policy.resources).length > 100
+        )
+          fail('Invalid token policy metadata.');
+        const resources = {};
+        for (const [resource, value] of Object.entries(policy.resources)) {
+          if (!/^com\.cloudflare\.api\.[a-zA-Z0-9_.*:/-]{1,512}$/.test(resource) || value !== '*')
+            fail('Unsupported token resource metadata; scope remains unresolved.');
+          resources[resource] = '*';
+        }
+        return {
+          id: policy.id,
+          effect: policy.effect,
+          permission_groups: policy.permission_groups.map((group) => {
+            if (!validId(group?.id)) fail('Invalid token permission group metadata.');
+            return { id: group.id, name: text(group.name, 'permission group name', 256) };
+          }),
+          resources,
+        };
+      });
+      if (JSON.stringify(policies).includes(token)) fail('Unsafe credential metadata.');
+      credential.policies = policies;
+      credential.scope_status = 'captured';
+    } catch (error) {
+      // A denied self-inspection is evidence of an unresolved scope, not authority
+      // to create another credential, expand permissions, or change authentication.
+      credential.scope_status = 'unresolved';
+      credential.reason =
+        error instanceof InventoryError ? error.message : 'Token metadata inspection failed.';
+    }
+  }
   return {
     schema_version: 1,
     provenance: {
@@ -229,6 +304,7 @@ export async function captureInventory({
     account,
     zones,
     worker_domains: workerDomains,
+    ...(credential ? { credential } : {}),
   };
 }
 

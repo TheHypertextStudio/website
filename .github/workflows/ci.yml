@@ -15,6 +15,11 @@ on:
         description: Capture read-only Studio Cloudflare route and domain recovery metadata
         type: boolean
         default: false
+      cloudflare_credential_kind:
+        description: Also inspect the existing token's own metadata; never creates credentials
+        type: choice
+        options: [none, user, account]
+        default: none
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -93,6 +98,7 @@ jobs:
         env:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_CREDENTIAL_KIND: ${{ inputs.cloudflare_credential_kind }}
         run: node scripts/ci/capture-cloudflare-inventory.mjs
       - name: Retain recovery inventory
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
