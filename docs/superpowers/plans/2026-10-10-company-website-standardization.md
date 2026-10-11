@@ -128,10 +128,10 @@ Shared element transitions are supported by the standard; adoption on each produ
 
 **Consumes:** The lifecycle from Task 2. **Produces:** The four versioned packages and two reference apps described above.
 
-- [ ] Implement shared configuration, tokens, controls, Mintlify config generation/validation, setup tooling, and repository/authoring documentation templates.
-- [ ] Add configuration fixtures for Curfew and Docket. Verify product overrides preserve navigation, redirects, branding, and base paths; generated config is deterministic and stale generated files fail `docs:config:check`.
-- [ ] Build the Astro and Next.js examples with product theme overrides. Keep interactive React islands optional for Astro content pages.
-- [ ] Implement the sign-in motion examples with URL/history, direct-navigation, keyboard, reduced-motion, and animation-fallback scenarios.
+- [x] Implement shared configuration, tokens, controls, Mintlify config generation/validation, setup tooling, and repository/authoring documentation templates.
+- [x] Add configuration fixtures for Curfew and Docket. Verify product overrides preserve navigation, redirects, branding, and base paths; generated config is deterministic and stale generated files fail `docs:config:check`.
+- [x] Build the Astro and Next.js examples with product theme overrides. Keep interactive React islands optional for Astro content pages.
+- [x] Implement the sign-in motion examples with URL/history, direct-navigation, keyboard, reduced-motion, and animation-fallback scenarios.
 - [ ] Publish an initial immutable package release. Prove clean consumer installation and builds in both framework profiles using scoped read-only package access.
 
 **Acceptance:** Both reference apps consume the same package release and pass the shared accessibility/navigation scenarios. Curfew and Docket config fixtures pass the same docs commands. Product themes retain their own typography and appearance; a fresh checkout can follow the shared setup and documentation without a global Mintlify installation.
@@ -228,7 +228,10 @@ Tasks 1–3 are in progress; no task or production migration is complete.
 - The release-engineering branch adds a prebuilt Workers site adapter, explicit account/environment/route isolation, complete release identity probes, and website-only candidate assembly coverage. Python and Swift checks pass locally. The follow-up guards module/file inputs and production resource isolation; hosted CI passes. Live framework fixture preview/recovery acceptance and complete cutover route capture remain outstanding.
 - Product repositories now have product-owned Mintlify configuration inputs. Root command/CI adoption awaits a verified shared package release; existing product checks remain required.
 - Studio Cloudflare access is now available through the explicitly selected `cf` profile `hypertext-studio`. Read-only inspection captured both Pages production recovery deployments, the five supporting Workers' current/previous versions, D1 metadata, and frontend CNAMEs. Mintlify dashboard inspection confirms Docket's Git source and successful docs deployment; Curfew's existing project is unconnected and has no successful deployment. Curfew's public `/docs` remains the HTML guide; Docket's docs canonical tags still name the old Studio alias. These differences are recorded for reconciliation. Full route/binding capture, provider baselines, authenticated acceptance, and isolated previews remain open.
-- Package publication, shared tokens/controls and framework examples, framework adaptations, production rollout/observation, and old-host retention/retirement remain open. The existing Mintlify React/ReactDOM peer mismatch must be reconciled and native docs acceptance repeated before publication.
+- Shared tokens, React controls, and both framework references now build locally. Astro passes 39 and Next.js passes 42 Chromium/Firefox/WebKit scenarios, covering native dialogs, focus, real sign-in URLs, direct visits/refresh, Back/Forward, reduced motion, and absent animation APIs. The Next.js example records real browser animations to check button-to-dialog growth and duration units. Astro's content-only route emits no scripts or islands. These are local framework checks, separate from Workers runtime/provider acceptance.
+- The shared repository now delegates setup/doctor/dev/check/build to checksum-pinned release-engineering v0.1.6. Setup, doctor under the declared Node runtime, checks, and builds pass. CI runs both production-reference browser suites. Documentation records package use, framework boundaries, and the demonstration form's lack of an authentication backend.
+- The pinned Mintlify CLI's missing matching ReactDOM dependency is reconciled with an exact package extension. Astro's Vite React plugin is pinned to its declared compiler peer. Peer checks pass without suppressed warnings; actual Curfew and Docket native Mintlify validation, links, and accessibility pass again with the reconciled graph.
+- Initial immutable package publication and clean read-only registry consumers remain open. Task 3 is still in progress. Product adoption, Workers framework adaptations/previews, production rollout/observation, and old-host retention/retirement remain open.
 
 ## Documentation references
 
