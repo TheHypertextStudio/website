@@ -31,7 +31,7 @@ pnpm exec wrangler deployments list --config wrangler.jsonc --env staging
 
 Run deployment from reviewed source after ordinary CI succeeds. Confirm the selected Cloudflare account is Hypertext Studio. Preserve the existing staging route and Access protection. Record the native deployment/version IDs in the release notes, then review actual pages, redirects, assets and headers at the staging hostname.
 
-The reusable Access policy is `2fddfb97-c128-4226-b4e6-8e7e97a0d07e`; Studio's Access application is `79db268c-2596-45e7-a69f-8c8a445d799c`. These are configuration identifiers, not credentials. Other company staging hosts should use this same staff policy and identity provider. Authenticated browser acceptance is still required; an anonymous login redirect alone does not prove the website works.
+The reusable Access policy is `2fddfb97-c128-4226-b4e6-8e7e97a0d07e`; Studio's Access application is `79db268c-2596-45e7-a69f-8c8a445d799c`. These are configuration identifiers, not credentials. Other company staging hosts should use this same staff policy and identity provider. The first ordinary staging deployment passed in [run38175180162](https://github.com/TheHypertextStudio/website/actions/runs/38175180162). Authenticated homepage/About rendering, canonical redirects, asset delivery and headers were observed, and a native version rollback served the retained homepage before restoring the new version. Complete staged journeys remain required; an anonymous login redirect alone does not prove the website works.
 
 ## Production cutover
 
