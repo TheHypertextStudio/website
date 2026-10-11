@@ -72,6 +72,19 @@ If access is denied, report the missing read permission for review; do not broad
 credentials automatically. An inventory describes resources visible to the
 existing token and does not prove that the token can see every account zone.
 
+The first hosted capture succeeded in [run 38115255706](https://github.com/TheHypertextStudio/website/actions/runs/38115255706),
+job `cloudflare_inventory`, at source `4ff8690d92e3de75db7e4ad4ef9edd0005453a9a`.
+Artifact `cloudflare-recovery-inventory-38115255706-1` records the five existing
+supporting route IDs and four Curfew backend custom domains. Its JSON SHA-256 is
+`c75f2941d555b285bd1d9926f3268c65e82f2759757b5d01d39dbfa26dcef161`.
+In particular, `curfew-staging.hypertext.studio` already belongs to
+`curfew-account-platform-staging`; use a separate marketing preview hostname.
+The visible zones were `hypertext.studio` and `clearthedocket.com`. LogDate's
+canonical DNS ownership still needs reconciliation. This capture does not prove
+route restoration. Ordinary CI jobs in the same run failed at frozen dependency
+installation because the canonical registry lock remains pending package
+publication; the successful inventory job is a separate result.
+
 The helper follows the Cloudflare API references for [account details](https://developers.cloudflare.com/api/resources/accounts/methods/get/),
 [zones](https://developers.cloudflare.com/api/resources/zones/methods/list/),
 [Workers routes](https://developers.cloudflare.com/api/resources/workers/subresources/routes/methods/list/),
