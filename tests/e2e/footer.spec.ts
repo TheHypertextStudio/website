@@ -40,7 +40,7 @@ test.describe('Footer', () => {
       studioDirectory.getByRole('link', { name: /support|privacy|github/i }),
     ).toHaveCount(0);
     for (const [label, href] of [
-      ['Product support', '/contact'],
+      ['Product support', 'mailto:support@hypertext.studio'],
       ['Privacy', '/privacy'],
       ['GitHub', 'https://github.com/TheHypertextStudio'],
     ] as const) {

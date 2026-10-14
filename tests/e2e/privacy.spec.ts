@@ -55,7 +55,8 @@ test('privacy contact and exact previous notice remain reachable without JavaScr
   await page.goto('/privacy/');
   await expect(page.locator('time')).toHaveAttribute('datetime', '2026-10-14');
   await expect(page.locator('main a[href="mailto:legal@hypertext.studio"]').first()).toBeVisible();
-  await expect(page.locator('main a[href="mailto:hello@hypertext.studio"]')).toBeVisible();
+  await expect(page.locator('main a[href="mailto:contact@hypertext.studio"]')).toBeVisible();
+  await expect(page.locator('main a[href="mailto:support@hypertext.studio"]')).toBeVisible();
   await page.getByRole('link', { name: 'Read previous policies' }).click();
   await page.getByRole('link', { name: 'Privacy notice before October 14, 2026' }).click();
   await expect(
@@ -63,5 +64,9 @@ test('privacy contact and exact previous notice remain reachable without JavaScr
   ).toBeVisible();
   await page.getByRole('link', { name: 'Read the current notice' }).click();
   await expect(page.locator('main')).toContainText('1810 East Sahara Avenue STE 75246');
+  await page.goto('/contact/');
+  for (const role of ['contact', 'support', 'legal']) {
+    await expect(page.locator(`main a[href="mailto:${role}@hypertext.studio"]`)).toBeVisible();
+  }
   await context.close();
 });
