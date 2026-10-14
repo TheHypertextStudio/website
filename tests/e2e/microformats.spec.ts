@@ -21,7 +21,7 @@ test.describe('Microformats', () => {
     const card = page.locator('article.h-card');
     await expect(card.locator('a.u-email')).toHaveAttribute(
       'href',
-      /mailto:hello@hypertext\.studio/,
+      /mailto:contact@hypertext\.studio/,
     );
     await expect(card.locator('img.u-photo')).toBeAttached();
   });

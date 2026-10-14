@@ -1,7 +1,7 @@
 /* TEAM */
 Studio: Hypertext Studio
 Site: hypertext.studio
-Contact: hello [at] hypertext.studio
+Contact: contact [at] hypertext.studio
 Location: Las Vegas, Nevada, US
 
 /* THANKS */

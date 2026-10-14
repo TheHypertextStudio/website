@@ -139,10 +139,10 @@ Say what the studio or product does. Use direct instructions, concrete nouns and
 
 Use “we” when the studio speaks. Use the company name when another organization or product describes it. Address the reader as “you” when it makes an explanation clearer.
 
-| Context          | Wording                                |
-| ---------------- | -------------------------------------- |
-| Support          | Email hello@hypertext.studio for help. |
-| Unavailable page | There's no page at this address.       |
+| Context          | Wording                                  |
+| ---------------- | ---------------------------------------- |
+| Support          | Email support@hypertext.studio for help. |
+| Unavailable page | There's no page at this address.         |
 
 Explain privacy and reliability through specific behavior. Avoid unsupported superlatives and promises.
 

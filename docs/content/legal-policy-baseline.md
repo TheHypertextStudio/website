@@ -4,9 +4,23 @@ Use this reference when maintaining Hypertext Studio’s website and product pol
 
 ## Operator and contact
 
-Use **Hypertext Studio** as the operator. Publish **1810 East Sahara Avenue STE 75246, Las Vegas, NV 89104, United States** as the mailing address. Use **legal@hypertext.studio** for official legal notices and privacy requests. Keep **hello@hypertext.studio** for general support and ordinary enquiries.
+Use **Hypertext Studio** as the operator. Publish **1810 East Sahara Avenue STE 75246, Las Vegas, NV 89104, United States** as the mailing address. Use **legal@hypertext.studio** for official legal notices and privacy requests. Use **contact@hypertext.studio** for general Studio enquiries and **support@hypertext.studio** for product help, billing, security, and abuse reports. Keep **hello@hypertext.studio** as a legacy inbound alias for the general contact address.
 
 Name the covered website, application, and hosted services. Product notices cover their own capabilities; the Studio website notice covers visits, email, the local enquiry composer, and public webmentions. A local-first product claim must not conceal account, billing, support, security, sync, integration, or AI processing.
+
+## Inbound email roles
+
+Publish the canonical Studio addresses below in current website and product copy. Apply the same role mapping to inbound aliases on Studio-managed product domains, including `clearthedocket.com`, `logdate.app`, and `curfew.hypertext.studio`, where the Studio manages email for that domain. A product domain name does not establish that its mail service or aliases exist; verify the approved domains and actual routes before publication.
+
+| Inbound role on a Studio or product domain    | Canonical Studio destination |
+| --------------------------------------------- | ---------------------------- |
+| `contact@`, `hello@`                          | `contact@hypertext.studio`   |
+| `support@`, `billing@`, `security@`, `abuse@` | `support@hypertext.studio`   |
+| `legal@`, `privacy@`                          | `legal@hypertext.studio`     |
+
+For general questions, publish the contact destination; for product assistance, publish support; for official notices or privacy rights, publish legal. Preserve exact historical policy text even when it contains a legacy address. Retain legacy inbound aliases so existing correspondence can reach the appropriate role.
+
+These are inbound addresses and routing targets. They are separate from outbound transactional sender identities, delivery providers, and reply handling. Do not replace an application's `no-reply@` or `noreply@` sender as part of this mapping. Review outbound sender verification, authentication, deliverability, and reply routing separately when that work is authorized. Source references do not establish provider provisioning, delivery, or send-as authorization.
 
 ## Privacy notice structure and common prose
 

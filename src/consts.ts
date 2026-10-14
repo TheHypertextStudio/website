@@ -14,7 +14,7 @@ export const STUDIO_LOCATION = {
   timezone: 'America/Los_Angeles',
 } as const;
 
-export const STUDIO_EMAIL = 'hello@hypertext.studio';
+export const STUDIO_EMAIL = 'contact@hypertext.studio';
 
 export const SOCIAL = {
   github: 'https://github.com/TheHypertextStudio',

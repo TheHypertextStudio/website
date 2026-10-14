@@ -1,5 +1,6 @@
 ---
 import products from '@/data/products.json';
+import t from '@/i18n';
 
 const studioLinks = [
   { label: 'Services', href: '/services/' },
@@ -7,7 +8,7 @@ const studioLinks = [
   { label: 'Let’s talk', href: '/work-together/' },
 ];
 const helpLinks = [
-  { label: 'Product support', href: '/contact' },
+  { label: 'Product support', href: `mailto:${t.contact.supportEmail}` },
   { label: 'Privacy', href: '/privacy' },
   {
     label: 'GitHub',

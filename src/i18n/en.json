@@ -31,8 +31,8 @@
   "contact": {
     "title": "Contact",
     "intro": "Reach the studio at:",
-    "email": "hello@hypertext.studio",
-    "body": "Press, partnership, and product feedback go to the same inbox.",
+    "email": "contact@hypertext.studio",
+    "body": "Press, partnerships, and Studio enquiries go to this inbox.",
     "mailing": {
       "heading": "Mail",
       "lines": ["Hypertext Studio", "1810 East Sahara Avenue", "STE 75246", "Las Vegas, NV 89104"]
@@ -53,7 +53,13 @@
         "href": "https://fed.brid.gy/r/https://hypertext.studio/",
         "rel": "me"
       }
-    ]
+    ],
+    "supportHeading": "Product support",
+    "supportEmail": "support@hypertext.studio",
+    "supportBody": "For help with Docket, LogDate, or Curfew, including billing, security, and abuse reports. Include the product name so we can understand your request.",
+    "legalHeading": "Legal and privacy",
+    "legalEmail": "legal@hypertext.studio",
+    "legalBody": "For official legal notices and privacy requests."
   },
   "page404": {
     "title": "404: Page not found",
@@ -119,7 +125,7 @@
       {
         "heading": "Changes and contact",
         "id": "contact",
-        "body": "Published and effective October 14, 2026. We will publish changes here with an updated date and provide additional notice when required by law. A privacy notice explains processing; continued use alone does not supply consent for a new use that requires your consent. <a href=\"/legal/history\">Read previous policies</a>.\n\nFor privacy requests and official legal notices, email <a href=\"mailto:legal@hypertext.studio\">legal@hypertext.studio</a>. For general questions and support, use <a href=\"mailto:hello@hypertext.studio\">hello@hypertext.studio</a>. You may also write to Hypertext Studio, 1810 East Sahara Avenue STE 75246, Las Vegas, NV 89104, United States."
+        "body": "Published and effective October 14, 2026. We will publish changes here with an updated date and provide additional notice when required by law. A privacy notice explains processing; continued use alone does not supply consent for a new use that requires your consent. <a href=\"/legal/history\">Read previous policies</a>.\n\nFor privacy requests and official legal notices, email <a href=\"mailto:legal@hypertext.studio\">legal@hypertext.studio</a>. For general Studio questions, use <a href=\"mailto:contact@hypertext.studio\">contact@hypertext.studio</a>. For product help, billing questions, security reports, or abuse reports, use <a href=\"mailto:support@hypertext.studio\">support@hypertext.studio</a>. You may also write to Hypertext Studio, 1810 East Sahara Avenue STE 75246, Las Vegas, NV 89104, United States."
       }
     ]
   },

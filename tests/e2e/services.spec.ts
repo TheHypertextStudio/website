@@ -35,7 +35,7 @@ test('the stepper keeps answers and edited enquiries when moving backward', asyn
   const edited = 'Please help us simplify navigation.\nWe are a nonprofit.';
   await page.getByLabel('Your enquiry').fill(edited);
   const href = await page.getByRole('link', { name: 'Email enquiry' }).getAttribute('href');
-  expect(href?.split('?')[0]).toBe('mailto:hello@hypertext.studio');
+  expect(href?.split('?')[0]).toBe('mailto:contact@hypertext.studio');
   expect(new URLSearchParams(href!.split('?')[1]).get('body')).toBe(edited);
   await page.getByRole('button', { name: 'Back', exact: true }).click();
   await page.getByRole('button', { name: 'Prepare an enquiry' }).click();
@@ -87,7 +87,7 @@ test('visitors without JavaScript can still email Willie', async ({ browser }) =
   await page.goto('/work-together/');
   await expect(page.getByRole('link', { name: 'Email Willie' })).toHaveAttribute(
     'href',
-    'mailto:hello@hypertext.studio',
+    'mailto:contact@hypertext.studio',
   );
   await expect(page.getByRole('button', { name: 'Continue' })).not.toBeVisible();
   await context.close();
