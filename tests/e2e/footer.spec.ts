@@ -9,7 +9,14 @@ test.describe('Footer', () => {
   test('closes the site frame and exposes the launch essentials', async ({ page }) => {
     const footer = page.getByRole('contentinfo');
     await expect(footer.locator('.closing-tag')).toHaveText('</hypertext-studio>');
-    for (const label of ['Services', 'About', 'Let’s talk', 'Product support', 'Privacy']) {
+    for (const label of [
+      'Services',
+      'About',
+      'Let’s talk',
+      'Product support',
+      'Privacy',
+      'Terms',
+    ]) {
       await expect(footer.getByRole('link', { name: label, exact: true })).toBeVisible();
     }
   });
@@ -42,6 +49,7 @@ test.describe('Footer', () => {
     for (const [label, href] of [
       ['Product support', 'mailto:support@hypertext.studio'],
       ['Privacy', '/privacy'],
+      ['Terms', '/terms'],
       ['GitHub', 'https://github.com/TheHypertextStudio'],
     ] as const) {
       await expect(helpDirectory.getByRole('link', { name: label, exact: true })).toHaveAttribute(

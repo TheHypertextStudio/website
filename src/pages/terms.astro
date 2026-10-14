@@ -1,0 +1,49 @@
+---
+import Base from '@/layouts/Base.astro';
+import t from '@/i18n';
+---
+
+<Base title={t.terms.title} description={t.terms.intro}>
+  <article class="prose-layout">
+    <header>
+      <h1>{t.terms.title}</h1>
+      <p class="lede">{t.terms.intro}</p>
+      <p class="policy-metadata">
+        Published <time datetime={t.terms.published}>October 14, 2026</time>.<br />
+        Existing visitors: effective <time datetime={t.terms.effectiveExisting}
+          >November 13, 2026</time
+        >.<br />
+        New visitors: effective when accepted.
+      </p>
+      <nav aria-label="Policy navigation">
+        <a href="/privacy">Privacy</a> · <a href="/legal/history">Policy history</a>
+      </nav>
+    </header>
+    {
+      t.terms.sections.map((section) => (
+        <section class="flow">
+          <h2 id={section.id}>
+            <a
+              class="anchor"
+              href={`#${section.id}`}
+              aria-label={`Permalink to ${section.heading}`}
+            >
+              #
+            </a>
+            {section.heading}
+          </h2>
+          {section.body.split('\n\n').map((paragraph) => (
+            <p set:html={paragraph} />
+          ))}
+        </section>
+      ))
+    }
+  </article>
+</Base>
+
+<style>
+  .policy-metadata {
+    color: var(--color-secondary);
+    margin-block-end: 0.75rem;
+  }
+</style>

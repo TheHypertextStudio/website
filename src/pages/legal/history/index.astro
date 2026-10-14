@@ -2,18 +2,36 @@
 import Base from '@/layouts/Base.astro';
 ---
 
-<Base title="Policy history" description="Previous Hypertext Studio website privacy policies.">
+<Base title="Policy history" description="Current and previous Hypertext Studio website policies.">
   <article class="prose-layout">
     <header>
       <h1>Policy history</h1>
-      <p class="lede">Previous policies for the Hypertext Studio website.</p>
+      <p class="lede">Policies for the Hypertext Studio website.</p>
     </header>
-    <p><a href="/privacy">Current privacy notice</a></p>
-    <ul>
-      <li>
-        <a href="/legal/history/privacy-before-2026-10-14">Privacy notice before October 14, 2026</a
-        >
-      </li>
-    </ul>
+    <section class="flow">
+      <h2>Current policies</h2>
+      <ul>
+        <li><a href="/privacy">Current privacy notice</a></li>
+        <li><a href="/terms">Current website terms</a></li>
+      </ul>
+    </section>
+    <section class="flow">
+      <h2>Previous privacy notice</h2>
+      <ul>
+        <li>
+          <a href="/legal/history/privacy-before-2026-10-14"
+            >Privacy notice before October 14, 2026</a
+          >
+        </li>
+      </ul>
+    </section>
+    <section class="flow">
+      <h2>Website terms history</h2>
+      <p>
+        The website Terms published October 14, 2026 are the first version recorded in this policy
+        history; there is no previous version to archive. They take effect for existing visitors on
+        November 13, 2026 and for new visitors when accepted.
+      </p>
+    </section>
   </article>
 </Base>
