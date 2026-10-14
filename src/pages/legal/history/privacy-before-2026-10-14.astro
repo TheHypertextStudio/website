@@ -1,0 +1,32 @@
+---
+import Base from '@/layouts/Base.astro';
+import policy from '@/data/legal/privacy-before-2026-10-14.json';
+---
+
+<Base
+  title="Previous privacy notice"
+  description="Hypertext Studio website privacy notice before October 14, 2026."
+  noIndex
+>
+  <article class="prose-layout">
+    <header>
+      <h1>{policy.title}</h1>
+      <p>
+        This is the previous website notice, retained as published before October 14, 2026. <a
+          href="/privacy">Read the current notice</a
+        >.
+      </p>
+      <p class="lede">{policy.intro}</p>
+    </header>
+    {
+      policy.sections.map((section) => (
+        <section class="flow">
+          <h2 id={section.id}>{section.heading}</h2>
+          {section.body.split('\n\n').map((paragraph) => (
+            <p set:html={paragraph.replace(/`([^`]+)`/g, '<code>$1</code>')} />
+          ))}
+        </section>
+      ))
+    }
+  </article>
+</Base>

@@ -1,0 +1,41 @@
+{
+  "title": "Privacy",
+  "intro": "What we collect when you visit hypertext.studio.",
+  "sections": [
+    {
+      "heading": "What we collect",
+      "id": "collect",
+      "body": "We use Cloudflare Web Analytics to count aggregate page views, see which pages are popular, and understand which countries our readers are in. Cloudflare Web Analytics does not use cookies, does not track individual visitors, and does not share data with third parties.\n\nThat is everything we collect from your visit."
+    },
+    {
+      "heading": "What we don't collect",
+      "id": "dont-collect",
+      "body": "We don't use Google Analytics, Meta pixels, or any third-party tracker. We don't set cookies. We don't fingerprint your device. We don't sell, share, or rent any data."
+    },
+    {
+      "heading": "Your rights",
+      "id": "rights",
+      "body": "There is nothing about you specifically in our data. Nothing to opt out of, delete, or export. Your visit shows up in our aggregate count; your visit isn't traceable back to you.\n\nIf you'd rather not appear in the count at all, your browser's \"Do Not Track\" or \"Global Privacy Control\" signals are honored. You can also block the analytics endpoint at the network level (`static.cloudflareinsights.com`)."
+    },
+    {
+      "heading": "Email",
+      "id": "email",
+      "body": "If you write to us, we'll have your email address until we delete the conversation. We will never add it to a mailing list or share it with anyone."
+    },
+    {
+      "heading": "Webmentions",
+      "id": "webmentions",
+      "body": "If you publish a post on your own site that links to a page on hypertext.studio and your site sends us a webmention, we may display the URL of your post, your name, and a summary of your post alongside the referenced page. You can ask us to remove your mention at any time — write to hello@hypertext.studio."
+    },
+    {
+      "heading": "Changes",
+      "id": "changes",
+      "body": "If we change anything about how the site collects data, we'll update this page and note the change in the colophon's last-modified date."
+    },
+    {
+      "heading": "Contact",
+      "id": "contact",
+      "body": "Questions: hello@hypertext.studio."
+    }
+  ]
+}

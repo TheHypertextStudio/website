@@ -4,6 +4,7 @@ import Header from '@/components/Header.astro';
 import Footer from '@/components/Footer/index.astro';
 import type { Schema } from '@/components/JsonLd.astro';
 import '@/styles/global.css';
+import Analytics from '@/components/Analytics.astro';
 
 interface Props {
   title?: string;
@@ -30,6 +31,7 @@ const { title, description, ogImage, ogType, canonical, noIndex, schemas } = Ast
       noIndex={noIndex}
       schemas={schemas}
     />
+    <Analytics />
   </head>
   <body>
     <!--

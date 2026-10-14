@@ -11,7 +11,7 @@ test('serves the built public pages with their intended identity', async ({ requ
     { marker: 'Product &amp; technical consulting', path: '/services/' },
     { marker: 'What do you need help with?', path: '/work-together/' },
     // Footer labels appear on other pages, so each marker must identify the body.
-    { marker: 'What we collect when you visit hypertext.studio.', path: '/privacy/' },
+    { marker: 'How Hypertext Studio handles information on this website.', path: '/privacy/' },
     { marker: 'Press, partnership, and product feedback go to the same inbox.', path: '/contact/' },
   ];
 
@@ -83,6 +83,7 @@ test('applies the _headers security policy to every response', async ({ request 
   for (const path of ['/', '/about/', '/llms.txt']) {
     const headers = (await request.get(path)).headers();
     expect(headers['content-security-policy'], path).toContain("default-src 'self'");
+    if (path !== '/llms.txt') expect(headers['cache-control'], path).toContain('no-transform');
     expect(headers['content-security-policy'], path).toContain("frame-ancestors 'none'");
     expect(headers['strict-transport-security'], path).toContain('max-age=63072000');
     expect(headers['x-content-type-options'], path).toBe('nosniff');
