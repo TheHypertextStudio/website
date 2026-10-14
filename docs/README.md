@@ -19,6 +19,7 @@ Everything you need to build, run, and write for `hypertext.studio`.
 
 - [`content.md`](content.md) — how to write and publish a study
 - [`content/style-guide.md`](content/style-guide.md) — voice, microcopy, do-not-say list
+- [`content/legal-policy-baseline.md`](content/legal-policy-baseline.md) — shared policy language, product differences, and publication requirements
 
 ## Conventions
 

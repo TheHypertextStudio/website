@@ -1,0 +1,11 @@
+---
+const token = import.meta.env.PUBLIC_CLOUDFLARE_WEB_ANALYTICS_TOKEN;
+---
+
+{token && <meta name="hypertext-analytics-token" content={token} />}
+<script>
+  import { loadAnalytics } from '@/lib/analytics';
+  loadAnalytics(
+    document.querySelector<HTMLMetaElement>('meta[name="hypertext-analytics-token"]')?.content,
+  );
+</script>

@@ -38,8 +38,16 @@
       "lines": ["Hypertext Studio", "1810 East Sahara Avenue", "STE 75246", "Las Vegas, NV 89104"]
     },
     "channels": [
-      { "label": "GitHub", "href": "https://github.com/TheHypertextStudio", "rel": "me" },
-      { "label": "Bluesky", "network": "bluesky", "rel": "me" },
+      {
+        "label": "GitHub",
+        "href": "https://github.com/TheHypertextStudio",
+        "rel": "me"
+      },
+      {
+        "label": "Bluesky",
+        "network": "bluesky",
+        "rel": "me"
+      },
       {
         "label": "Fediverse",
         "href": "https://fed.brid.gy/r/https://hypertext.studio/",
@@ -54,42 +62,64 @@
   },
   "privacy": {
     "title": "Privacy",
-    "intro": "What we collect when you visit hypertext.studio.",
+    "intro": "How Hypertext Studio handles information on this website.",
+    "published": "2026-10-14",
+    "effective": "2026-10-14",
     "sections": [
       {
-        "heading": "What we collect",
+        "heading": "Operator and scope",
+        "id": "scope",
+        "body": "Hypertext Studio operates hypertext.studio. This notice explains personal information handled when you visit this website, prepare an enquiry, email us, or send a webmention. Our products have their own privacy notices; this website notice does not describe all product data or imply that every product is local-only or end-to-end encrypted."
+      },
+      {
+        "heading": "Data and purposes",
         "id": "collect",
-        "body": "We use Cloudflare Web Analytics to count aggregate page views, see which pages are popular, and understand which countries our readers are in. Cloudflare Web Analytics does not use cookies, does not track individual visitors, and does not share data with third parties.\n\nThat is everything we collect from your visit."
+        "body": "Cloudflare delivers and protects the website. Requests expose information such as your IP address, requested URL, browser information, and request time to Cloudflare for delivery, security, and abuse prevention. This operational processing is separate from optional website analytics.\n\nWhen configured, Cloudflare Web Analytics helps us understand page views, referring sites, approximate country, browser and device categories, and page performance. Its beacon does not use cookies or browser storage or track people across websites. Cloudflare receives the IP address needed to handle the analytics request and says its RUM service discards it at the nearest data center rather than storing it in its core databases or logs. See <a href=\"https://developers.cloudflare.com/speed/observatory/rum-beacon/\">Cloudflare’s RUM documentation</a>.\n\nIf you email us, we receive your address, message, attachments, and information you choose to include. We use these to respond, provide support, discuss work, and keep necessary business records. We do not add you to a marketing list just because you contact us."
       },
       {
-        "heading": "What we don't collect",
-        "id": "dont-collect",
-        "body": "We don't use Google Analytics, Meta pixels, or any third-party tracker. We don't set cookies. We don't fingerprint your device. We don't sell, share, or rent any data."
+        "heading": "Local and hosted processing",
+        "id": "processing",
+        "body": "The work-together enquiry composer runs in your browser. It does not submit your answers to a website form endpoint. Choosing “Email enquiry” opens your email app with a draft; you decide whether to send it. Choosing “Copy enquiry” writes the draft to your device’s clipboard, which may be available to your device’s clipboard services.\n\nPublic pages are hosted by Cloudflare. Verified webmentions are stored in Cloudflare D1 and may also appear in generated pages and caches. Email you send is handled by Google Workspace, our email provider, and your email provider. These hosted records are accessible to the Studio operator and the providers needed to deliver the service; they are not end-to-end encrypted against us."
       },
       {
-        "heading": "Your rights",
-        "id": "rights",
-        "body": "There is nothing about you specifically in our data. Nothing to opt out of, delete, or export. Your visit shows up in our aggregate count; your visit isn't traceable back to you.\n\nIf you'd rather not appear in the count at all, your browser's \"Do Not Track\" or \"Global Privacy Control\" signals are honored. You can also block the analytics endpoint at the network level (`static.cloudflareinsights.com`)."
-      },
-      {
-        "heading": "Email",
-        "id": "email",
-        "body": "If you write to us, we'll have your email address until we delete the conversation. We will never add it to a mailing list or share it with anyone."
+        "heading": "Recipients and AI",
+        "id": "recipients",
+        "body": "Cloudflare processes website delivery, security, analytics when enabled, and webmention storage. Google Workspace processes correspondence; see <a href=\"https://policies.google.com/privacy\">Google’s privacy policy</a>. Providers receive information needed to perform those services. Cloudflare explains its processing in its <a href=\"https://www.cloudflare.com/privacypolicy/\">privacy policy</a>.\n\nThe website enquiry composer does not call an AI service, and we do not send your enquiry to an AI provider through it. A separate product or agreed engagement that uses AI must explain its own processing. We may disclose information where law requires it or where necessary to protect people, investigate abuse, or establish or defend legal claims. We do not sell personal information or share it for cross-context behavioral advertising."
       },
       {
         "heading": "Webmentions",
         "id": "webmentions",
-        "body": "If you publish a post on your own site that links to a page on hypertext.studio and your site sends us a webmention, we may display the URL of your post, your name, and a summary of your post alongside the referenced page. You can ask us to remove your mention at any time — write to hello@hypertext.studio."
+        "body": "If your site sends a webmention linking to hypertext.studio, we fetch the source page to verify the link and extract its public information. Stored information can include the source and target URLs, mention type, author name, profile URL and photo URL, text and HTML content, publication date, and receipt and verification times. Verified mentions are available through our public webmention API and may appear alongside the referenced page, including an author name, source link, or excerpt.\n\nOnly send a webmention if you intend this public use. Ask <a href=\"mailto:legal@hypertext.studio\">legal@hypertext.studio</a> to remove a mention, identifying its source and target URLs. Removing our copy cannot remove the source publication or copies held by other people."
       },
       {
-        "heading": "Changes",
-        "id": "changes",
-        "body": "If we change anything about how the site collects data, we'll update this page and note the change in the colophon's last-modified date."
+        "heading": "Retention and deletion",
+        "id": "retention",
+        "body": "We keep correspondence while needed to respond, support an ongoing relationship, maintain required records, or resolve disputes. We retain verified webmentions while their public citation remains useful, unless removed following a request or moderation. Unverified submissions are deleted when verification fails; the service does not promise an automatic expiry for every record.\n\nHosting, security, and analytics records follow the provider’s service retention and our configured settings. We do not promise immediate removal from every backup or cache. When deleting information, we also consider necessary legal, security, and recordkeeping obligations. Contact us for a specific access or deletion request."
       },
       {
-        "heading": "Contact",
+        "heading": "Security",
+        "id": "security",
+        "body": "We use HTTPS, access controls, and limited service permissions to protect information. No internet service or email system can guarantee complete security. Please avoid sending passwords, secret keys, or sensitive personal information that is unnecessary for your request."
+      },
+      {
+        "heading": "Choices and rights",
+        "id": "rights",
+        "body": "When your browser sends an active Do Not Track or Global Privacy Control signal, we do not load the optional analytics beacon. This does not stop the network requests needed to deliver and protect the website. You can also block `static.cloudflareinsights.com` and the analytics collection endpoints at the network level. We do not use advertising trackers or set our own tracking cookies.\n\nDepending on where you live, you may have rights to access, correct, delete, receive a copy of, restrict, or object to processing of personal information, or withdraw consent where processing relies on consent. Contact <a href=\"mailto:legal@hypertext.studio\">legal@hypertext.studio</a>. We may need proportionate information to verify your request. You may also complain to your local data protection authority. We will respect applicable rights and will not deny them merely because website analytics are aggregated."
+      },
+      {
+        "heading": "Children",
+        "id": "children",
+        "body": "This website is for a general audience and is not directed to children under 13. We do not knowingly collect their personal information. If you believe a child has sent us personal information, contact us so we can review and remove it where appropriate. Product account age requirements are described in each product’s terms."
+      },
+      {
+        "heading": "International processing",
+        "id": "international",
+        "body": "Hypertext Studio is based in the United States. Cloudflare and email services may process information in the United States and other countries where they operate. Applicable transfer safeguards and legal protections depend on the provider, service, and your location."
+      },
+      {
+        "heading": "Changes and contact",
         "id": "contact",
-        "body": "Questions: hello@hypertext.studio."
+        "body": "Published and effective October 14, 2026. We will publish changes here with an updated date and provide additional notice when required by law. A privacy notice explains processing; continued use alone does not supply consent for a new use that requires your consent. <a href=\"/legal/history\">Read previous policies</a>.\n\nFor privacy requests and official legal notices, email <a href=\"mailto:legal@hypertext.studio\">legal@hypertext.studio</a>. For general questions and support, use <a href=\"mailto:hello@hypertext.studio\">hello@hypertext.studio</a>. You may also write to Hypertext Studio, 1810 East Sahara Avenue STE 75246, Las Vegas, NV 89104, United States."
       }
     ]
   },
@@ -97,10 +127,22 @@
     "title": "Colophon",
     "intro": "How this site is built.",
     "credits": [
-      { "key": "typefaces", "value": "Source Serif 4, Inter, IBM Plex Mono" },
-      { "key": "framework", "value": "Astro 7, static output" },
-      { "key": "hosting", "value": "Cloudflare Pages + Workers + D1" },
-      { "key": "analytics", "value": "Cloudflare Web Analytics — cookieless" }
+      {
+        "key": "typefaces",
+        "value": "Source Serif 4, Inter, IBM Plex Mono"
+      },
+      {
+        "key": "framework",
+        "value": "Astro 7, static output"
+      },
+      {
+        "key": "hosting",
+        "value": "Cloudflare Pages + Workers + D1"
+      },
+      {
+        "key": "analytics",
+        "value": "Cloudflare Web Analytics — cookieless"
+      }
     ]
   },
   "indieweb": {

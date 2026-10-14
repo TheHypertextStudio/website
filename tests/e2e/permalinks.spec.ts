@@ -8,7 +8,19 @@ test.describe('Self-anchoring headings', () => {
 
   test('privacy page sub-headings are anchored', async ({ page }) => {
     await page.goto('/privacy');
-    const ids = ['collect', 'dont-collect', 'rights', 'email', 'webmentions', 'changes', 'contact'];
+    const ids = [
+      'scope',
+      'collect',
+      'processing',
+      'recipients',
+      'webmentions',
+      'retention',
+      'security',
+      'rights',
+      'children',
+      'international',
+      'contact',
+    ];
     for (const id of ids) {
       await expect(page.locator(`h2#${id}`)).toBeAttached();
     }
