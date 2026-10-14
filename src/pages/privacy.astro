@@ -11,7 +11,10 @@ import t from '@/i18n';
     <header>
       <h1>{t.privacy.title}</h1>
       <p class="lede">{t.privacy.intro}</p>
-      <p>Published and effective <time datetime={t.privacy.effective}>October 14, 2026</time>.</p>
+      <div class="policy-metadata">
+        <p>Published and effective <time datetime={t.privacy.effective}>October 14, 2026</time>.</p>
+        <nav aria-label="Policy navigation"><a href="/legal/history">Policy history</a></nav>
+      </div>
     </header>
     {
       t.privacy.sections.map((s) => (
@@ -30,3 +33,16 @@ import t from '@/i18n';
     }
   </article>
 </Base>
+
+<style>
+  .policy-metadata {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.5rem 1.5rem;
+    color: var(--color-secondary);
+  }
+  .policy-metadata p {
+    margin: 0;
+  }
+</style>

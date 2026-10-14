@@ -54,6 +54,14 @@ test('privacy contact and exact previous notice remain reachable without JavaScr
   const page = await context.newPage();
   await page.goto('/privacy/');
   await expect(page.locator('time')).toHaveAttribute('datetime', '2026-10-14');
+  await expect(page.locator('main p').filter({ hasText: 'Published and effective' })).toHaveCount(
+    1,
+  );
+  await expect(
+    page
+      .getByRole('navigation', { name: 'Policy navigation' })
+      .getByRole('link', { name: 'Policy history' }),
+  ).toBeVisible();
   await expect(page.locator('main a[href="mailto:legal@hypertext.studio"]').first()).toBeVisible();
   await expect(page.locator('main a[href="mailto:contact@hypertext.studio"]')).toBeVisible();
   await expect(page.locator('main a[href="mailto:support@hypertext.studio"]')).toBeVisible();

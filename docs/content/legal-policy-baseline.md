@@ -10,7 +10,7 @@ Name the covered website, application, and hosted services. Product notices cove
 
 ## Inbound email roles
 
-Publish the canonical Studio addresses below in current website and product copy. Apply the same role mapping to inbound aliases on Studio-managed product domains, including `clearthedocket.com`, `logdate.app`, and `curfew.hypertext.studio`, where the Studio manages email for that domain. A product domain name does not establish that its mail service or aliases exist; verify the approved domains and actual routes before publication.
+Publish the canonical Studio addresses below on the Studio website. Product copy may publish verified product-domain `contact@` and `support@` aliases that route to the corresponding canonical Studio destinations. Continue to publish **legal@hypertext.studio** for official legal notices and privacy requests. Apply the same inbound role mapping on Studio-managed product domains where the Studio manages email for that domain. A product domain name does not establish that its mail service or aliases exist; verify the approved domains and actual routes before publication.
 
 | Inbound role on a Studio or product domain    | Canonical Studio destination |
 | --------------------------------------------- | ---------------------------- |
@@ -18,7 +18,7 @@ Publish the canonical Studio addresses below in current website and product copy
 | `support@`, `billing@`, `security@`, `abuse@` | `support@hypertext.studio`   |
 | `legal@`, `privacy@`                          | `legal@hypertext.studio`     |
 
-For general questions, publish the contact destination; for product assistance, publish support; for official notices or privacy rights, publish legal. Preserve exact historical policy text even when it contains a legacy address. Retain legacy inbound aliases so existing correspondence can reach the appropriate role.
+For general product questions and product assistance, publish either the verified product-domain contact/support alias or its canonical Studio destination. For official notices or privacy rights, publish the Studio legal address. Preserve exact historical policy text even when it contains a legacy address. Retain legacy inbound aliases so existing correspondence can reach the appropriate role.
 
 These are inbound addresses and routing targets. They are separate from outbound transactional sender identities, delivery providers, and reply handling. Do not replace an application's `no-reply@` or `noreply@` sender as part of this mapping. Review outbound sender verification, authentication, deliverability, and reply routing separately when that work is authorized. Source references do not establish provider provisioning, delivery, or send-as authorization.
 
