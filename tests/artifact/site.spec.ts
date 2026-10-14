@@ -12,6 +12,7 @@ test('serves the built public pages with their intended identity', async ({ requ
     { marker: 'What do you need help with?', path: '/work-together/' },
     // Footer labels appear on other pages, so each marker must identify the body.
     { marker: 'How Hypertext Studio handles information on this website.', path: '/privacy/' },
+    { marker: 'Terms for the free, account-free Hypertext Studio website.', path: '/terms/' },
     { marker: 'Press, partnerships, and Studio enquiries go to this inbox.', path: '/contact/' },
   ];
 

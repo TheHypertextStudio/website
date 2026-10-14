@@ -9,6 +9,7 @@ export const PAGES = [
   { path: '/work-together/', name: 'Work together', titleIncludes: 'Work together' },
   { path: '/about', name: 'About', titleIncludes: 'About' },
   { path: '/privacy', name: 'Privacy', titleIncludes: 'Privacy' },
+  { path: '/terms', name: 'Terms', titleIncludes: 'Website terms' },
   { path: '/colophon', name: 'Colophon', titleIncludes: 'Colophon' },
   { path: '/studies', name: 'Studies', titleIncludes: 'Studies' },
   { path: '/contact', name: 'Contact', titleIncludes: 'Contact' },

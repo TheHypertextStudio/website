@@ -43,6 +43,8 @@ Public webmentions are relevant to the Studio website and may have a dedicated s
 
 Use these eleven sections in this order. Keep existing liability amounts and open-source rights unless a separately approved change requires otherwise. Do not introduce arbitration, indemnities, or new use restrictions through this alignment.
 
+For the Studio website, these sections cover the free public pages, local enquiry composer, and public webmentions. Account, payment, and paid-service obligations belong to the applicable product terms or a separately agreed services contract. Keep website content permission tied to the chosen features and preserve existing open-source grants and mandatory rights.
+
 ### 1. Operator and scope
 
 “These terms govern your use of [product and covered services], operated by Hypertext Studio.” Name the distribution channels and any separate third-party terms. Explain how the agreement is accepted at the relevant account or purchase step.

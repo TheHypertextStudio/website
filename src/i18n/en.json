@@ -129,6 +129,69 @@
       }
     ]
   },
+  "terms": {
+    "title": "Website terms",
+    "intro": "Terms for the free, account-free Hypertext Studio website.",
+    "published": "2026-10-14",
+    "effectiveExisting": "2026-11-13",
+    "sections": [
+      {
+        "heading": "Operator and scope",
+        "id": "scope",
+        "body": "Hypertext Studio operates hypertext.studio. These Terms cover the free public website, its enquiry composer, and public webmentions. Our <a href=\"/privacy\">Privacy notice</a> explains how we handle information.\n\nDocket, LogDate, Curfew, and other products have their own terms. Consulting, design, development, and other quoted work are governed by the separate agreement for that engagement. These website Terms do not replace those agreements."
+      },
+      {
+        "heading": "Eligibility",
+        "id": "eligibility",
+        "body": "You can browse this general-audience website without creating an account or making a purchase. If you request work on behalf of another person or organization, you must have authority to make that request. Any binding services engagement must be agreed by someone with the legal capacity and authority to enter it, including a parent or guardian where applicable law requires one. Product account eligibility is described in each product’s own terms."
+      },
+      {
+        "heading": "Accounts",
+        "id": "accounts",
+        "body": "This public website does not offer visitor accounts or subscriptions. Product accounts, sign-in, and account recovery are governed by the relevant product’s terms and support process."
+      },
+      {
+        "heading": "Your content",
+        "id": "content",
+        "body": "You retain ownership of your content. You give Hypertext Studio only the permission needed to operate, secure, support, and deliver the website features you choose to use. For correspondence, that means handling your message to respond or discuss requested work. For a webmention you send, it includes fetching and verifying the public source, storing the mention, and publishing its source link, author information, or excerpt as described in the Privacy notice. Only send information you have authority to provide.\n\nThis limited permission does not authorize unrelated advertising use or training general-purpose AI models on your content. You can ask us to remove our copy of a webmention through the privacy contact; we cannot remove copies on the source site or held by others.\n\nThe website source is available under the <a href=\"https://github.com/TheHypertextStudio/website/blob/main/LICENSE\">MIT license</a>. Nothing in these Terms restricts rights granted by that license or another applicable open-source license. Third-party material remains subject to its applicable rights and licenses."
+      },
+      {
+        "heading": "Features and connected services",
+        "id": "features",
+        "body": "The website describes the Studio, its work, and its products. Product availability, purchases, and use are covered by the relevant product information and terms. Links to another service take you to that service, which has its own terms.\n\nThe enquiry composer prepares a draft locally in your browser. You can copy it or open it in your email app, then decide whether to send it. Preparing or sending an enquiry does not by itself establish a paid engagement. The scope, price, and commitments for quoted work are agreed separately."
+      },
+      {
+        "heading": "Billing, cancellation, and refunds",
+        "id": "billing",
+        "body": "The public website is free to use and does not sell website accounts or subscriptions. There is no website subscription to cancel or website purchase to refund. Payment, cancellation, and refunds for separately agreed services follow that agreement and applicable law. Product purchases follow the relevant product’s terms and the purchase channel’s applicable rules."
+      },
+      {
+        "heading": "Acceptable use",
+        "id": "acceptable-use",
+        "body": "Use the website lawfully and respect other people’s rights. Do not attempt unauthorized access to its systems, knowingly send malicious code, or disrupt the service for others. These rules do not restrict open-source license rights, lawful criticism, or good-faith reporting of a security issue. Send security or abuse reports to <a href=\"mailto:support@hypertext.studio\">support@hypertext.studio</a>."
+      },
+      {
+        "heading": "Changes and termination",
+        "id": "changes",
+        "body": "We will publish material changes to these Terms and give existing visitors at least 30 days’ advance notice before they apply, unless law or urgent security needs require an earlier change, which we will explain. Changes apply prospectively and do not remove accrued rights or change an earlier services agreement or product purchase. You may stop using the website at any time.\n\nWe may take proportionate steps to protect the website against unauthorized access, malicious activity, or disruption, including blocking abusive requests. This does not terminate a separate product or services agreement. Current and previous policy records are available in the <a href=\"/legal/history\">policy history</a>."
+      },
+      {
+        "heading": "Warranty and liability",
+        "id": "warranty",
+        "body": "Nothing in these Terms excludes or limits rights or liability that cannot lawfully be excluded or limited, including applicable consumer guarantees and remedies. Warranties and liability for separately agreed services are governed by that agreement, subject to applicable law. Open-source software remains governed by its applicable license."
+      },
+      {
+        "heading": "Governing law and disputes",
+        "id": "law",
+        "body": "Nevada law governs these Terms, subject to mandatory laws that protect you where you live. Courts in Clark County, Nevada are the agreed forum, except where applicable consumer law gives you the right to bring a claim in your home courts or requires another forum. Nothing here removes non-waivable consumer rights."
+      },
+      {
+        "heading": "Contact",
+        "id": "contact",
+        "body": "For official legal notices and privacy requests, email <a href=\"mailto:legal@hypertext.studio\">legal@hypertext.studio</a> or write to Hypertext Studio, 1810 East Sahara Avenue STE 75246, Las Vegas, NV 89104, United States. For general Studio enquiries, use <a href=\"mailto:contact@hypertext.studio\">contact@hypertext.studio</a>. For product help, billing, security, or abuse reports, use <a href=\"mailto:support@hypertext.studio\">support@hypertext.studio</a>."
+      }
+    ]
+  },
   "colophon": {
     "title": "Colophon",
     "intro": "How this site is built.",
