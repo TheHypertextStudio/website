@@ -1,85 +1,103 @@
 # Hypertext Studio Website Standardization Implementation Plan
 
-**Updated 2026-10-11:** The user requested removal of all ad hoc or unconventional migration workflows and scripts. This revision replaces the earlier custom lifecycle, candidate manifest, repackaging and recovery design. Historical acceptance notes describe earlier work; they are not current operating instructions.
-
 ## Goal and scope
 
 Standardize configuration, setup and documentation across the company websites. Move Studio, Curfew, LogDate and Docket frontends to Cloudflare Workers. Keep Mintlify for Curfew and Docket documentation. Preserve each product's content, appearance, URLs, accessibility, auth and application behavior.
 
-Native applications, backend APIs, databases, licensing, webhooks and existing native distribution remain on their current systems. Reasonable Tech, Lovelace and LVBT are outside this migration.
+Native applications, backend APIs, databases, licensing, webhooks and native distribution retain their existing systems. Reasonable Tech, Lovelace and LVBT are outside this migration.
+
+The approved cleanup integration includes Docket's existing automatic production API/admin rollout and database migrations. Preserve its ordinary CI and release gates. Frontend production cutovers require separate approval.
 
 ## Standard toolchain
 
-| Surface      | Build                                                                      | Local Workers preview        | Deployment              |
-| ------------ | -------------------------------------------------------------------------- | ---------------------------- | ----------------------- |
-| Studio       | Astro -> `dist/`                                                           | Wrangler dev                 | Wrangler deploy         |
-| Curfew       | Astro -> `dist/`                                                           | Wrangler dev with docs proxy | Wrangler deploy         |
-| LogDate      | Official OpenNext Cloudflare build                                         | OpenNext preview             | OpenNext deploy/upload  |
-| Docket       | Official OpenNext Cloudflare build plus existing monorepo/SW prerequisites | OpenNext preview             | OpenNext deploy/upload  |
-| Product docs | Shared configuration + pinned Mintlify CLI                                 | Mintlify dev                 | Mintlify Git publishing |
+| Surface      | Build                                                                      | Local Workers preview                          | Deployment                                             |
+| ------------ | -------------------------------------------------------------------------- | ---------------------------------------------- | ------------------------------------------------------ |
+| Studio       | Astro → `dist/`                                                            | Existing Worker preview script                 | Existing staging workflow and native deployment script |
+| Curfew       | Astro → `dist/`                                                            | Existing Worker preview script with docs proxy | Existing staging workflow and native deployment script |
+| LogDate      | Official OpenNext Cloudflare build                                         | OpenNext preview                               | OpenNext deploy/upload                                 |
+| Docket       | Official OpenNext Cloudflare build plus existing monorepo/SW prerequisites | OpenNext preview                               | OpenNext deploy/upload                                 |
+| Product docs | Shared configuration and pinned Mintlify CLI                               | Mintlify dev                                   | Mintlify Git publishing                                |
 
-- Node 24 and pnpm 11, pinned to compatible patches in each repository. Dependencies stay in ordinary pnpm locks.
-- Shared private GitHub Packages: `web-config`, `web-tokens`, `web-ui`, `web-docs`, starting at the approved `0.0.1` release.
-- Existing `./bootstrap worktree prepare` remains the worktree setup owner. Development, checks, build and preview use package scripts invoking the actual tools.
-- One source Wrangler configuration per frontend, with `staging` and `production` environments. Official OpenNext owns its generated output and cache population.
-- GitHub Actions provides ordinary frozen-install CI. Use conventional protected deployment environments when automating deployment. Pull requests receive no production deployment credentials.
-- Native Worker version and deployment IDs provide release history; native Wrangler rollback restores a previous Worker version. DNS/routes and external services require their own explicit reversal when changed.
-- No downloaded website lifecycle runner, custom candidate/evidence JSON, second archive format, release identity endpoint, recovery journal, cache seed adapter, temporary activation flags or one-off credential/lock investigation jobs.
+- Use `cf` for authenticated Cloudflare account and resource administration. Project builds and deployment workflows retain their pinned native tools and adapters.
+- Pin Node 24 and pnpm 11 to compatible patches in each repository. Dependencies stay in ordinary pnpm locks.
+- Use the shared private GitHub Packages `web-config`, `web-tokens`, `web-ui` and `web-docs`, starting at the approved `0.0.1` release.
+- Keep `./bootstrap worktree prepare` as the worktree setup owner. Package scripts invoke the actual development, check, build and preview tools.
+- Maintain one source Worker configuration per frontend, with separate staging and production environments. Official OpenNext owns its generated output and cache population.
+- Use ordinary frozen-install GitHub Actions CI and protected deployment environments. Pull requests receive no production deployment credentials.
+- Use native Worker version and deployment history for rollback. DNS/routes and external services need their own recorded reversal steps.
+- Exclude downloaded website lifecycle runners, custom candidate/evidence JSON, second archive formats, release identity endpoints, recovery journals, cache seed adapters, temporary activation flags and one-off credential/lock investigation jobs.
 
 ## Shared configuration and documentation
 
 Retain the four versioned frontend packages. Product themes retain their approved fonts, colors and artwork; Curfew docs use the approved accessible orange `#b25e30`.
 
-Mintlify remains the rendering/search/publishing owner. `web-docs` provides shared defaults and config generation; products own MDX, navigation, URLs and branding. Commit the native `docs.json` generated from the shared base and product `docs.site.json`. CI checks that generated config is current. Use pinned Mintlify tools for authoring and validation.
+Mintlify owns documentation rendering, search and publishing. `web-docs` supplies shared defaults and configuration generation; products own MDX, navigation, URLs and branding. Commit the native `docs.json` generated from the shared base and product `docs.site.json`. CI checks that generated configuration is current. Use pinned Mintlify tools for authoring and validation.
 
-Each repository documents setup, configuration and environment names, local development, checks, deployment, rollback and troubleshooting. Common instructions live in `web-platform`; product docs record only their differences and link to the common guidance.
+Each repository documents setup, configuration and environment names, local development, checks, deployment, rollback and troubleshooting. Common instructions live in `web-platform`; product documentation records its differences and links to that guidance.
 
-Private package CI authentication uses repository access grants and short-lived `GITHUB_TOKEN` with `packages: read`. Prefer workload identity federation where supported. No classic PAT workaround. Cloudflare authentication must follow supported provider tooling with separately scoped staging/production access.
+Private package CI authentication uses repository access grants and short-lived `GITHUB_TOKEN` with `packages: read`. Prefer workload identity federation where supported. No classic PAT workaround. Cloudflare authentication uses supported provider tooling and separately scoped staging/production access.
+
+Docket and LogDate each use a separate R2 incremental cache bucket. Their supported S3 cache upload uses `--rclone --no-x-provision`, a token limited to the site's Worker and object access limited to its cache bucket. Preserve those scopes when choosing an upload method. Store deployment credentials in the corresponding protected GitHub environment, outside build inputs and public variables, and rotate them before expiry. Astro frontends do not need R2 cache credentials.
+
+References: [OpenNext cache upload](https://opennext.js.org/cloudflare/cli), [R2 permissions](https://developers.cloudflare.com/r2/api/tokens/).
 
 ## Phase 1: Remove custom migration machinery
 
 - [x] Studio: remove candidate/promote/staging-recovery workflows and helpers, one-off CI modes, website lifecycle runner/config, custom identity Worker and assembly scripts. Build directly into `dist/`; retain redirects, headers and existing browser/artifact checks.
-- [x] Curfew: remove parity snapshot gate, public asset copier, candidate assembler, lifecycle runner/config and temporary lock CI. Put static assets in Astro `public/`; preserve native appcast publication through a normal build output.
-- [x] LogDate: remove lifecycle/candidate/promote/assembly/identity layers. Use official OpenNext commands and one Wrangler config. Preserve isolated waitlist, auth and backend selection.
-- [x] Docket: remove equivalent lifecycle/repackaging layers, duplicate prebuilt config, one-off CI modes and temporary migration holds. Preserve application compatibility code and existing backend release checks.
-- [x] Shared tooling: remove website-specific adapter/recovery/cache extensions after all website callers are gone. Preserve existing unrelated package/native release tooling and published tags.
+- [x] Curfew: remove parity snapshot gate, public asset copier, candidate assembler, lifecycle runner/config and temporary lock CI. Put static assets in Astro `public/`; preserve native appcast generation and signing ownership.
+- [x] LogDate: remove lifecycle/candidate/promote/assembly/identity layers. Use official OpenNext commands and one Worker configuration. Preserve isolated waitlist, auth and backend selection.
+- [x] Docket: remove equivalent lifecycle/repackaging layers, duplicate prebuilt configuration, one-off CI modes and temporary migration holds. Preserve application compatibility code and existing backend release checks.
+- [x] Shared tooling: remove website-specific adapter/recovery/cache extensions after all website callers are gone. Preserve unrelated package/native release tooling and published tags.
 - [x] Update current documentation and existing checks that reference removed tooling. Preserve historical evidence with an explicit superseded notice.
-
 - [x] Web platform: remove lifecycle/candidate/promotion and one-off registry consumer tooling; use ordinary package scripts, a native Astro preview and a manual GitHub Packages workflow. Update shared repository documentation templates.
 
-No deployment, provider configuration change or production publication is part of this cleanup phase. Existing source branches remain reviewable before integration.
+Cleanup does not authorize provider changes or production publication. Preserve reviewable source changes until integration gates pass.
 
 ## Phase 2: Integrate and accept ordinary builds
 
 - [x] Review cleanup diffs for each repository, preserving unrelated work and accepted dependency locks.
-- [ ] Require existing hosted CI and mandatory checks on reviewed source; do not introduce migration-only probe suites.
-- [ ] Integrate each repository using the established linear Git workflow. Keep Docket integration pending its production backend baseline and publication decision.
-- [ ] Confirm Curfew Mintlify Git publishing uses `curfew/main/web/docs`, including the `/docs/mcp` guide alias, navigation and accessible theme.
-- [ ] Reconcile Docket's Mintlify custom domain through the pending provider confirmation.
-
-Studio cleanup is integrated at `831d36d`, LogDate at `7cf747e`, web-platform at `e2dea20` and release-engineering at `37fe36f`. Their ordinary default-branch CI passed. Curfew is integrated at `2058af92`: its reviewed website/docs and full native capture CI passed, and ordinary main website/docs CI passed; main native capture CI remains running. Docket cleanup is reviewed and committed at `397e6284`, with integration still held for the backend baseline. Curfew's Mintlify dashboard confirms successful publication of docs-changing commit `04a86a3b`; its docs tree matches current main, and the renamed `/docs/mcp-guide` serves the expected content. Public `/docs/mcp` alias acceptance remains open through the old host.
+- [ ] Require existing hosted CI and mandatory checks on the current reviewed source; do not introduce migration-only probe suites.
+- [x] Align Docket’s existing bootstrap owner with the shared `./bootstrap worktree prepare` setup entrypoint and validate its native local checks.
+- [ ] Adopt the shared `./bootstrap worktree prepare` setup entrypoint in LogDate while preserving its native pnpm workspace and checks.
+- [x] Integrate Docket's setup, MCP documentation and verification tooling follow-ups with linear history.
+- [x] Integrate the cleanup in each repository using the established linear Git workflow.
+- [x] Confirm Curfew Mintlify Git publishing uses `curfew/main/web/docs` and publishes the reviewed documentation source.
+- [ ] Accept Curfew’s published `/docs/mcp` guide alias, canonical URL, navigation and accessible theme through the marketing Worker.
+- [x] Confirm Docket Mintlify Git publishing uses `athena-web/main/apps/docs` and publishes the reviewed documentation source.
+- [ ] Reconcile Docket's Mintlify custom domain during its accepted frontend cutover. Preserve the existing domain until the replacement is approved and ready; the provider requires removing the old domain before adding `clearthedocket.com/docs`.
 
 ## Phase 3: Complete isolated staging
 
-- [ ] Finish supported Cloudflare credential setup in Chrome's Hypertext Studio profile when the user is available.
-- [ ] Confirm isolated staging Worker names, hostnames, Access policies and separate bindings. Docket/LogDate staging R2 buckets already exist; their app deployments and scoped credentials remain pending.
-- [ ] Deploy through native Wrangler/OpenNext commands and record native version/deployment IDs.
-- [ ] Review real Studio/Curfew pages, redirects, metadata, assets, docs and supported publishing endpoints.
+- [x] Configure separately scoped staging deployment credentials for each frontend and each Next site's cache bucket.
+- [x] Configure isolated staging Worker names, hostnames and Studio staff Access policies.
+- [x] Confirm all four preview hostnames reject anonymous requests with a Cloudflare Access challenge.
+- [ ] Confirm separate staging bindings and successful staff browsing for each frontend.
+- [ ] Deploy LogDate's explicit staging backend origin and accept page rendering through its existing runtime guard. Configure and accept its separate staging waitlist before signup acceptance.
+- [ ] Reconcile Docket's existing staging API trusted origins, hosts, passkey RP and cookies with the Workers hostname. Accept OAuth and Lattice client registration against the same isolated staging backend before application acceptance.
+- [ ] Deploy all four frontends through their native staging workflows after the required checks pass. Retain native version/deployment IDs in operational release records.
+- [ ] Review real Studio/Curfew pages at desktop and mobile widths, redirects, metadata, assets, docs, sitemap/feed delivery and supported publishing endpoints.
 - [ ] Review real LogDate/Docket runtime, auth/cookies, API destinations, caching/revalidation, docs, forms and application journeys. Use isolated staging forms and backends.
-- [ ] Reauthenticate Google when the user returns, then read Docket's existing backend deployment baseline before integration. Do not deploy a backend as part of this frontend migration.
-- [ ] Check native rollback on staging; retain prior version IDs and independent route/DNS baselines.
+- [x] Restore Google access and read Docket's production API/admin revision, image and public configuration baselines before the approved cleanup integration.
+- [x] Observe Docket's approved cleanup backend rollout, including migrations, resulting revisions, scheduler reconciliation and actual health.
+- [x] Exercise native version rollback and restore the selected version on Studio staging.
+- [ ] Exercise native version rollback and restore the selected version on Curfew staging.
+- [ ] Exercise native version rollback and restore the selected version on LogDate staging.
+- [ ] Exercise native version rollback and restore the selected version on Docket staging.
+- [ ] Retain accepted previous versions and independent route/DNS reversal baselines for all four frontends.
 
-Studio already has its single-Worker staging token in the main-only GitHub `staging` environment. Its existing staging custom domain is now protected by Access application `79db268c-2596-45e7-a69f-8c8a445d799c`, using the existing Studio Google Workspace provider and reusable staff preview policy `2fddfb97-c128-4226-b4e6-8e7e97a0d07e`. Anonymous requests redirect to Access. Chrome's Studio profile opened the existing staging homepage, with an allowed Google Workspace event in the native Access log; that earlier Access observation alone did not accept the later deployment. PR61 is merged at `c0cca1dd`, providing conventional staging deployment from successful main CI output through native Wrangler. Main CI38174423403 and native staging deployment38175180162 passed. Assets-only version `20557104-9706-4b77-bac9-1c80c631e667` is active. Authenticated homepage/About rendering, encoded-query redirect, headers/font/assets and branded release-endpoint404 were observed. Native version rollback served the retained homepage at HTTP200, then the new version was restored in deployment `4c74d31f-52dc-4c4d-9a27-b7cd32623eb4`. The old JSON endpoint was blocked by the browser client and is not accepted. These observations do not complete the other sites or every application journey. All four GitHub staging environments permit only the `main` branch.
+Require both anonymous rejection and successful staff access to protected previews. A successful build, deployment job or login redirect alone does not accept the application journeys.
 
 ## Phase 4: Approved production cutovers
 
 For each site independently:
 
-- [ ] Resolve DNS ownership, current deployment, route/TLS state and provider access. LogDate registrar/DNS access is still pending.
-- [ ] Review the accepted staging source, native build/deployment output, production bindings and exact cutover/rollback steps.
+- [ ] Resolve DNS ownership, current deployment, route/TLS state and provider access, including LogDate registrar/DNS ownership.
+- [ ] Move LogDate's authoritative DNS off Vercel while preserving mail, cloud/cloud-staging backend and api.staging records. Verify registrar authority and retain the complete previous zone for rollback.
+- [ ] Review accepted staging source, native build/deployment output, production bindings and exact cutover/rollback steps.
+- [ ] Coordinate Curfew's signed appcast publication with its frontend cutover. Preserve native generation/signing, release attachments and the public feed URL. Use the accepted Workers publisher before retiring Pages. Retain the no-public-release state until a real signed native release is available.
 - [ ] Obtain production cutover approval and execute the native provider operation.
-- [ ] Confirm actual canonical domain, TLS, redirects, assets, metadata and application behavior.
-- [ ] Observe production, then retire old Pages/Vercel hosting only after the agreed rollback window. Never delete current hosting as a prerequisite for preview acceptance.
+- [ ] Confirm the actual canonical domain, TLS, redirects, assets, metadata and application behavior.
+- [ ] Observe production, then retire old Pages/Vercel hosting only after the agreed rollback window. Preserve current hosting through preview acceptance.
 
 ## Completion criteria
 
