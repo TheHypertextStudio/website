@@ -80,7 +80,7 @@ Cleanup does not authorize provider changes or production publication. Preserve 
 - [x] Confirm separate staging bindings and successful staff browsing for each frontend.
 - [x] Deploy LogDate's explicit staging backend origin and accept page rendering through its existing runtime guard.
 - [x] Configure LogDate's separate staging waitlist and accept its browser fallback with a retained provider response.
-- [ ] Accept LogDate's JavaScript waitlist submission with a retained provider response before signup acceptance.
+- [x] Accept LogDate's JavaScript waitlist submission with a retained provider response before signup acceptance.
 - [ ] Reconcile Docket's existing staging API trusted origins, hosts, passkey RP and cookies with the Workers hostname. Accept OAuth and Lattice client registration against the same isolated staging backend before application acceptance.
 - [x] Match Docket's staging API web origin, trusted origins/hosts and passkey RP to its protected Workers hostname while preserving the existing image, isolated secrets and host-only cookie design.
 - [x] Publish and verify Docket's staging Lattice client metadata for provider discovery while protecting the rest of the preview.
