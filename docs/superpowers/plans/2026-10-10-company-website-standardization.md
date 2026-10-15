@@ -76,8 +76,9 @@ Cleanup does not authorize provider changes or production publication. Preserve 
 - [x] Configure isolated staging Worker names, hostnames and Studio staff Access policies.
 - [x] Confirm all four preview hostnames reject anonymous requests with a Cloudflare Access challenge.
 - [ ] Route LogDate’s auth and tenant hosts under `logdate-preview.hypertext.studio`, outside the production cookie domain. Protect them with the Studio staff policy and accept TLS and sign-in/signup delivery.
-- [ ] Configure LogDate’s staging WebAuthn RP as `logdate-preview.hypertext.studio` and allow `https://app.logdate-preview.hypertext.studio` through a separately reviewed backend rollout. Preserve backend identity handles, Android origins and disabled migrations; re-register staging web passkeys.
+- [ ] Configure LogDate’s staging WebAuthn RP as `logdate-preview.hypertext.studio` and allow `https://app.logdate-preview.hypertext.studio` through a separately reviewed backend rollout. Preserve backend identity handles, Android origins and disabled migrations; re-register staging passkeys.
 - [ ] Preserve the independent staging browser RP and frontend origin in the backend’s ordinary deployment contract and configuration.
+- [ ] Accept the staging RP’s public native association metadata against the staging signer before the backend RP rollout. Preserve native application identifiers and keep application pages behind staff Access.
 - [ ] Accept passkey registration and sign-in against the staging backend after the coordinated backend and frontend deployments. Retire obsolete LogDate-domain frontend hosts only after replacement auth and tenant acceptance, preserving the backend DNS record.
 - [x] Confirm separate staging bindings and successful staff browsing for each frontend.
 - [x] Deploy LogDate's explicit staging backend origin and accept page rendering through its existing runtime guard.
