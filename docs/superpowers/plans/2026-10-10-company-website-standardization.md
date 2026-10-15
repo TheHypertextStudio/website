@@ -76,12 +76,12 @@ Cleanup does not authorize provider changes or production publication. Preserve 
 - [x] Route LogDate’s staging auth hostname to its isolated Worker, protect it with the Studio staff policy and accept its TLS and sign-in/signup page delivery.
 - [x] Add LogDate’s staging auth frontend origin to its backend WebAuthn allowlist while preserving its current image, isolated RP, existing Android origin and disabled migrations.
 - [ ] Preserve the staging frontend origin in the backend’s ordinary deployment configuration; accept passkey registration and sign-in.
-- [ ] Confirm separate staging bindings and successful staff browsing for each frontend.
+- [x] Confirm separate staging bindings and successful staff browsing for each frontend.
 - [ ] Deploy LogDate's explicit staging backend origin and accept page rendering through its existing runtime guard. Configure and accept its separate staging waitlist before signup acceptance.
 - [ ] Reconcile Docket's existing staging API trusted origins, hosts, passkey RP and cookies with the Workers hostname. Accept OAuth and Lattice client registration against the same isolated staging backend before application acceptance.
 - [x] Match Docket's staging API web origin, trusted origins/hosts and passkey RP to its protected Workers hostname while preserving the existing image, isolated secrets and host-only cookie design.
 - [ ] Publish and verify Docket's staging Lattice client metadata for provider discovery, preserve its previous client identity and accept enabled OAuth callbacks before changing registrations.
-- [ ] Deploy all four frontends through their native staging workflows after the required checks pass. Retain native version/deployment IDs in operational release records.
+- [x] Deploy all four frontends through their native staging workflows after the required checks pass. Retain native version/deployment IDs in operational release records.
 - [ ] Review real Studio/Curfew pages at desktop and mobile widths, redirects, metadata, assets, docs, sitemap/feed delivery and supported publishing endpoints.
 - [ ] Review real LogDate/Docket runtime, auth/cookies, API destinations, caching/revalidation, docs, forms and application journeys. Use isolated staging forms and backends.
 - [x] Restore Google access and read Docket's production API/admin revision, image and public configuration baselines before the approved cleanup integration.
