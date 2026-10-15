@@ -76,6 +76,8 @@ Cleanup does not authorize provider changes or production publication. Preserve 
 - [ ] Confirm separate staging bindings and successful staff browsing for each frontend.
 - [ ] Deploy LogDate's explicit staging backend origin and accept page rendering through its existing runtime guard. Configure and accept its separate staging waitlist before signup acceptance.
 - [ ] Reconcile Docket's existing staging API trusted origins, hosts, passkey RP and cookies with the Workers hostname. Accept OAuth and Lattice client registration against the same isolated staging backend before application acceptance.
+- [x] Match Docket's staging API web origin, trusted origins/hosts and passkey RP to its protected Workers hostname while preserving the existing image, isolated secrets and host-only cookie design.
+- [ ] Publish and verify Docket's staging Lattice client metadata for provider discovery, preserve its previous client identity and accept enabled OAuth callbacks before changing registrations.
 - [ ] Deploy all four frontends through their native staging workflows after the required checks pass. Retain native version/deployment IDs in operational release records.
 - [ ] Review real Studio/Curfew pages at desktop and mobile widths, redirects, metadata, assets, docs, sitemap/feed delivery and supported publishing endpoints.
 - [ ] Review real LogDate/Docket runtime, auth/cookies, API destinations, caching/revalidation, docs, forms and application journeys. Use isolated staging forms and backends.
@@ -97,6 +99,7 @@ For each site independently:
 - [x] Move LogDate's authoritative DNS off Vercel while preserving mail, cloud/cloud-staging backend and api.staging records. Verify registrar authority and retain the complete previous zone for rollback.
 - [x] Publish LogDate's approved production Worker with its seeded cache, apex and wildcard routes. Confirm public HTTPS homepage/auth landing rendering, assets, images, native associations and HTTP-to-HTTPS redirects.
 - [ ] Accept LogDate's signed-in/private journeys, cache invalidation, tenant shares and legacy aliases before retiring Vercel.
+- [ ] Resolve LogDate's Cache Components cold-cache and repeated tenant-request hangs without dropping its existing PPR, caching or application behavior. Accept the native adapter path against actual Workers requests before treating runtime parity as complete.
 - [ ] Review accepted staging source, native build/deployment output, production bindings and exact cutover/rollback steps.
 - [ ] Coordinate Curfew's signed appcast publication with its frontend cutover. Preserve native generation/signing, release attachments and the public feed URL. Use the accepted Workers publisher before retiring Pages. Retain the no-public-release state until a real signed native release is available.
 - [ ] Obtain production cutover approval and execute the native provider operation.
