@@ -39,6 +39,8 @@ Private package CI authentication uses repository access grants and short-lived 
 
 Docket and LogDate each use a separate R2 incremental cache bucket. Their supported S3 cache upload uses `--rclone --no-x-provision`, a token limited to the site's Worker and object access limited to its cache bucket. Preserve those scopes when choosing an upload method. Store deployment credentials in the corresponding protected GitHub environment, outside build inputs and public variables, and rotate them before expiry. Astro frontends do not need R2 cache credentials.
 
+LogDate's supervised production rollout may use the approved official adapter's interactive Cloudflare sign-in. Pass the selected Studio OAuth session through the supported native token command and process environment so deployment and remote cache population use the same account. Keep its staging S3 workflow and independently scoped credentials. Cache population must succeed before serving a new production build.
+
 References: [OpenNext cache upload](https://opennext.js.org/cloudflare/cli), [R2 permissions](https://developers.cloudflare.com/r2/api/tokens/).
 
 ## Phase 1: Remove custom migration machinery
@@ -58,7 +60,7 @@ Cleanup does not authorize provider changes or production publication. Preserve 
 - [x] Review cleanup diffs for each repository, preserving unrelated work and accepted dependency locks.
 - [ ] Require existing hosted CI and mandatory checks on the current reviewed source; do not introduce migration-only probe suites.
 - [x] Align Docket’s existing bootstrap owner with the shared `./bootstrap worktree prepare` setup entrypoint and validate its native local checks.
-- [ ] Adopt the shared `./bootstrap worktree prepare` setup entrypoint in LogDate while preserving its native pnpm workspace and checks.
+- [x] Adopt the shared `./bootstrap worktree prepare` setup entrypoint in LogDate while preserving its native pnpm workspace and checks.
 - [x] Integrate Docket's setup, MCP documentation and verification tooling follow-ups with linear history.
 - [x] Integrate the cleanup in each repository using the established linear Git workflow.
 - [x] Confirm Curfew Mintlify Git publishing uses `curfew/main/web/docs` and publishes the reviewed documentation source.
@@ -93,6 +95,8 @@ For each site independently:
 
 - [ ] Resolve DNS ownership, current deployment, route/TLS state and provider access, including LogDate registrar/DNS ownership.
 - [x] Move LogDate's authoritative DNS off Vercel while preserving mail, cloud/cloud-staging backend and api.staging records. Verify registrar authority and retain the complete previous zone for rollback.
+- [x] Publish LogDate's approved production Worker with its seeded cache, apex and wildcard routes. Confirm public HTTPS homepage/auth landing rendering, assets, images, native associations and HTTP-to-HTTPS redirects.
+- [ ] Accept LogDate's signed-in/private journeys, cache invalidation, tenant shares and legacy aliases before retiring Vercel.
 - [ ] Review accepted staging source, native build/deployment output, production bindings and exact cutover/rollback steps.
 - [ ] Coordinate Curfew's signed appcast publication with its frontend cutover. Preserve native generation/signing, release attachments and the public feed URL. Use the accepted Workers publisher before retiring Pages. Retain the no-public-release state until a real signed native release is available.
 - [ ] Obtain production cutover approval and execute the native provider operation.
