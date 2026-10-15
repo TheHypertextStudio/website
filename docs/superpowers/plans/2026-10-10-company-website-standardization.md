@@ -64,7 +64,7 @@ Cleanup does not authorize provider changes or production publication. Preserve 
 - [x] Integrate Docket's setup, MCP documentation and verification tooling follow-ups with linear history.
 - [x] Integrate the cleanup in each repository using the established linear Git workflow.
 - [x] Confirm Curfew Mintlify Git publishing uses `curfew/main/web/docs` and publishes the reviewed documentation source.
-- [ ] Accept Curfew’s published `/docs/mcp` guide alias, canonical URL, navigation and accessible theme through the marketing Worker.
+- [x] Accept Curfew’s published `/docs/mcp` guide alias, canonical URL, navigation and accessible theme through the marketing Worker.
 - [x] Confirm Docket Mintlify Git publishing uses `athena-web/main/apps/docs` and publishes the reviewed documentation source.
 - [ ] Reconcile Docket's Mintlify custom domain during its accepted frontend cutover. Preserve the existing domain until the replacement is approved and ready; the provider requires removing the old domain before adding `clearthedocket.com/docs`.
 
