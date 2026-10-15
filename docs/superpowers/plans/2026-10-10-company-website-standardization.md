@@ -94,7 +94,8 @@ Cleanup does not authorize provider changes or production publication. Preserve 
 - [x] Exercise native version rollback and restore the selected version on Curfew staging.
 - [x] Exercise native version rollback and restore the selected version on LogDate staging.
 - [x] Exercise native version rollback and restore the selected version on Docket staging.
-- [ ] Retain accepted previous versions and independent route/DNS reversal baselines for all four frontends.
+- [x] Retain native Worker deployment histories and complete DNS exports for all four company zones.
+- [ ] Retain accepted previous versions and independent route reversal baselines for all four frontends.
 
 Require both anonymous rejection and successful staff access to protected previews. A successful build, deployment job or login redirect alone does not accept the application journeys.
 
