@@ -6,7 +6,7 @@ Standardize configuration, setup and documentation across the company websites. 
 
 Native applications, backend APIs, databases, licensing, webhooks and native distribution retain their existing systems. Reasonable Tech, Lovelace and LVBT are outside this migration.
 
-The approved cleanup integration includes Docket's existing automatic production API/admin rollout and database migrations. Preserve its ordinary CI and release gates. Frontend production cutovers require separate approval.
+The approved cleanup integration includes Docket's existing automatic production API/admin rollout and database migrations. Preserve its ordinary CI and release gates. LogDate’s production migration, including DNS and Workers hosting, is authorized. Studio, Curfew and Docket frontend production cutovers require separate approval.
 
 ## Standard toolchain
 
@@ -92,7 +92,7 @@ Require both anonymous rejection and successful staff access to protected previe
 For each site independently:
 
 - [ ] Resolve DNS ownership, current deployment, route/TLS state and provider access, including LogDate registrar/DNS ownership.
-- [ ] Move LogDate's authoritative DNS off Vercel while preserving mail, cloud/cloud-staging backend and api.staging records. Verify registrar authority and retain the complete previous zone for rollback.
+- [x] Move LogDate's authoritative DNS off Vercel while preserving mail, cloud/cloud-staging backend and api.staging records. Verify registrar authority and retain the complete previous zone for rollback.
 - [ ] Review accepted staging source, native build/deployment output, production bindings and exact cutover/rollback steps.
 - [ ] Coordinate Curfew's signed appcast publication with its frontend cutover. Preserve native generation/signing, release attachments and the public feed URL. Use the accepted Workers publisher before retiring Pages. Retain the no-public-release state until a real signed native release is available.
 - [ ] Obtain production cutover approval and execute the native provider operation.
