@@ -75,7 +75,7 @@
       {
         "heading": "Operator and scope",
         "id": "scope",
-        "body": "Hypertext Studio operates hypertext.studio. This notice covers visits to this website, enquiries, email, and webmentions. Each product has its own privacy notice."
+        "body": "Hypertext Studio operates hypertext.studio. This notice covers website visits, enquiries, email, and webmentions. Each product has its own privacy notice."
       },
       {
         "heading": "Data and purposes",
@@ -85,22 +85,22 @@
       {
         "heading": "Local and hosted processing",
         "id": "processing",
-        "body": "The enquiry composer prepares a draft in your browser. “Email enquiry” opens your email app; you decide whether to send it. “Copy enquiry” copies the draft to your device’s clipboard. Your device settings control whether clipboard contents sync elsewhere. The composer does not send your answers to us.\n\nCloudflare hosts public pages and stores webmentions. Google Workspace handles email sent to us. The Studio and these providers can access information needed to provide their services. Email and webmentions are not encrypted to prevent the Studio from reading them."
+        "body": "The enquiry composer prepares a draft in your browser. “Email enquiry” opens your email app; you decide whether to send it. “Copy enquiry” copies the draft to your device’s clipboard. Your device settings control whether clipboard contents sync elsewhere. The composer does not send your answers to us.\n\nCloudflare hosts public pages and stores webmentions. Google Workspace handles email sent to us. The Studio and these providers can read email and webmention content to provide their services."
       },
       {
         "heading": "Recipients and AI",
         "id": "recipients",
-        "body": "Our providers are <a href=\"https://www.cloudflare.com/privacypolicy/\">Cloudflare</a> for the website, security, analytics, and webmentions, and <a href=\"https://policies.google.com/privacy\">Google Workspace</a> for email. Your own email provider also handles messages you send.\n\nThe enquiry composer does not use AI or send drafts to an AI provider. A product or separately agreed service that uses AI explains that processing in its own notice.\n\nWe may disclose information when required by law or needed to protect people, investigate abuse, or handle legal claims. We do not sell personal information or share it for advertising based on your activity across different websites or apps."
+        "body": "Our providers are <a href=\"https://www.cloudflare.com/privacypolicy/\">Cloudflare</a> for the website, security, analytics, and webmentions, and <a href=\"https://policies.google.com/privacy\">Google Workspace</a> for email. Your own email provider also handles messages you send.\n\nThe enquiry composer does not use AI or send drafts to an AI provider. Products and services that use AI explain that processing in their own notices.\n\nWe may disclose information when required by law or needed to protect people, investigate abuse, or handle legal claims. We do not sell personal information or share it for advertising based on your activity across different websites or apps."
       },
       {
         "heading": "Webmentions",
         "id": "webmentions",
-        "body": "A webmention is a public reference from another website to a page here. If your site sends one, we fetch the source page to check the link. We keep its source and destination links, author information such as a name, profile link, or photo, text or excerpts, and relevant dates. Verified mentions are public and may appear beside the referenced page or through our public webmention service.\n\nOnly send a webmention intended for public use. To request removal, email <a href=\"mailto:legal@hypertext.studio\">legal@hypertext.studio</a> with the source and destination links. We can remove our copy, but not the original publication or copies held by others."
+        "body": "A webmention is a public reference from another website to a page here. If your site sends one, we fetch the source page to check the link. We keep its source and destination links, author information such as a name, profile link, or photo, text or excerpts, and relevant dates. Verified mentions are public and may appear beside the referenced page or through our webmention service.\n\nSend webmentions only if you intend them to be public. To request removal, email <a href=\"mailto:legal@hypertext.studio\">legal@hypertext.studio</a> with the source and destination links. We can remove our copy, but not the original publication or copies held by others."
       },
       {
         "heading": "Retention and deletion",
         "id": "retention",
-        "body": "We keep correspondence while needed to answer, support an ongoing relationship, keep required records, or resolve a dispute. We keep verified webmentions while their public reference is useful, unless removed on request or through moderation. We delete submissions that fail verification.\n\nHosting, security, and analytics records follow the provider’s retention rules and our service settings. Backups and caches may retain copies after active records are removed. Legal or security obligations may also require retention. Contact us to ask about a particular record or request deletion."
+        "body": "We keep correspondence as needed to respond, support an ongoing relationship, meet recordkeeping requirements, or resolve a dispute. We keep verified webmentions while useful, unless removed on request or through moderation. We delete submissions that fail verification.\n\nHosting, security, and analytics records follow the provider’s retention rules and our service settings. Backups and caches may retain copies after active records are removed. Legal or security obligations may also require retention. Contact us to ask about a particular record or request deletion."
       },
       {
         "heading": "Security",
@@ -110,7 +110,7 @@
       {
         "heading": "Choices and rights",
         "id": "rights",
-        "body": "We do not load optional analytics when your browser enables Do Not Track or Global Privacy Control. These settings do not stop the requests needed to deliver and protect the website. We do not use advertising trackers or set tracking cookies.\n\nDepending on where you live, you may have rights to access, correct, delete, or receive a copy of your information; restrict or object to its use; or withdraw consent. Email <a href=\"mailto:legal@hypertext.studio\">legal@hypertext.studio</a>. We may need to verify your identity. You can also complain to your local data protection authority. We do not refuse a valid privacy request just because analytics are aggregated."
+        "body": "We do not load optional analytics when your browser enables Do Not Track or Global Privacy Control. These settings do not stop the requests needed to deliver and protect the website. We do not use advertising trackers or set tracking cookies.\n\nDepending on where you live, you may have rights to access, correct, delete, or receive a copy of your information; restrict or object to its use; or withdraw consent. Email <a href=\"mailto:legal@hypertext.studio\">legal@hypertext.studio</a>. We may need to verify your identity. You can also complain to your local data protection authority. Aggregated analytics do not limit your rights in other personal information."
       },
       {
         "heading": "Children",
@@ -131,19 +131,19 @@
   },
   "terms": {
     "title": "Website terms",
-    "intro": "Terms for the free, account-free Hypertext Studio website.",
+    "intro": "Terms for using the Hypertext Studio website.",
     "published": "2026-10-14",
     "effectiveExisting": "2026-11-13",
     "sections": [
       {
         "heading": "Operator and scope",
         "id": "scope",
-        "body": "Hypertext Studio operates hypertext.studio. These terms cover this free website, its enquiry composer, and public webmentions. Our <a href=\"/privacy\">Privacy notice</a> explains how we handle information.\n\nDocket, LogDate, and Curfew have their own terms. Consulting, design, development, and other paid work require a separate agreement."
+        "body": "Hypertext Studio operates hypertext.studio. These terms cover this free website, its enquiry composer, and public webmentions. Our <a href=\"/privacy\">privacy notice</a> explains how we handle information.\n\nThese terms apply to new visitors when accepted and to existing visitors from November 13, 2026.\n\nDocket, LogDate, and Curfew have their own terms. Consulting, design, development, and other paid work require a separate agreement."
       },
       {
         "heading": "Eligibility",
         "id": "eligibility",
-        "body": "Anyone can browse without an account or purchase. If you request work for another person or organization, you must have their authority. A paid engagement must be agreed by someone legally able and authorized to enter it, with a parent or guardian where required. Product account age requirements are in each product’s terms."
+        "body": "Anyone can browse without an account or purchase. If you request work for another person or organization, you must have their authority. Any agreement for paid work requires someone legally able and authorized to enter it, with a parent or guardian where required. Product account age requirements are in each product’s terms."
       },
       {
         "heading": "Accounts",
@@ -158,7 +158,7 @@
       {
         "heading": "Features and connected services",
         "id": "features",
-        "body": "The website describes the Studio, its work, and its products. Linked services have their own terms.\n\nThe enquiry composer prepares a draft in your browser. You can copy it or open it in your email app and choose whether to send it. An enquiry does not create a paid engagement. We agree the scope, price, and commitments for work separately."
+        "body": "The website describes the Studio, its work, and its products. Linked services have their own terms.\n\nThe enquiry composer prepares a draft in your browser. You can copy it or open it in your email app and choose whether to send it. An enquiry does not create a paid engagement. We agree the scope, price, and commitments separately."
       },
       {
         "heading": "Billing, cancellation, and refunds",
@@ -183,7 +183,7 @@
       {
         "heading": "Governing law and disputes",
         "id": "law",
-        "body": "Nevada law governs these terms, subject to mandatory protections where you live. Disputes are handled by courts in Clark County, Nevada, unless applicable consumer law lets you use your local courts or requires another location. Your non-waivable consumer rights remain protected."
+        "body": "Nevada law governs these terms, subject to mandatory protections where you live. Disputes are handled by courts in Clark County, Nevada, unless applicable consumer law lets you use your local courts or requires another location."
       },
       {
         "heading": "Contact",

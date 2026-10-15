@@ -53,7 +53,7 @@ test('terms metadata and honest first-version history work without JavaScript', 
     .getByRole('navigation', { name: 'Policy navigation' })
     .getByRole('link', { name: 'Policy history' })
     .click();
-  await expect(page.locator('main')).toContainText('there is no previous version to archive');
+  await expect(page.locator('main')).toContainText('There are no earlier terms to archive.');
   await page.getByRole('link', { name: 'Current website terms' }).click();
   await expect(page.locator('main')).toContainText('1810 East Sahara Avenue STE 75246');
   await expect(page.locator('main')).toContainText('free');
