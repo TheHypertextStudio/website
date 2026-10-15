@@ -6,7 +6,7 @@ Use this reference when maintaining Hypertext Studio’s website and product pol
 
 Explain what happens, when it happens, what the person can control, and what happens after cancellation or deletion. Use short paragraphs and familiar words. Keep the shared section order, but do not pad a section with obligations or features the product does not have.
 
-Keep titles and introductions focused on the policy’s subject. Date metadata uses short labels such as “Published” and “Effective.” Explain new and existing user applicability once in the body, where acceptance and notice have context; do not put account-creation instructions in a tagline. Remove repeated explanations and words that add no meaning, while preserving dates, material limitations, and rights.
+Keep titles and introductions focused on the policy’s subject. Date metadata uses short labels such as “Published” and “Effective.” Explain new and existing user applicability once in the body, where acceptance and notice have context, and anchor the boundary to the publication date; do not put account-creation instructions in a tagline. Remove repeated explanations and words that add no meaning, while preserving dates, material limitations, and rights.
 
 Public policies are not operational evidence registers. Keep environment names, branch inventories, internal identifiers, storage namespaces, internal worker configuration, migration mechanics, database engines, credential settings, and filesystem paths in private records. Name a provider when that helps explain who receives information. Explain an encryption or retention limitation in terms of its effect on the person, without reciting implementation details. Give useful cleanup timing when verified, and explain that outages can delay it.
 
