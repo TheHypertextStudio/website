@@ -74,7 +74,8 @@ Cleanup does not authorize provider changes or production publication. Preserve 
 - [x] Configure isolated staging Worker names, hostnames and Studio staff Access policies.
 - [x] Confirm all four preview hostnames reject anonymous requests with a Cloudflare Access challenge.
 - [x] Route LogDate’s staging auth hostname to its isolated Worker, protect it with the Studio staff policy and accept its TLS and sign-in/signup page delivery.
-- [ ] Add LogDate’s staging auth frontend origin to its backend WebAuthn allowlist while preserving its isolated RP and existing Android origin; accept passkey registration and sign-in.
+- [x] Add LogDate’s staging auth frontend origin to its backend WebAuthn allowlist while preserving its current image, isolated RP, existing Android origin and disabled migrations.
+- [ ] Preserve the staging frontend origin in the backend’s ordinary deployment configuration; accept passkey registration and sign-in.
 - [ ] Confirm separate staging bindings and successful staff browsing for each frontend.
 - [ ] Deploy LogDate's explicit staging backend origin and accept page rendering through its existing runtime guard. Configure and accept its separate staging waitlist before signup acceptance.
 - [ ] Reconcile Docket's existing staging API trusted origins, hosts, passkey RP and cookies with the Workers hostname. Accept OAuth and Lattice client registration against the same isolated staging backend before application acceptance.
