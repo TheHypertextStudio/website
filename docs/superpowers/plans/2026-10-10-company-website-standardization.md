@@ -35,6 +35,8 @@ Mintlify owns documentation rendering, search and publishing. `web-docs` supplie
 
 Each repository documents setup, configuration and environment names, local development, checks, deployment, rollback and troubleshooting. Common instructions live in `web-platform`; product documentation records its differences and links to that guidance.
 
+Staging frontend cookie namespaces must be outside their production cookie domains. A narrower staging cookie does not prevent the browser from sending a production parent-domain cookie to staging. Keep browser origins, backend identity handles and passkey relying-party IDs explicit; coordinate changes to the staging RP and allowed origins through the backend's ordinary deployment configuration.
+
 Private package CI authentication uses repository access grants and short-lived `GITHUB_TOKEN` with `packages: read`. Prefer workload identity federation where supported. No classic PAT workaround. Cloudflare authentication uses supported provider tooling and separately scoped staging/production access.
 
 Docket and LogDate each use a separate R2 incremental cache bucket. Their supported S3 cache upload uses `--rclone --no-x-provision`, a token limited to the site's Worker and object access limited to its cache bucket. Preserve those scopes when choosing an upload method. Store deployment credentials in the corresponding protected GitHub environment, outside build inputs and public variables, and rotate them before expiry. Astro frontends do not need R2 cache credentials.
@@ -73,10 +75,10 @@ Cleanup does not authorize provider changes or production publication. Preserve 
 - [x] Configure separately scoped staging deployment credentials for each frontend and each Next site's cache bucket.
 - [x] Configure isolated staging Worker names, hostnames and Studio staff Access policies.
 - [x] Confirm all four preview hostnames reject anonymous requests with a Cloudflare Access challenge.
-- [x] Route LogDate’s staging auth hostname to its isolated Worker, protect it with the Studio staff policy and accept its TLS and sign-in/signup page delivery.
-- [x] Add LogDate’s staging auth frontend origin to its backend WebAuthn allowlist while preserving its current image, isolated RP, existing Android origin and disabled migrations.
-- [x] Preserve the staging frontend origin in the backend’s ordinary deployment configuration.
-- [ ] Accept passkey registration and sign-in against the staging backend after its ordinary deployment.
+- [ ] Route LogDate’s auth and tenant hosts under `logdate-preview.hypertext.studio`, outside the production cookie domain. Protect them with the Studio staff policy and accept TLS and sign-in/signup delivery.
+- [ ] Configure LogDate’s staging WebAuthn RP as `logdate-preview.hypertext.studio` and allow `https://app.logdate-preview.hypertext.studio` through a separately reviewed backend rollout. Preserve backend identity handles, Android origins and disabled migrations; re-register staging web passkeys.
+- [ ] Preserve the independent staging browser RP and frontend origin in the backend’s ordinary deployment contract and configuration.
+- [ ] Accept passkey registration and sign-in against the staging backend after the coordinated backend and frontend deployments. Retire obsolete LogDate-domain frontend hosts only after replacement auth and tenant acceptance, preserving the backend DNS record.
 - [x] Confirm separate staging bindings and successful staff browsing for each frontend.
 - [x] Deploy LogDate's explicit staging backend origin and accept page rendering through its existing runtime guard.
 - [x] Configure LogDate's separate staging waitlist and accept its browser fallback with a retained provider response.
@@ -86,7 +88,8 @@ Cleanup does not authorize provider changes or production publication. Preserve 
 - [x] Publish and verify Docket's staging Lattice client metadata for provider discovery while protecting the rest of the preview.
 - [ ] Preserve Docket’s previous Lattice client identity and accept enabled OAuth callbacks before changing registrations.
 - [x] Deploy all four frontends through their native staging workflows after the required checks pass. Retain native version/deployment IDs in operational release records.
-- [ ] Review real Studio/Curfew pages at desktop and mobile widths, redirects, metadata, assets, docs, sitemap/feed delivery and supported publishing endpoints.
+- [x] Review real Studio/Curfew pages at desktop and mobile widths, redirects, metadata, assets, docs and sitemap/feed delivery. Preserve Curfew’s absent signed-feed state until a genuine native release exists.
+- [x] Review the preserved Studio service endpoints through their existing production routes, including read-only Micropub discovery, oEmbed, Webmentions and Poem delivery.
 - [ ] Review real LogDate/Docket runtime, auth/cookies, API destinations, caching/revalidation, docs, forms and application journeys. Use isolated staging forms and backends.
 - [x] Restore Google access and read Docket's production API/admin revision, image and public configuration baselines before the approved cleanup integration.
 - [x] Observe Docket's approved cleanup backend rollout, including migrations, resulting revisions, scheduler reconciliation and actual health.
