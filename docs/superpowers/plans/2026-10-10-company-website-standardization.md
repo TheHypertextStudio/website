@@ -87,7 +87,7 @@ Cleanup does not authorize provider changes or production publication. Preserve 
 - [x] Observe Docket's approved cleanup backend rollout, including migrations, resulting revisions, scheduler reconciliation and actual health.
 - [x] Exercise native version rollback and restore the selected version on Studio staging.
 - [x] Exercise native version rollback and restore the selected version on Curfew staging.
-- [ ] Exercise native version rollback and restore the selected version on LogDate staging.
+- [x] Exercise native version rollback and restore the selected version on LogDate staging.
 - [ ] Exercise native version rollback and restore the selected version on Docket staging.
 - [ ] Retain accepted previous versions and independent route/DNS reversal baselines for all four frontends.
 
