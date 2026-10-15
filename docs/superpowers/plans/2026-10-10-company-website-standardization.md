@@ -106,6 +106,7 @@ For each site independently:
 - [ ] Resolve DNS ownership, current deployment, route/TLS state and provider access, including LogDate registrar/DNS ownership.
 - [x] Move LogDate's authoritative DNS off Vercel while preserving mail, cloud/cloud-staging backend and api.staging records. Verify registrar authority and retain the complete previous zone for rollback.
 - [x] Publish LogDate's approved production Worker with its seeded cache, apex and wildcard routes. Confirm public HTTPS homepage/auth landing rendering, assets, images, native associations and HTTP-to-HTTPS redirects.
+- [x] Publish Studio's approved frontend Worker, preserve the existing service routes and apex DNS, and accept public page rendering, feeds, sitemap and www redirects. Retain Pages through the recovery window.
 - [ ] Accept LogDate's signed-in/private journeys, cache invalidation, tenant shares and legacy aliases before retiring Vercel.
 - [ ] Resolve LogDate's Cache Components cold-cache and repeated tenant-request hangs without dropping its existing PPR, caching or application behavior. Accept the native adapter path against actual Workers requests before treating runtime parity as complete.
 - [ ] Review accepted staging source, native build/deployment output, production bindings and exact cutover/rollback steps.

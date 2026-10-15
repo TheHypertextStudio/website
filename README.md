@@ -33,7 +33,7 @@ The existing Webmention D1 database remains bound only to the production Webment
 
 ## Release status
 
-The Workers migration is in progress. Production cutover and domain changes remain pending. Validation CI builds and checks the site; deployments use native Wrangler commands. See [deployment and rollback](docs/deployment.md).
+Production runs on Workers Static Assets. Validation CI builds and checks the site; deployments use native Wrangler commands. The previous Pages deployment is retained through the migration's recovery window. See [deployment and rollback](docs/deployment.md).
 
 ## Documentation
 
