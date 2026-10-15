@@ -2,6 +2,14 @@
 
 Use this reference when maintaining Hypertext Studio’s website and product policies. Policies must describe the shipped capability and its actual providers. Shared language establishes consistent operator identity and user protections; it is not evidence that every product has the same architecture. Each repository keeps native, independently published policy pages. Do not introduce a shared runtime dependency for legal text.
 
+## Write for the person using the product
+
+Explain what happens, when it happens, what the person can control, and what happens after cancellation or deletion. Use short paragraphs and familiar words. Keep the shared section order, but do not pad a section with obligations or features the product does not have.
+
+Public policies are not operational evidence registers. Keep environment names, branch inventories, internal identifiers, storage namespaces, internal worker configuration, migration mechanics, database engines, credential settings, and filesystem paths in private records. Name a provider when that helps explain who receives information. Explain an encryption or retention limitation in terms of its effect on the person, without reciting implementation details. Give useful cleanup timing when verified, and explain that outages can delay it.
+
+Do not hide a material limitation while simplifying it. For example, if deletion does not automatically reach every separate copy, say that related copies require separate review and removal, how to request it, and what recovery or legal retention can remain. Explain whether the Studio or a provider can read content; implementation names do not substitute for that answer. Optional technical documentation can give details that people need to configure or recover their own installations.
+
 ## Operator and contact
 
 Use **Hypertext Studio** as the operator. Publish **1810 East Sahara Avenue STE 75246, Las Vegas, NV 89104, United States** as the mailing address. Use **legal@hypertext.studio** for official legal notices and privacy requests. Use **contact@hypertext.studio** for general Studio enquiries and **support@hypertext.studio** for product help, billing, security, and abuse reports. Keep **hello@hypertext.studio** as a legacy inbound alias for the general contact address.
