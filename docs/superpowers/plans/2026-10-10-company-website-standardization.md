@@ -58,7 +58,7 @@ Cleanup does not authorize provider changes or production publication. Preserve 
 ## Phase 2: Integrate and accept ordinary builds
 
 - [x] Review cleanup diffs for each repository, preserving unrelated work and accepted dependency locks.
-- [ ] Require existing hosted CI and mandatory checks on the current reviewed source; do not introduce migration-only probe suites.
+- [x] Require existing hosted CI and mandatory checks on the current reviewed source; do not introduce migration-only probe suites.
 - [x] Align Docket’s existing bootstrap owner with the shared `./bootstrap worktree prepare` setup entrypoint and validate its native local checks.
 - [x] Adopt the shared `./bootstrap worktree prepare` setup entrypoint in LogDate while preserving its native pnpm workspace and checks.
 - [x] Integrate Docket's setup, MCP documentation and verification tooling follow-ups with linear history.
