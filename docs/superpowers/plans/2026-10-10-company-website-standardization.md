@@ -80,7 +80,8 @@ Cleanup does not authorize provider changes or production publication. Preserve 
 - [ ] Deploy LogDate's explicit staging backend origin and accept page rendering through its existing runtime guard. Configure and accept its separate staging waitlist before signup acceptance.
 - [ ] Reconcile Docket's existing staging API trusted origins, hosts, passkey RP and cookies with the Workers hostname. Accept OAuth and Lattice client registration against the same isolated staging backend before application acceptance.
 - [x] Match Docket's staging API web origin, trusted origins/hosts and passkey RP to its protected Workers hostname while preserving the existing image, isolated secrets and host-only cookie design.
-- [ ] Publish and verify Docket's staging Lattice client metadata for provider discovery, preserve its previous client identity and accept enabled OAuth callbacks before changing registrations.
+- [x] Publish and verify Docket's staging Lattice client metadata for provider discovery while protecting the rest of the preview.
+- [ ] Preserve Docket’s previous Lattice client identity and accept enabled OAuth callbacks before changing registrations.
 - [x] Deploy all four frontends through their native staging workflows after the required checks pass. Retain native version/deployment IDs in operational release records.
 - [ ] Review real Studio/Curfew pages at desktop and mobile widths, redirects, metadata, assets, docs, sitemap/feed delivery and supported publishing endpoints.
 - [ ] Review real LogDate/Docket runtime, auth/cookies, API destinations, caching/revalidation, docs, forms and application journeys. Use isolated staging forms and backends.
@@ -89,7 +90,7 @@ Cleanup does not authorize provider changes or production publication. Preserve 
 - [x] Exercise native version rollback and restore the selected version on Studio staging.
 - [x] Exercise native version rollback and restore the selected version on Curfew staging.
 - [x] Exercise native version rollback and restore the selected version on LogDate staging.
-- [ ] Exercise native version rollback and restore the selected version on Docket staging.
+- [x] Exercise native version rollback and restore the selected version on Docket staging.
 - [ ] Retain accepted previous versions and independent route/DNS reversal baselines for all four frontends.
 
 Require both anonymous rejection and successful staff access to protected previews. A successful build, deployment job or login redirect alone does not accept the application journeys.
