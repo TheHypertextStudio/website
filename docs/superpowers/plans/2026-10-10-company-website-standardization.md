@@ -72,7 +72,7 @@ Cleanup does not authorize provider changes or production publication. Preserve 
 - [x] Confirm Curfew Mintlify Git publishing uses `curfew/main/web/docs` and publishes the reviewed documentation source.
 - [x] Accept Curfew’s published `/docs/mcp` guide alias, canonical URL, navigation and accessible theme through the marketing Worker.
 - [x] Confirm Docket Mintlify Git publishing uses `athena-web/main/apps/docs` and publishes the reviewed documentation source.
-- [ ] Reconcile Docket's Mintlify custom domain during its accepted frontend cutover. Preserve the existing domain until the replacement is approved and ready; the provider requires removing the old domain before adding `clearthedocket.com/docs`.
+- [x] Reconcile Docket's Mintlify custom domain during its accepted frontend cutover, using `clearthedocket.com/docs`. Publish the provider address change and verify page-specific canonical URLs through the Worker proxy.
 
 ## Phase 3: Complete isolated staging
 
@@ -81,8 +81,8 @@ Cleanup does not authorize provider changes or production publication. Preserve 
 - [x] Confirm all four preview hostnames reject anonymous requests with a Cloudflare Access challenge.
 - [ ] Route LogDate’s auth and tenant hosts under `logdate-preview.hypertext.studio`, outside the production cookie domain. Protect them with the Studio staff policy and accept TLS and sign-in/signup delivery.
 - [ ] Configure LogDate’s staging WebAuthn RP as `logdate-preview.hypertext.studio` and allow `https://app.logdate-preview.hypertext.studio` through a separately reviewed backend rollout. Preserve backend identity handles, Android origins and disabled migrations; re-register staging passkeys.
-- [ ] Preserve the independent staging browser RP and frontend origin in the backend’s ordinary deployment contract and configuration.
-- [ ] Accept the staging RP’s public native association metadata against the staging signer before the backend RP rollout. Preserve native application identifiers and keep application pages behind staff Access.
+- [x] Preserve the independent staging browser RP and frontend origin in the backend’s ordinary deployment contract and configuration.
+- [x] Accept the staging RP’s public native association metadata against the staging signer before the backend RP rollout. Preserve native application identifiers and keep application pages behind staff Access.
 - [ ] Accept passkey registration and sign-in against the staging backend after the coordinated backend and frontend deployments. Retire obsolete LogDate-domain frontend hosts only after replacement auth and tenant acceptance, preserving the backend DNS record.
 - [x] Confirm separate staging bindings and successful staff browsing for each frontend.
 - [x] Deploy LogDate's explicit staging backend origin and accept page rendering through its existing runtime guard.
@@ -103,7 +103,7 @@ Cleanup does not authorize provider changes or production publication. Preserve 
 - [x] Exercise native version rollback and restore the selected version on LogDate staging.
 - [x] Exercise native version rollback and restore the selected version on Docket staging.
 - [x] Retain native Worker deployment histories and complete DNS exports for all four company zones.
-- [ ] Retain accepted previous versions and independent route reversal baselines for all four frontends.
+- [x] Retain accepted previous versions and independent route reversal baselines for all four frontends.
 
 Require both anonymous rejection and successful staff access to protected previews. A successful build, deployment job or login redirect alone does not accept the application journeys.
 
@@ -115,18 +115,18 @@ For each site independently:
 - [x] Move LogDate's authoritative DNS off Vercel while preserving mail, cloud/cloud-staging backend and api.staging records. Verify registrar authority and retain the complete previous zone for rollback.
 - [x] Publish LogDate's approved production Worker with its seeded cache, apex and wildcard routes. Confirm public HTTPS homepage/auth landing rendering, assets, images, native associations and HTTP-to-HTTPS redirects.
 - [x] Publish Studio's approved frontend Worker, preserve the existing service routes and apex DNS, and accept public page rendering, feeds, sitemap and www redirects.
-- [x] Publish Curfew's approved production Worker and attach only the apex frontend route. Verify actual serving-version events for public pages, docs, assets and account handoff while preserving the absent signed-appcast state.
+- [x] Publish Curfew's approved production Worker and attach its managed frontend domains, preserving more-specific service routes. Verify actual serving-version events for public pages, docs, assets and account handoff while preserving the absent signed-appcast state.
 - [x] Accept LogDate's changed Workers streaming/cache behavior, tenant delivery, auth landing redirects and native associations before retiring Vercel. Assume unchanged signed-in/private authentication works; require further checks only where the migration changes that behavior.
 - [x] Resolve LogDate's Cache Components cold-cache and repeated tenant-request hangs without dropping its existing PPR, caching or application behavior. Accept the native adapter path against actual Workers requests before treating runtime parity as complete.
-- [ ] Review accepted staging source, native build/deployment output, production bindings and exact cutover/rollback steps.
+- [x] Review accepted staging source, native build/deployment output, production bindings and exact cutover/rollback steps.
 - [x] Keep Curfew's native appcast publisher on Workers, preserving generation/signing, release attachments and the public feed URL. Retain the no-public-release state until a real signed native release is available; a future native application release is not a prerequisite for retiring Pages.
-- [ ] Obtain production cutover approval and execute the native provider operation.
-- [ ] Confirm the actual canonical domain, TLS, redirects, assets, metadata and application behavior.
-- [ ] Retire old Pages/Vercel hosting and its DNS and deployment dependencies after each Workers cutover passes the relevant serving and behavior checks. These sites are unlaunched; no fixed observation or recovery window is required. Retain source, build configuration and native Worker version history for recovery.
+- [x] Obtain production cutover approval and execute the native provider operation.
+- [x] Confirm the actual canonical domain, TLS, redirects, assets, metadata and application behavior.
+- [x] Retire old Pages/Vercel hosting and its DNS and deployment dependencies after each Workers cutover passes the relevant serving and behavior checks. These sites are unlaunched; no fixed observation or recovery window is required. Retain source, build configuration and native Worker version history for recovery.
   - [x] Studio: remove the Pages project and Pages DNS dependency after accepting managed-domain static delivery and preserved service routes.
   - [x] Curfew: remove the Pages project and Pages DNS dependencies after accepting managed-domain delivery and the existing account coordinator handoff.
   - [x] LogDate: remove the Vercel project and exclusive source tooling; use managed apex DNS and a proxied wildcard CNAME with the existing Worker routes.
-  - [ ] Docket: remove superseded Vercel frontend projects, DNS targets and exclusive source tooling after its approved Workers cutover and ordinary backend release gate.
+  - [x] Docket: remove superseded Vercel frontend projects, DNS targets and exclusive source tooling after its approved Workers cutover and ordinary backend release gate.
 
 ## Completion criteria
 
