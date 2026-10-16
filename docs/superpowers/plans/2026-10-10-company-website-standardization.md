@@ -87,10 +87,10 @@ Cleanup does not authorize provider changes or production publication. Preserve 
 - [x] Deploy LogDate's explicit staging backend origin and accept page rendering through its existing runtime guard.
 - [x] Configure LogDate's separate staging waitlist and accept its browser fallback with a retained provider response.
 - [x] Accept LogDate's JavaScript waitlist submission with a retained provider response before signup acceptance.
-- [ ] Reconcile Docket's existing staging API trusted origins, hosts, passkey RP and cookies with the Workers hostname. Accept OAuth and Lattice client registration against the same isolated staging backend before application acceptance.
+- [x] Reconcile Docket's existing staging API trusted origins, hosts, passkey RP and cookies with the Workers hostname. Verify configured OAuth callbacks and Lattice URL-client discovery against the same isolated staging backend before application acceptance.
 - [x] Match Docket's staging API web origin, trusted origins/hosts and passkey RP to its protected Workers hostname while preserving the existing image, isolated secrets and host-only cookie design.
 - [x] Publish and verify Docket's staging Lattice client metadata for provider discovery while protecting the rest of the preview.
-- [ ] Preserve Docket’s previous Lattice client identity and accept enabled OAuth callbacks before changing registrations.
+- [x] Preserve Docket’s previous Lattice client identity and verify enabled OAuth callback configuration before changing registrations.
 - [x] Deploy all four frontends through their native staging workflows after the required checks pass. Retain native version/deployment IDs in operational release records.
 - [x] Review real Studio/Curfew pages at desktop and mobile widths, redirects, metadata, assets, docs and sitemap/feed delivery. Preserve Curfew’s absent signed-feed state until a genuine native release exists.
 - [x] Review the preserved Studio service endpoints through their existing production routes, including read-only Micropub discovery, oEmbed, Webmentions and Poem delivery.
