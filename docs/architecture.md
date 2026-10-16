@@ -38,4 +38,4 @@ Micropub content is committed to `src/content/notes/*.md` through GitHub's Conte
 
 `scripts/build.sh` generates public metadata and images, then builds Astro into `dist/`. Wrangler deploys that output directly through Workers Static Assets using `wrangler.jsonc`. There is no custom site entrypoint, archive assembly or release identity endpoint.
 
-The staging deployment workflow deploys the successful main-branch CI artifact through Wrangler. Production uses the frontend Worker's apex route while preserving the supporting service routes. Retire the superseded Pages deployment after cutover acceptance, with no fixed waiting period. See [deployment and rollback](deployment.md) for native commands and acceptance requirements.
+The staging deployment workflow deploys the successful main-branch CI artifact through Wrangler. Production uses a managed Custom Domain and retains the frontend apex route and supporting service routes. Pages is not a publication or recovery dependency. See [deployment and rollback](deployment.md) for native commands and acceptance requirements.

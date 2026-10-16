@@ -27,7 +27,8 @@ The approved cleanup integration includes Docket's existing automatic production
 - Maintain one source Worker configuration per frontend, with separate staging and production environments. Official OpenNext owns its generated output and cache population.
 - Use ordinary frozen-install GitHub Actions CI and protected deployment environments. Pull requests receive no production deployment credentials.
 - Use native Worker version and deployment history for rollback. DNS/routes and external services need their own recorded reversal steps.
-- After deployment or rollback, correlate actual acceptance requests with native runtime `scriptVersion.id` and the reviewed build output. Allow a bounded settling period, then require every request in the acceptance batch to reach the intended version. Inspect that version's bindings; generic script settings may describe a newer uploaded version that is not serving traffic.
+- After deployment or rollback, correlate requests to executing Workers with native runtime `scriptVersion.id` and the reviewed build output. For assets-only Workers, verify the native domain association, selected deployment/version, exact delivered bytes, TLS, headers and redirects; there is no executing script to tail. Inspect the selected version's bindings; generic script settings may describe a newer uploaded version that is not serving traffic.
+- Administer managed Custom Domains and routing independently of restricted Worker deployment credentials. Keep more-specific backend and service routes intact. Frontend hosting must not depend on a Pages or Vercel origin.
 - Exclude downloaded website lifecycle runners, custom candidate/evidence JSON, second archive formats, release identity endpoints, recovery journals, cache seed adapters, temporary activation flags and one-off credential/lock investigation jobs.
 
 ## Shared configuration and documentation
@@ -110,18 +111,22 @@ Require both anonymous rejection and successful staff access to protected previe
 
 For each site independently:
 
-- [ ] Resolve DNS ownership, current deployment, route/TLS state and provider access, including LogDate registrar/DNS ownership.
+- [x] Resolve DNS ownership, current deployment, route/TLS state and provider access, including LogDate registrar/DNS ownership.
 - [x] Move LogDate's authoritative DNS off Vercel while preserving mail, cloud/cloud-staging backend and api.staging records. Verify registrar authority and retain the complete previous zone for rollback.
 - [x] Publish LogDate's approved production Worker with its seeded cache, apex and wildcard routes. Confirm public HTTPS homepage/auth landing rendering, assets, images, native associations and HTTP-to-HTTPS redirects.
 - [x] Publish Studio's approved frontend Worker, preserve the existing service routes and apex DNS, and accept public page rendering, feeds, sitemap and www redirects.
 - [x] Publish Curfew's approved production Worker and attach only the apex frontend route. Verify actual serving-version events for public pages, docs, assets and account handoff while preserving the absent signed-appcast state.
-- [ ] Accept LogDate's signed-in/private journeys, cache invalidation, tenant shares and legacy aliases before retiring Vercel.
-- [ ] Resolve LogDate's Cache Components cold-cache and repeated tenant-request hangs without dropping its existing PPR, caching or application behavior. Accept the native adapter path against actual Workers requests before treating runtime parity as complete.
+- [x] Accept LogDate's changed Workers streaming/cache behavior, tenant delivery, auth landing redirects and native associations before retiring Vercel. Assume unchanged signed-in/private authentication works; require further checks only where the migration changes that behavior.
+- [x] Resolve LogDate's Cache Components cold-cache and repeated tenant-request hangs without dropping its existing PPR, caching or application behavior. Accept the native adapter path against actual Workers requests before treating runtime parity as complete.
 - [ ] Review accepted staging source, native build/deployment output, production bindings and exact cutover/rollback steps.
-- [ ] Coordinate Curfew's signed appcast publication with its frontend cutover. Preserve native generation/signing, release attachments and the public feed URL. Use the accepted Workers publisher before retiring Pages. Retain the no-public-release state until a real signed native release is available.
+- [x] Keep Curfew's native appcast publisher on Workers, preserving generation/signing, release attachments and the public feed URL. Retain the no-public-release state until a real signed native release is available; a future native application release is not a prerequisite for retiring Pages.
 - [ ] Obtain production cutover approval and execute the native provider operation.
 - [ ] Confirm the actual canonical domain, TLS, redirects, assets, metadata and application behavior.
 - [ ] Retire old Pages/Vercel hosting and its DNS and deployment dependencies after each Workers cutover passes the relevant serving and behavior checks. These sites are unlaunched; no fixed observation or recovery window is required. Retain source, build configuration and native Worker version history for recovery.
+  - [x] Studio: remove the Pages project and Pages DNS dependency after accepting managed-domain static delivery and preserved service routes.
+  - [x] Curfew: remove the Pages project and Pages DNS dependencies after accepting managed-domain delivery and the existing account coordinator handoff.
+  - [x] LogDate: remove the Vercel project and exclusive source tooling; use managed apex DNS and a proxied wildcard CNAME with the existing Worker routes.
+  - [ ] Docket: remove superseded Vercel frontend projects, DNS targets and exclusive source tooling after its approved Workers cutover and ordinary backend release gate.
 
 ## Completion criteria
 

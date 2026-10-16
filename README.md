@@ -33,7 +33,7 @@ The existing Webmention D1 database remains bound only to the production Webment
 
 ## Release status
 
-Production runs on Workers Static Assets. Validation CI builds and checks the site; deployments use native Wrangler commands. The previous Pages deployment awaits retirement after cutover acceptance, with no fixed waiting period. See [deployment and rollback](docs/deployment.md).
+Production runs on Workers Static Assets through the managed `hypertext.studio` Custom Domain. Validation CI builds and checks the site; deployments use native Wrangler commands. Pages is not a publication or recovery dependency. See [deployment and rollback](docs/deployment.md).
 
 ## Documentation
 

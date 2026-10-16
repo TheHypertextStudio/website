@@ -2,7 +2,7 @@
 
 ## Current status
 
-The company frontend runs on Workers Static Assets at `hypertext.studio`, served by `hypertext-studio-site`. Validation CI does not deploy; the separate staging workflow deploys its verified output after successful main-branch CI. Production publication uses the approved native CLI operation. The previous Pages deployment awaits retirement after cutover acceptance, with no fixed waiting period.
+The company frontend runs on Workers Static Assets at `hypertext.studio`, served by `hypertext-studio-site` through a managed Custom Domain. Validation CI does not deploy; the separate staging workflow deploys its verified output after successful main-branch CI. Production publication uses the approved native CLI operation. Pages is not a publication or recovery dependency.
 
 The earlier custom candidate, promotion and `staging-recovery` workflows have been removed. Use the pinned Wrangler CLI and Cloudflare's native version/deployment history.
 
@@ -35,7 +35,9 @@ The reusable Access policy is `2fddfb97-c128-4226-b4e6-8e7e97a0d07e`; Studio's A
 
 ## Production deployment
 
-Review accepted staging output, production DNS, TLS and route ownership before publication. The frontend owns the `hypertext.studio/*` route. The separate `www`, `poem`, Webmention, Micropub and oEmbed Workers retain their more-specific routes and data. During the initial cutover, the frontend Worker route takes precedence over the proxied apex DNS record pointing at Pages. Before retiring Pages, remove that DNS dependency using supported Workers routing and confirm canonical-domain serving again.
+Review accepted staging output, production DNS, TLS and route ownership before publication. The managed `hypertext.studio` Custom Domain selects `hypertext-studio-site`; the frontend also retains the `hypertext.studio/*` route. The separate `www`, `poem`, Webmention, Micropub and oEmbed Workers retain their more-specific routes and data.
+
+Administer managed Custom Domains through Cloudflare's native API using an approved operator profile, separately from Worker build/deploy credentials and configuration. Read the existing account, zone, hostname and Worker/environment association before an approved change; read back that exact association and its managed DNS afterward. Do not add domain provisioning to restricted deployment configuration or replace service routes. A code upload does not establish domain ownership or TLS readiness.
 
 After production approval, use the same pinned build tools and native Wrangler command:
 
@@ -47,11 +49,11 @@ A future automated deployment should use a conventional GitHub Actions deploymen
 
 ## Confirm the serving version
 
-After a deployment or rollback, confirm the version that handles actual canonical-domain requests through Cloudflare's native runtime logs. A deployment history entry records the selected traffic configuration; it does not establish which version handled a particular request during the transition. Correlate acceptance requests with their runtime events and require the intended `scriptVersion.id`. Compare the delivered pages and assets with the reviewed build as well.
+After a deployment or rollback, read the native Custom Domain association and the selected Worker deployment/version. Inspect that exact version's assets settings, headers, redirects and bindings; generic script settings can describe a different, latest uploaded version.
 
-Allow a bounded settling period before the acceptance batch. If any acceptance request still reaches another version, rollout acceptance remains incomplete. A successful request on the new version must not hide a failed request on that same version. Use native observability and existing build output; no public release-identity endpoint or custom acceptance runner is required.
+The frontend serves assets directly and has no executing script to tail. Accept it through the native domain-to-selected-version association, verified public TLS, exact page/feed/sitemap and asset bytes compared with the reviewed build, security headers, canonical redirects and read-only service responses. A deployment selection alone does not establish public delivery. Use existing build output; no identity wrapper or custom acceptance runner is required.
 
-Inspect bindings on the selected version when verifying rollback. The generic script settings endpoint describes the latest uploaded version, which can differ from the version currently selected for traffic. Confirm both the selected version and its bindings before reviewing public behavior. Stop temporary diagnostic tails and remove temporary local debug settings after diagnosis; debug logging is not runtime acceptance.
+For supporting Workers with executing scripts, correlate requests with native runtime events and the intended `scriptVersion.id` when diagnosing a transition. Do not hide failed requests behind successful ones. Stop temporary tails and remove temporary debug settings afterward; debug logging is not runtime acceptance.
 
 ## Native Worker rollback
 
@@ -63,6 +65,6 @@ pnpm exec wrangler versions list --config wrangler.jsonc --env production
 pnpm exec wrangler rollback <previous-version-id> --config wrangler.jsonc --env production
 ```
 
-For staging, select `--env staging`. Cloudflare documents [native rollback](https://developers.cloudflare.com/workers/configuration/versions-and-deployments/rollbacks/). Worker version rollback does not restore DNS, route ownership, databases or external services. If the initial cutover changes routing, reverse that specific provider change to the recorded previous host as part of the approved rollback.
+For staging, select `--env staging`. Cloudflare documents [native rollback](https://developers.cloudflare.com/workers/configuration/versions-and-deployments/rollbacks/). Worker version rollback does not restore managed Custom Domains, DNS, route ownership, databases or external services. Reverse only an explicitly approved routing change to its recorded baseline, preserving every supporting service owner.
 
-While Pages remains available, reversal of the initial migration removes only the new frontend catch-all route to return traffic to Pages. Preserve every pre-existing service route. Once canonical-domain serving and the migration's affected behavior are accepted, retire the superseded hosting and its remaining DNS and deployment dependencies. These sites are unlaunched; there is no mandatory 24-hour observation period or 14-day recovery window. Retain source and build configuration for redeployment, and use native Worker version rollback once an accepted previous version exists. Removing the frontend route after Pages retirement is no longer a valid reversal.
+Retain source and build configuration for redeployment, and use native Worker version rollback to restore an accepted previous version. Verify domain association, selected-version resources and public delivery again after recovery. Removing the frontend route or restoring a Pages CNAME is not a recovery path. No fixed observation or recovery delay is required.
