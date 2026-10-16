@@ -64,7 +64,7 @@ Cleanup does not authorize provider changes or production publication. Preserve 
 ## Phase 2: Integrate and accept ordinary builds
 
 - [x] Review cleanup diffs for each repository, preserving unrelated work and accepted dependency locks.
-- [x] Require existing hosted CI and mandatory checks on the current reviewed source; do not introduce migration-only probe suites.
+- [x] Validate the current reviewed source with ordinary checks. Preserve existing hosted CI and mandatory checks; use the explicitly approved local-validation/manual-integration exception for capacity-blocked LogDate CI without claiming a hosted pass. Do not introduce migration-only probe suites.
 - [x] Align Docket’s existing bootstrap owner with the shared `./bootstrap worktree prepare` setup entrypoint and validate its native local checks.
 - [x] Adopt the shared `./bootstrap worktree prepare` setup entrypoint in LogDate while preserving its native pnpm workspace and checks.
 - [x] Integrate Docket's setup, MCP documentation and verification tooling follow-ups with linear history.
@@ -130,4 +130,4 @@ For each site independently:
 
 ## Completion criteria
 
-All four company frontends run on Workers; Curfew/Docket docs remain on Mintlify; shared packages/config/setup/docs are adopted; ordinary CI passes; real provider and application acceptance is complete; recovery uses retained source/build configuration and accepted native Worker versions; superseded hosting and its dependencies are retired after cutover acceptance without a fixed waiting period. Source implementation or a successful build alone does not complete the migration.
+All four company frontends run on Workers; Curfew/Docket docs remain on Mintlify; shared packages/config/setup/docs are adopted; ordinary checks pass through hosted CI or the explicitly approved local/manual integration exception; real provider and application acceptance is complete; recovery uses retained source/build configuration and accepted native Worker versions; superseded hosting and its dependencies are retired after cutover acceptance without a fixed waiting period. Source implementation or a successful build alone does not complete the migration.
