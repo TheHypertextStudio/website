@@ -6,6 +6,8 @@ Standardize configuration, setup and documentation across the company websites. 
 
 Native applications, backend APIs, databases, licensing, webhooks and native distribution retain their existing systems. Reasonable Tech, Lovelace and LVBT are outside this migration.
 
+Assume existing authentication works wherever this migration leaves it unchanged. Verification covers the routing, forwarding, cookie scope, RP/origin configuration and OAuth client settings this migration changes. Use existing checks and native configuration/runtime observations; do not require the owner to create a personal staging account or sign in as a prerequisite for hosting migration. Authentication defects introduced by the migration still require correction.
+
 The approved cleanup integration includes Docket's existing automatic production API/admin rollout and database migrations. Preserve its ordinary CI and release gates. LogDate’s production migration, including DNS and Workers hosting, is authorized. Studio, Curfew and Docket frontend production cutovers require separate approval.
 
 ## Standard toolchain
