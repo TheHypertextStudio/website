@@ -45,6 +45,14 @@ pnpm run deploy:worker --env production
 
 A future automated deployment should use a conventional GitHub Actions deployment job with a protected production environment, scoped provider credentials and concurrency control. There is no custom manifest, recovery journal, activation variable or second package format to introduce.
 
+## Confirm the serving version
+
+After a deployment or rollback, confirm the version that handles actual canonical-domain requests through Cloudflare's native runtime logs. A deployment history entry records the selected traffic configuration; it does not establish which version handled a particular request during the transition. Correlate acceptance requests with their runtime events and require the intended `scriptVersion.id`. Compare the delivered pages and assets with the reviewed build as well.
+
+Allow a bounded settling period before the acceptance batch. If any acceptance request still reaches another version, rollout acceptance remains incomplete. A successful request on the new version must not hide a failed request on that same version. Use native observability and existing build output; no public release-identity endpoint or custom acceptance runner is required.
+
+Inspect bindings on the selected version when verifying rollback. The generic script settings endpoint describes the latest uploaded version, which can differ from the version currently selected for traffic. Confirm both the selected version and its bindings before reviewing public behavior. Stop temporary diagnostic tails and remove temporary local debug settings after diagnosis; debug logging is not runtime acceptance.
+
 ## Native Worker rollback
 
 Inspect the version history and choose the previously accepted version:

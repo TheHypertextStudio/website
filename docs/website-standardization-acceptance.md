@@ -1,5 +1,7 @@
 # Website standardization source checkpoint
 
+> Historical execution record. Its dated status and deployment receipts are superseded for current operations. Use the [migration plan](superpowers/plans/2026-10-10-company-website-standardization.md) for remaining acceptance and [deployment and rollback](deployment.md) for the supported workflow.
+
 ## Source cleanup on 2026-10-11
 
 The user requested removal of ad hoc or unconventional migration workflows/scripts. Cleanup is reviewed and committed in all six repositories. Studio, Curfew, LogDate, web-platform and release-engineering are integrated by normal rebase merges. Studio, LogDate, web-platform and release-engineering default-branch CI passed. Curfew's reviewed full native capture CI and ordinary main website/docs CI passed; main native capture CI remains running. Docket integration remains pending the existing Google production backend baseline. Published package versions and production hosting are unchanged.
