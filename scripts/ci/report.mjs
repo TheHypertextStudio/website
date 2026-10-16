@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { appendFile, readdir, readFile, stat } from 'node:fs/promises';
+import { appendFile, readdir, stat } from 'node:fs/promises';
 import { pathToFileURL } from 'node:url';
 import { resolve } from 'node:path';
 
@@ -11,21 +11,6 @@ const OUTCOME_LABELS = {
   skipped: '⏭️ Skipped',
 };
 
-// [row label, workflow env var] — the single source for the production stage
-// list, shared by the renderer and the CLI. Same shape as a TABLE_MODES entry.
-const PRODUCTION_STAGES = [
-  ['Checkout', 'CHECKOUT_RESULT'],
-  ['Toolchain and dependencies', 'SETUP_RESULT'],
-  ['Artifact download', 'ARTIFACT_DOWNLOAD_RESULT'],
-  ['D1 migrations', 'MIGRATION_RESULT'],
-  ['Worker: www', 'WWW_RESULT'],
-  ['Worker: poem', 'POEM_RESULT'],
-  ['Worker: webmention', 'WEBMENTION_RESULT'],
-  ['Worker: micropub', 'MICROPUB_RESULT'],
-  ['Worker: oEmbed', 'OEMBED_RESULT'],
-  ['Pages', 'PAGES_RESULT'],
-  ['Production smoke', 'SMOKE_RESULT'],
-];
 export function escapeMarkdownCell(value) {
   return String(value ?? '')
     .replaceAll('\\', '\\\\')
@@ -335,18 +320,6 @@ const MODES = {
       setupOutcome: environment.SETUP_RESULT,
       uploadOutcome: environment.UPLOAD_RESULT,
     }),
-
-  production: async (environment) => {
-    let smokeRows = [];
-    if (environment.SMOKE_REPORT_FILE) {
-      try {
-        smokeRows = parseSmokeReport(await readFile(environment.SMOKE_REPORT_FILE, 'utf8'));
-      } catch (error) {
-        if (error?.code !== 'ENOENT') throw error;
-      }
-    }
-    return renderProductionReport(rowsFrom(PRODUCTION_STAGES, environment), smokeRows);
-  },
 
   workflow: (environment) =>
     renderWorkflowReport({

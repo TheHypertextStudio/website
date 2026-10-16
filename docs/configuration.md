@@ -18,7 +18,7 @@ Cloudflare's current [GitHub Actions deployment guide](https://developers.cloudf
 
 `wrangler.jsonc` points Workers Static Assets at Astro's `dist/` directory. It declares the Studio account and distinct `staging` and `production` Worker names. No custom release metadata endpoint or deployment runner is required.
 
-The staging host is `staging.hypertext.studio`; the production host is `hypertext.studio`. Staging routes are managed separately from code uploads and omitted from the config. `workers_dev` and `preview_urls` are disabled. Production's explicit apex route is applied only during the approved cutover.
+The staging host is `staging.hypertext.studio`; the production host is `hypertext.studio`. Managed Custom Domains are administered separately from code uploads through Cloudflare's native API, using approved operator access. Keep domain declarations out of restricted deployment configuration. Staging routing is omitted from the config; production retains its explicit apex route and the separately managed Custom Domain. `workers_dev` and `preview_urls` are disabled. Preserve every more-specific supporting service route.
 
 Use separately scoped deployment credentials for staging and production. Site runtime has no secrets or database bindings. Package installation uses the repository's short-lived GitHub token; Cloudflare deployment authentication remains separate.
 

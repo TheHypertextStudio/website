@@ -57,4 +57,4 @@ Use native Wrangler deployment/version history and the Cloudflare dashboard. See
 
 ## Optional identities
 
-Blank social variables are the supported default. To add a Bluesky domain identity, set both the repository Actions variable `BLUESKY_DID` and, when the profile should be public, `BLUESKY_HANDLE`; run the production workflow and verify the resulting well-known endpoint before completing provider verification.
+Blank social variables are the supported default. To add a Bluesky domain identity, set both the repository Actions variable `BLUESKY_DID` and, when the profile should be public, `BLUESKY_HANDLE`; include those public values in the reviewed build, publish through the approved native production deployment, and verify the resulting well-known endpoint before completing provider verification.
