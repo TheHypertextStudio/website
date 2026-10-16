@@ -6,6 +6,14 @@ The company frontend runs on Workers Static Assets at `hypertext.studio`, served
 
 The earlier custom candidate, promotion and `staging-recovery` workflows have been removed. Use the pinned Wrangler CLI and Cloudflare's native version/deployment history.
 
+## Browser session boundaries
+
+The public Studio website does not issue product authentication cookies or
+receive product refresh credentials. Staff preview access is handled separately
+by the exact-host Cloudflare Access application and its Studio staff policy.
+
+Company applications follow the [Studio browser session standard](https://github.com/TheHypertextStudio/product-standards/blob/main/docs/product-standards.md#browser-session-boundaries): host-only application sessions, refresh credentials confined to the auth host, and explicit tenant session handoffs. Production and staging use independent credential stores and exact allowed origins. A staging child domain is permitted once legacy production parent-domain cookies are retired; a narrower new cookie alone does not erase those legacy cookies.
+
 ## Build and inspect locally
 
 ```sh
