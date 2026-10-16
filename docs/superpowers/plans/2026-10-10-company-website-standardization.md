@@ -39,7 +39,7 @@ Mintlify owns documentation rendering, search and publishing. `web-docs` supplie
 
 Each repository documents setup, configuration and environment names, local development, checks, deployment, rollback and troubleshooting. Common instructions live in `web-platform`; product documentation records its differences and links to that guidance.
 
-Staging frontend cookie namespaces must be outside their production cookie domains. A narrower staging cookie does not prevent the browser from sending a production parent-domain cookie to staging. Keep browser origins, backend identity handles and passkey relying-party IDs explicit; coordinate changes to the staging RP and allowed origins through the backend's ordinary deployment configuration.
+Application sessions use host-only cookies and separate production/staging credential stores. The original hosting migration kept LogDate staging outside its production parent-cookie domain. The browser-session follow-up retires those legacy cookies and uses `staging.logdate.app`; see [the Studio browser session standard](https://github.com/TheHypertextStudio/product-standards/blob/main/docs/product-standards.md#browser-session-boundaries). A narrower new cookie alone does not erase an old parent-domain cookie. Keep browser origins, backend identity handles and passkey relying-party IDs explicit; coordinate staging RP and allowed-origin changes through ordinary backend configuration.
 
 Private package CI authentication uses repository access grants and short-lived `GITHUB_TOKEN` with `packages: read`. Prefer workload identity federation where supported. No classic PAT workaround. Cloudflare authentication uses supported provider tooling and separately scoped staging/production access.
 
