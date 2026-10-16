@@ -2,7 +2,7 @@
 
 ## Current status
 
-The company frontend runs on Workers Static Assets at `hypertext.studio`, served by `hypertext-studio-site`. Validation CI does not deploy; the separate staging workflow deploys its verified output after successful main-branch CI. Production publication uses the approved native CLI operation. The previous Pages deployment is retained through the migration's recovery window.
+The company frontend runs on Workers Static Assets at `hypertext.studio`, served by `hypertext-studio-site`. Validation CI does not deploy; the separate staging workflow deploys its verified output after successful main-branch CI. Production publication uses the approved native CLI operation. The previous Pages deployment awaits retirement after cutover acceptance, with no fixed waiting period.
 
 The earlier custom candidate, promotion and `staging-recovery` workflows have been removed. Use the pinned Wrangler CLI and Cloudflare's native version/deployment history.
 
@@ -35,7 +35,7 @@ The reusable Access policy is `2fddfb97-c128-4226-b4e6-8e7e97a0d07e`; Studio's A
 
 ## Production deployment
 
-Review accepted staging output, production DNS, TLS and route ownership before publication. The frontend owns the `hypertext.studio/*` route. The separate `www`, `poem`, Webmention, Micropub and oEmbed Workers retain their more-specific routes and data. Keep the proxied apex DNS record pointed at the retained Pages deployment during the recovery window; the frontend Worker route takes precedence.
+Review accepted staging output, production DNS, TLS and route ownership before publication. The frontend owns the `hypertext.studio/*` route. The separate `www`, `poem`, Webmention, Micropub and oEmbed Workers retain their more-specific routes and data. During the initial cutover, the frontend Worker route takes precedence over the proxied apex DNS record pointing at Pages. Before retiring Pages, remove that DNS dependency using supported Workers routing and confirm canonical-domain serving again.
 
 After production approval, use the same pinned build tools and native Wrangler command:
 
@@ -65,4 +65,4 @@ pnpm exec wrangler rollback <previous-version-id> --config wrangler.jsonc --env 
 
 For staging, select `--env staging`. Cloudflare documents [native rollback](https://developers.cloudflare.com/workers/configuration/versions-and-deployments/rollbacks/). Worker version rollback does not restore DNS, route ownership, databases or external services. If the initial cutover changes routing, reverse that specific provider change to the recorded previous host as part of the approved rollback.
 
-For reversal of the initial migration, remove only the new frontend catch-all route to return traffic to retained Pages. Preserve every pre-existing service route and the apex DNS record. Keep Pages available for the agreed 14-day recovery window and observe production for at least 24 hours before considering retirement. Retiring old hosting is a separate approved operation.
+While Pages remains available, reversal of the initial migration removes only the new frontend catch-all route to return traffic to Pages. Preserve every pre-existing service route. Once canonical-domain serving and the migration's affected behavior are accepted, retire the superseded hosting and its remaining DNS and deployment dependencies. These sites are unlaunched; there is no mandatory 24-hour observation period or 14-day recovery window. Retain source and build configuration for redeployment, and use native Worker version rollback once an accepted previous version exists. Removing the frontend route after Pages retirement is no longer a valid reversal.
