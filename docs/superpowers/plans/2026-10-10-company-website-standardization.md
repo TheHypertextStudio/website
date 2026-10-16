@@ -79,11 +79,11 @@ Cleanup does not authorize provider changes or production publication. Preserve 
 - [x] Configure separately scoped staging deployment credentials for each frontend and each Next site's cache bucket.
 - [x] Configure isolated staging Worker names, hostnames and Studio staff Access policies.
 - [x] Confirm all four preview hostnames reject anonymous requests with a Cloudflare Access challenge.
-- [ ] Route LogDate’s auth and tenant hosts under `logdate-preview.hypertext.studio`, outside the production cookie domain. Protect them with the Studio staff policy and accept TLS and sign-in/signup delivery.
-- [ ] Configure LogDate’s staging WebAuthn RP as `logdate-preview.hypertext.studio` and allow `https://app.logdate-preview.hypertext.studio` through a separately reviewed backend rollout. Preserve backend identity handles, Android origins and disabled migrations; re-register staging passkeys.
+- [x] Route LogDate’s auth and tenant hosts under `logdate-preview.hypertext.studio`, outside the production cookie domain. Protect them with the Studio staff policy and accept TLS and sign-in/signup delivery.
+- [x] Configure LogDate’s staging WebAuthn RP as `logdate-preview.hypertext.studio` and allow `https://app.logdate-preview.hypertext.studio` through a separately reviewed backend rollout. Preserve backend identity handles, Android origins and disabled migrations; re-register staging passkeys.
 - [x] Preserve the independent staging browser RP and frontend origin in the backend’s ordinary deployment contract and configuration.
 - [x] Accept the staging RP’s public native association metadata against the staging signer before the backend RP rollout. Preserve native application identifiers and keep application pages behind staff Access.
-- [ ] Accept passkey registration and sign-in against the staging backend after the coordinated backend and frontend deployments. Retire obsolete LogDate-domain frontend hosts only after replacement auth and tenant acceptance, preserving the backend DNS record.
+- [x] Accept passkey registration and sign-in against the staging backend after the coordinated backend and frontend deployments. Retire obsolete LogDate-domain frontend hosts only after replacement auth and tenant acceptance, preserving the backend DNS record.
 - [x] Confirm separate staging bindings and successful staff browsing for each frontend.
 - [x] Deploy LogDate's explicit staging backend origin and accept page rendering through its existing runtime guard.
 - [x] Configure LogDate's separate staging waitlist and accept its browser fallback with a retained provider response.
@@ -95,7 +95,7 @@ Cleanup does not authorize provider changes or production publication. Preserve 
 - [x] Deploy all four frontends through their native staging workflows after the required checks pass. Retain native version/deployment IDs in operational release records.
 - [x] Review real Studio/Curfew pages at desktop and mobile widths, redirects, metadata, assets, docs and sitemap/feed delivery. Preserve Curfew’s absent signed-feed state until a genuine native release exists.
 - [x] Review the preserved Studio service endpoints through their existing production routes, including read-only Micropub discovery, oEmbed, Webmentions and Poem delivery.
-- [ ] Review real LogDate/Docket runtime, auth/cookies, API destinations, caching/revalidation, docs, forms and application journeys. Use isolated staging forms and backends.
+- [x] Review real LogDate/Docket runtime, auth/cookies, API destinations, caching/revalidation, docs, forms and application journeys. Use isolated staging forms and backends.
 - [x] Restore Google access and read Docket's production API/admin revision, image and public configuration baselines before the approved cleanup integration.
 - [x] Observe Docket's approved cleanup backend rollout, including migrations, resulting revisions, scheduler reconciliation and actual health.
 - [x] Exercise native version rollback and restore the selected version on Studio staging.
@@ -105,7 +105,7 @@ Cleanup does not authorize provider changes or production publication. Preserve 
 - [x] Retain native Worker deployment histories and complete DNS exports for all four company zones.
 - [x] Retain accepted previous versions and independent route reversal baselines for all four frontends.
 
-Require both anonymous rejection and successful staff access to protected previews. A successful build, deployment job or login redirect alone does not accept the application journeys.
+Require both anonymous rejection and successful staff access to protected previews. A successful build, deployment job or login redirect alone does not accept the application journeys. Assume unchanged signed-in authentication works; verify behavior changed by the migration, including the isolated staging browser RP, origins and cookies.
 
 ## Phase 4: Approved production cutovers
 
