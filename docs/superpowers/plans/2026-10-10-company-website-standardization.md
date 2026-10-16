@@ -27,6 +27,7 @@ The approved cleanup integration includes Docket's existing automatic production
 - Maintain one source Worker configuration per frontend, with separate staging and production environments. Official OpenNext owns its generated output and cache population.
 - Use ordinary frozen-install GitHub Actions CI and protected deployment environments. Pull requests receive no production deployment credentials.
 - Use native Worker version and deployment history for rollback. DNS/routes and external services need their own recorded reversal steps.
+- After deployment or rollback, correlate actual acceptance requests with native runtime `scriptVersion.id` and the reviewed build output. Allow a bounded settling period, then require every request in the acceptance batch to reach the intended version. Inspect that version's bindings; generic script settings may describe a newer uploaded version that is not serving traffic.
 - Exclude downloaded website lifecycle runners, custom candidate/evidence JSON, second archive formats, release identity endpoints, recovery journals, cache seed adapters, temporary activation flags and one-off credential/lock investigation jobs.
 
 ## Shared configuration and documentation
