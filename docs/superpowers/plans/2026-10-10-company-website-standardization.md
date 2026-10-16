@@ -113,15 +113,16 @@ For each site independently:
 - [ ] Resolve DNS ownership, current deployment, route/TLS state and provider access, including LogDate registrar/DNS ownership.
 - [x] Move LogDate's authoritative DNS off Vercel while preserving mail, cloud/cloud-staging backend and api.staging records. Verify registrar authority and retain the complete previous zone for rollback.
 - [x] Publish LogDate's approved production Worker with its seeded cache, apex and wildcard routes. Confirm public HTTPS homepage/auth landing rendering, assets, images, native associations and HTTP-to-HTTPS redirects.
-- [x] Publish Studio's approved frontend Worker, preserve the existing service routes and apex DNS, and accept public page rendering, feeds, sitemap and www redirects. Retain Pages through the recovery window.
+- [x] Publish Studio's approved frontend Worker, preserve the existing service routes and apex DNS, and accept public page rendering, feeds, sitemap and www redirects.
+- [x] Publish Curfew's approved production Worker and attach only the apex frontend route. Verify actual serving-version events for public pages, docs, assets and account handoff while preserving the absent signed-appcast state.
 - [ ] Accept LogDate's signed-in/private journeys, cache invalidation, tenant shares and legacy aliases before retiring Vercel.
 - [ ] Resolve LogDate's Cache Components cold-cache and repeated tenant-request hangs without dropping its existing PPR, caching or application behavior. Accept the native adapter path against actual Workers requests before treating runtime parity as complete.
 - [ ] Review accepted staging source, native build/deployment output, production bindings and exact cutover/rollback steps.
 - [ ] Coordinate Curfew's signed appcast publication with its frontend cutover. Preserve native generation/signing, release attachments and the public feed URL. Use the accepted Workers publisher before retiring Pages. Retain the no-public-release state until a real signed native release is available.
 - [ ] Obtain production cutover approval and execute the native provider operation.
 - [ ] Confirm the actual canonical domain, TLS, redirects, assets, metadata and application behavior.
-- [ ] Observe production, then retire old Pages/Vercel hosting only after the agreed rollback window. Preserve current hosting through preview acceptance.
+- [ ] Retire old Pages/Vercel hosting and its DNS and deployment dependencies after each Workers cutover passes the relevant serving and behavior checks. These sites are unlaunched; no fixed observation or recovery window is required. Retain source, build configuration and native Worker version history for recovery.
 
 ## Completion criteria
 
-All four company frontends run on Workers; Curfew/Docket docs remain on Mintlify; shared packages/config/setup/docs are adopted; ordinary CI passes; real provider and application acceptance is complete; native rollback and route reversal are documented; superseded hosting is retired after the observation window. Source implementation or a successful build alone does not complete the migration.
+All four company frontends run on Workers; Curfew/Docket docs remain on Mintlify; shared packages/config/setup/docs are adopted; ordinary CI passes; real provider and application acceptance is complete; recovery uses retained source/build configuration and accepted native Worker versions; superseded hosting and its dependencies are retired after cutover acceptance without a fixed waiting period. Source implementation or a successful build alone does not complete the migration.
