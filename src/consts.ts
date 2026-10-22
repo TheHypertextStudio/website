@@ -23,8 +23,4 @@ export const SOCIAL = {
   fediverse: 'https://fed.brid.gy/r/https://hypertext.studio/',
 } as const;
 
-export const PRODUCT_DOMAINS = [
-  'clearthedocket.com',
-  'logdate.app',
-  'curfew.hypertext.studio',
-] as const;
+export const PRODUCT_DOMAINS = ['clearthedocket.com', 'logdate.app', 'thecurfew.app'] as const;

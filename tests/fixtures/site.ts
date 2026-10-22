@@ -33,7 +33,7 @@ export const PRODUCTS = [
     slug: 'curfew',
     name: 'Curfew',
     tagline: 'A hard stop for your workday.',
-    url: 'https://curfew.hypertext.studio',
+    url: 'https://thecurfew.app',
   },
 ] as const;
 
