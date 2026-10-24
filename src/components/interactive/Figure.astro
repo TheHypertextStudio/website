@@ -33,15 +33,15 @@ const dataAttr = bleed ? { 'data-bleed': '' } : {};
 ---
 
 <figure class="figure" id={id} {...dataAttr}>
-  <div class="figure-body"><slot /></div>
-  {
-    (caption || number !== undefined) && (
-      <figcaption class="figure-caption">
-        {number !== undefined && <span class="figure-number">Figure {number}</span>}
-        {caption && <span class="figure-text">{caption}</span>}
-      </figcaption>
-    )
-  }
+  <div class="figure-body">
+    <slot />
+  </div>
+  {(caption || number !== undefined) && (
+    <figcaption class="figure-caption">
+      {number !== undefined && <span class="figure-number">Figure {number}</span>}
+      {caption && <span class="figure-text">{caption}</span>}
+    </figcaption>
+  )}
 </figure>
 
 <style>

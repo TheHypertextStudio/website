@@ -13,3 +13,9 @@ public/img
 workers/generated
 **/*.min.css
 **/*.min.js
+
+# Vendored resolver is formatted in product-standards before distribution.
+/.hypertext/formatter-tools/prettier.mjs
+# Managed preset and generated dependency lock retain their distributed bytes.
+/.hypertext/formatter-tools/preset.mjs
+/.hypertext/formatter-tools/npm-lock.json

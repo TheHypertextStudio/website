@@ -42,7 +42,9 @@
     "test:install": "playwright install --with-deps",
     "screenshots": "node scripts/screenshots.mjs",
     "preview:worker": "wrangler dev --config wrangler.jsonc --env staging",
-    "deploy:worker": "wrangler deploy --config wrangler.jsonc"
+    "deploy:worker": "wrangler deploy --config wrangler.jsonc",
+    "hooks:install": "python3 .hypertext/formatting/install.py",
+    "prepare": "python3 .hypertext/formatting/install.py"
   },
   "dependencies": {
     "@astrojs/markdown-remark": "^7.2.4",
@@ -53,7 +55,7 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
-    "@thehypertextstudio/web-config": "0.0.1",
+    "@thehypertextstudio/web-config": "0.0.3",
     "@cloudflare/vitest-pool-workers": "^0.22.0",
     "@cloudflare/workers-types": "^5.20260830.1",
     "@playwright/test": "1.62.1",
@@ -65,8 +67,7 @@
     "eslint-plugin-jsx-a11y-x": "0.2.0",
     "lint-staged": "^17.4.1",
     "portless": "^0.15.6",
-    "prettier": "3.9.6",
-    "prettier-plugin-astro": "^0.14.1",
+    "prettier": "3.9.10",
     "rehype-autolink-headings": "^7.1.0",
     "rehype-slug": "^6.0.0",
     "remark-gfm": "^4.0.1",
@@ -75,14 +76,5 @@
     "typescript": "^6.0.3",
     "vitest": "^4.1.11",
     "wrangler": "4.127.1"
-  },
-  "lint-staged": {
-    "*.{astro,ts,tsx,js,mjs,cjs,css}": [
-      "prettier --write",
-      "eslint --fix"
-    ],
-    "*.{json,md,mdx,yml,yaml,html}": [
-      "prettier --write"
-    ]
   }
 }

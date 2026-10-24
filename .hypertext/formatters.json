@@ -1,0 +1,227 @@
+{
+  "schema_version": 1,
+  "formatters": [
+    {
+      "include": ["**/Makefile", "Makefile"],
+      "argv": ["python3", "{repo}/.hypertext/formatter-tools/dsl.py", "make", "--path", "{path}"]
+    },
+    {
+      "include": [
+        "public/.well-known/security.txt",
+        "public/_headers",
+        "public/_redirects",
+        "public/humans.txt",
+        "public/robots.txt"
+      ],
+      "argv": ["python3", ".hypertext/formatter-tools/text.py", "{path}"]
+    },
+    {
+      "include": [
+        "public/.well-known/apple-app-site-association",
+        "public/.well-known/webfinger",
+        "public/site.webmanifest",
+        "*.json"
+      ],
+      "argv": ["node", ".hypertext/formatter-tools/prettier.mjs", "{path}", "json"]
+    },
+    {
+      "include": ["*.py", "*.pyi"],
+      "argv": ["python3", ".hypertext/formatter-tools/run.py", "{path}"]
+    },
+    {
+      "include": ["*.js", "*.jsx", "*.mjs", "*.cjs"],
+      "argv": ["node", ".hypertext/formatter-tools/prettier.mjs", "{path}", "babel"]
+    },
+    {
+      "include": ["*.toml"],
+      "argv": ["node", ".hypertext/formatter-tools/prettier.mjs", "{path}", "toml"]
+    },
+    {
+      "include": [".editorconfig", "*.ini"],
+      "argv": ["node", ".hypertext/formatter-tools/prettier.mjs", "{path}", "ini"]
+    },
+    {
+      "include": [
+        ".githooks/commit-msg",
+        ".githooks/pre-commit",
+        ".githooks/pre-push",
+        "bootstrap",
+        "scripts/bootstrap-worktree",
+        "scripts/bootstrap-worktree-engine",
+        "tests/fixtures/fake-bin/curl",
+        "*.sh",
+        "*.bash",
+        "*.zsh"
+      ],
+      "argv": ["node", ".hypertext/formatter-tools/prettier.mjs", "{path}", "sh"]
+    },
+    {
+      "include": ["*.yml", "*.yaml"],
+      "argv": ["node", ".hypertext/formatter-tools/prettier.mjs", "{path}", "yaml"]
+    },
+    {
+      "include": ["*.md", "*.markdown", "*.mdc"],
+      "argv": ["node", ".hypertext/formatter-tools/prettier.mjs", "{path}", "markdown"]
+    },
+    {
+      "include": [
+        "public/.well-known/host-meta",
+        "*.xml",
+        "*.svg",
+        "*.plist",
+        "*.entitlements",
+        "*.xcprivacy",
+        "*.xcworkspacedata",
+        "*.xcsettings",
+        "*.xcscheme",
+        "*.xcbkptlist",
+        "*.csproj"
+      ],
+      "argv": ["node", ".hypertext/formatter-tools/prettier.mjs", "{path}", "xml"]
+    },
+    {
+      "include": ["*.ts", "*.tsx", "*.mts"],
+      "argv": ["node", ".hypertext/formatter-tools/prettier.mjs", "{path}", "typescript"]
+    },
+    {
+      "include": ["src/pages/notes/[slug].astro", "src/pages/studies/[slug].astro", "*.astro"],
+      "argv": ["node", ".hypertext/formatter-tools/prettier.mjs", "{path}", "astro"]
+    },
+    {
+      "include": ["*.mdx"],
+      "argv": ["node", ".hypertext/formatter-tools/prettier.mjs", "{path}", "mdx"]
+    },
+    {
+      "include": ["*.css"],
+      "argv": ["node", ".hypertext/formatter-tools/prettier.mjs", "{path}", "css"]
+    },
+    {
+      "include": ["*.jsonc"],
+      "argv": ["node", ".hypertext/formatter-tools/prettier.mjs", "{path}", "jsonc"]
+    }
+  ],
+  "exclude": [
+    {
+      "include": [
+        ".hypertext/formatting/*",
+        ".hypertext/formatter-tools/setup.py",
+        ".hypertext/formatter-tools/run.py",
+        ".hypertext/formatter-tools/prettier.mjs",
+        ".hypertext/formatter-tools/preset.mjs",
+        ".hypertext/formatter-tools/text.py"
+      ],
+      "kind": "vendored",
+      "reason": "Locked shared formatter engine; maintained and formatted in product-standards."
+    },
+    {
+      "include": [".env.example"],
+      "kind": "non-formattable",
+      "reason": "Tool-owned dependency lock, credential/value file, or exact line protocol; preserve its semantic bytes."
+    },
+    {
+      "include": [".gitattributes"],
+      "kind": "non-formattable",
+      "reason": "Tool-owned dependency lock, credential/value file, or exact line protocol; preserve its semantic bytes."
+    },
+    {
+      "include": [".gitignore"],
+      "kind": "non-formattable",
+      "reason": "Tool-owned dependency lock, credential/value file, or exact line protocol; preserve its semantic bytes."
+    },
+    {
+      "include": [".npmrc"],
+      "kind": "non-formattable",
+      "reason": "Tool-owned dependency lock, credential/value file, or exact line protocol; preserve its semantic bytes."
+    },
+    {
+      "include": [".nvmrc"],
+      "kind": "non-formattable",
+      "reason": "Tool-owned dependency lock, credential/value file, or exact line protocol; preserve its semantic bytes."
+    },
+    {
+      "include": [".prettierignore"],
+      "kind": "non-formattable",
+      "reason": "Tool-owned dependency lock, credential/value file, or exact line protocol; preserve its semantic bytes."
+    },
+    {
+      "include": ["LICENSE"],
+      "kind": "non-formattable",
+      "reason": "Legal text, frozen observation, exact dependency/registration list, or opaque document data; preserve its consumer representation."
+    },
+    {
+      "include": ["migrations/0001_create_webmentions.sql"],
+      "kind": "non-formattable",
+      "reason": "Already-published migration checksum contract; create a new migration instead of changing historical bytes."
+    },
+    {
+      "include": ["pnpm-lock.yaml"],
+      "kind": "generated",
+      "reason": "Tool-owned dependency lock, credential/value file, or exact line protocol; preserve its semantic bytes."
+    },
+    {
+      "include": ["public/apple-touch-icon.png"],
+      "kind": "binary",
+      "reason": "Binary media, font, signing, or tool archive; no text formatter applies."
+    },
+    {
+      "include": ["public/favicon.ico"],
+      "kind": "binary",
+      "reason": "Binary media, font, signing, or tool archive; no text formatter applies."
+    },
+    {
+      "include": ["public/fonts/IBMPlexMono-Regular.woff2"],
+      "kind": "binary",
+      "reason": "Binary media, font, signing, or tool archive; no text formatter applies."
+    },
+    {
+      "include": ["public/fonts/InterVariable.woff2"],
+      "kind": "binary",
+      "reason": "Binary media, font, signing, or tool archive; no text formatter applies."
+    },
+    {
+      "include": ["public/fonts/SourceSerif4Variable-Italic.woff2"],
+      "kind": "binary",
+      "reason": "Binary media, font, signing, or tool archive; no text formatter applies."
+    },
+    {
+      "include": ["public/fonts/SourceSerif4Variable-Roman.woff2"],
+      "kind": "binary",
+      "reason": "Binary media, font, signing, or tool archive; no text formatter applies."
+    },
+    {
+      "include": ["public/icon-192.png"],
+      "kind": "binary",
+      "reason": "Binary media, font, signing, or tool archive; no text formatter applies."
+    },
+    {
+      "include": ["public/icon-512.png"],
+      "kind": "binary",
+      "reason": "Binary media, font, signing, or tool archive; no text formatter applies."
+    },
+    {
+      "include": ["public/icon-maskable.png"],
+      "kind": "binary",
+      "reason": "Binary media, font, signing, or tool archive; no text formatter applies."
+    },
+    {
+      "include": ["src/components/interactive/.gitkeep"],
+      "kind": "non-formattable",
+      "reason": "Empty directory placeholder or intentionally empty data marker."
+    },
+    {
+      "include": ["src/content/notes/.gitkeep"],
+      "kind": "non-formattable",
+      "reason": "Empty directory placeholder or intentionally empty data marker."
+    },
+    {
+      "include": ["src/content/studies/.gitkeep"],
+      "kind": "non-formattable",
+      "reason": "Empty directory placeholder or intentionally empty data marker."
+    },
+    {
+      "include": ["tests/unit/__snapshots__/feed.test.ts.snap"],
+      "kind": "non-formattable",
+      "reason": "Legal text, frozen observation, exact dependency/registration list, or opaque document data; preserve its consumer representation."
+    }
+  ]
+}

@@ -38,66 +38,64 @@ const studyRows = studies.map((s: CollectionEntry<'studies'>, i: number) => ({
       <p class="lede">{t.studies.lede}</p>
     </header>
 
-    {
-      studies.length === 0 ? (
-        <section class="studies-empty">
-          <article class="study-card study-card--empty" aria-labelledby="empty-heading">
-            <h2 id="empty-heading">{t.studies.empty.heading}</h2>
-            <p>{t.studies.empty.body}</p>
-            <footer>
-              <a href={t.studies.empty.subscribeUrl} rel="alternate">
-                {t.studies.empty.subscribeLabel} →
-              </a>
-            </footer>
-          </article>
-        </section>
-      ) : (
-        <section class="studies-list">
-          <ul role="list">
-            {studyRows.map(({ study, cited }) => (
-              <li>
-                <article class="study-card">
-                  <header>
-                    <h2>
-                      <a href={`/studies/${study.id}`}>{study.data.title}</a>
-                    </h2>
-                    <p class="meta">
-                      <time datetime={study.data.publishedAt.toISOString()}>
-                        {study.data.publishedAt.toISOString().slice(0, 10)}
-                      </time>
-                      {study.data.product && (
-                        <>
-                          <span aria-hidden="true">·</span>
-                          <span>{study.data.product}</span>
-                        </>
-                      )}
-                      {study.data.timeRequired && (
-                        <>
-                          <span aria-hidden="true">·</span>
-                          <span>{study.data.timeRequired}</span>
-                        </>
-                      )}
-                      {cited > 0 && (
-                        <>
-                          <span aria-hidden="true">·</span>
-                          <span>
-                            {cited} {t.studies.citedSuffix}
-                          </span>
-                        </>
-                      )}
-                    </p>
-                  </header>
-                  <p class="summary">{study.data.summary}</p>
-                  <footer>
-                    <a href={`/studies/${study.id}`}>Read →</a>
-                  </footer>
-                </article>
-              </li>
-            ))}
-          </ul>
-        </section>
-      )
-    }
+    {studies.length === 0 ? (
+      <section class="studies-empty">
+        <article class="study-card study-card--empty" aria-labelledby="empty-heading">
+          <h2 id="empty-heading">{t.studies.empty.heading}</h2>
+          <p>{t.studies.empty.body}</p>
+          <footer>
+            <a href={t.studies.empty.subscribeUrl} rel="alternate">
+              {t.studies.empty.subscribeLabel} →
+            </a>
+          </footer>
+        </article>
+      </section>
+    ) : (
+      <section class="studies-list">
+        <ul role="list">
+          {studyRows.map(({ study, cited }) => (
+            <li>
+              <article class="study-card">
+                <header>
+                  <h2>
+                    <a href={`/studies/${study.id}`}>{study.data.title}</a>
+                  </h2>
+                  <p class="meta">
+                    <time datetime={study.data.publishedAt.toISOString()}>
+                      {study.data.publishedAt.toISOString().slice(0, 10)}
+                    </time>
+                    {study.data.product && (
+                      <>
+                        <span aria-hidden="true">·</span>
+                        <span>{study.data.product}</span>
+                      </>
+                    )}
+                    {study.data.timeRequired && (
+                      <>
+                        <span aria-hidden="true">·</span>
+                        <span>{study.data.timeRequired}</span>
+                      </>
+                    )}
+                    {cited > 0 && (
+                      <>
+                        <span aria-hidden="true">·</span>
+                        <span>
+                          {cited} {t.studies.citedSuffix}
+                        </span>
+                      </>
+                    )}
+                  </p>
+                </header>
+                <p class="summary">{study.data.summary}</p>
+                <footer>
+                  <a href={`/studies/${study.id}`}>Read →</a>
+                </footer>
+              </article>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )}
   </article>
 </Base>
 

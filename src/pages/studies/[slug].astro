@@ -34,40 +34,38 @@ const citationsCount = mentions.citations.length;
 <Base title={data.title} description={data.summary} ogType="article" canonical={canonical}>
   <div class="study-page">
     <article class="study h-entry" lang="en">
-      {
-        data.inReplyTo && (
-          <link rel="in-reply-to" href={data.inReplyTo} class="u-in-reply-to" hidden />
-        )
-      }
-      <a class="u-url" href={canonical} hidden>{canonical}</a>
+      {data.inReplyTo && (
+        <link rel="in-reply-to" href={data.inReplyTo} class="u-in-reply-to" hidden />
+      )}
+      <a class="u-url" href={canonical} hidden>
+        {canonical}
+      </a>
 
       <header class="study-header">
         <h1 class="p-name">{data.title}</h1>
         <p class="study-summary p-summary">{data.summary}</p>
         <p class="study-meta">
           <span class="p-author h-card">
-            <a class="u-url p-name" href={SITE_URL} rel="author">{data.author ?? SITE_NAME}</a>
+            <a class="u-url p-name" href={SITE_URL} rel="author">
+              {data.author ?? SITE_NAME}
+            </a>
           </span>
-          {
-            data.product && (
-              <>
-                <span aria-hidden="true">·</span>
-                <span>{data.product}</span>
-              </>
-            )
-          }
+          {data.product && (
+            <>
+              <span aria-hidden="true">·</span>
+              <span>{data.product}</span>
+            </>
+          )}
           <span aria-hidden="true">·</span>
           <time class="dt-published" datetime={data.publishedAt.toISOString()}>
             {isoDate(data.publishedAt)}
           </time>
-          {
-            data.timeRequired && (
-              <>
-                <span aria-hidden="true">·</span>
-                <span>{data.timeRequired}</span>
-              </>
-            )
-          }
+          {data.timeRequired && (
+            <>
+              <span aria-hidden="true">·</span>
+              <span>{data.timeRequired}</span>
+            </>
+          )}
         </p>
       </header>
 
@@ -75,21 +73,19 @@ const citationsCount = mentions.citations.length;
         <Content />
       </div>
 
-      {
-        data.tags.length > 0 && (
-          <footer class="study-tags" aria-label={t.indieweb.post.tagsLabel}>
-            <ul role="list">
-              {data.tags.map((t: string) => (
-                <li>
-                  <a class="p-category" href={`/studies?tag=${encodeURIComponent(t)}`}>
-                    {t}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </footer>
-        )
-      }
+      {data.tags.length > 0 && (
+        <footer class="study-tags" aria-label={t.indieweb.post.tagsLabel}>
+          <ul role="list">
+            {data.tags.map((t: string) => (
+              <li>
+                <a class="p-category" href={`/studies?tag=${encodeURIComponent(t)}`}>
+                  {t}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </footer>
+      )}
     </article>
 
     <Citations groups={mentions} />
