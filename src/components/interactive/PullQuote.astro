@@ -23,7 +23,9 @@ const dataAttr = aside ? { 'data-aside': '' } : {};
 ---
 
 <blockquote class={`pullquote${aside ? ' is-aside' : ''}`} {...dataAttr}>
-  <p class="pullquote-text"><slot /></p>
+  <p class="pullquote-text">
+    <slot />
+  </p>
   {cite && <footer class="pullquote-cite">— {cite}</footer>}
 </blockquote>
 

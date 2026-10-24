@@ -21,21 +21,21 @@ const helpLinks = [
 
 <footer class="site-footer">
   <div class="site-footer__inner">
-    <div class="closing-tag" aria-hidden="true" translate="no">&lt;/hypertext-studio&gt;</div>
+    <div class="closing-tag" aria-hidden="true" translate="no">
+      &lt;/hypertext-studio&gt;
+    </div>
     <div class="footer-directory">
       <section class="footer-group">
         <h2>Studio</h2>
         <nav aria-label="Studio">
           <ul>
-            {
-              studioLinks.map((link) => (
-                <li>
-                  <a class="footer-link" href={link.href}>
-                    <span class="footer-link__label">{link.label}</span>
-                  </a>
-                </li>
-              ))
-            }
+            {studioLinks.map((link) => (
+              <li>
+                <a class="footer-link" href={link.href}>
+                  <span class="footer-link__label">{link.label}</span>
+                </a>
+              </li>
+            ))}
           </ul>
         </nav>
       </section>
@@ -43,22 +43,20 @@ const helpLinks = [
         <h2>Products</h2>
         <nav aria-label="Products">
           <ul>
-            {
-              products.map((product) => (
-                <li>
-                  <a
-                    class={`footer-link footer-link--${product.slug}`}
-                    href={product.url}
-                    rel="external noopener"
-                  >
-                    <span class="footer-link__label">{product.name}</span>
-                    <span class="footer-link__address" aria-hidden="true">
-                      {new URL(product.url).host}
-                    </span>
-                  </a>
-                </li>
-              ))
-            }
+            {products.map((product) => (
+              <li>
+                <a
+                  class={`footer-link footer-link--${product.slug}`}
+                  href={product.url}
+                  rel="external noopener"
+                >
+                  <span class="footer-link__label">{product.name}</span>
+                  <span class="footer-link__address" aria-hidden="true">
+                    {new URL(product.url).host}
+                  </span>
+                </a>
+              </li>
+            ))}
           </ul>
         </nav>
       </section>
@@ -66,19 +64,17 @@ const helpLinks = [
         <h2>Help &amp; resources</h2>
         <nav aria-label="Help & resources">
           <ul>
-            {
-              helpLinks.map((link) => (
-                <li>
-                  <a
-                    class="footer-link"
-                    href={link.href}
-                    rel={link.external ? 'external noopener' : undefined}
-                  >
-                    <span class="footer-link__label">{link.label}</span>
-                  </a>
-                </li>
-              ))
-            }
+            {helpLinks.map((link) => (
+              <li>
+                <a
+                  class="footer-link"
+                  href={link.href}
+                  rel={link.external ? 'external noopener' : undefined}
+                >
+                  <span class="footer-link__label">{link.label}</span>
+                </a>
+              </li>
+            ))}
           </ul>
         </nav>
       </section>

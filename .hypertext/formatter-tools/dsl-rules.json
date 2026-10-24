@@ -1,0 +1,10 @@
+{
+  "setup": [["python3", "{repo}/.hypertext/formatter-tools/dsl.py", "setup-make"]],
+  "rules": [
+    {
+      "name": "mbake 1.4.6",
+      "patterns": ["**/Makefile", "Makefile"],
+      "argv": ["python3", "{repo}/.hypertext/formatter-tools/dsl.py", "make", "--path", "{path}"]
+    }
+  ]
+}

@@ -38,13 +38,11 @@ const fullOgImage = new URL(ogImage, SITE_URL).toString();
 <meta name="theme-color" content="#181713" media="(prefers-color-scheme: dark)" />
 <meta name="color-scheme" content="light dark" />
 <meta name="referrer" content="strict-origin-when-cross-origin" />
-{
-  noIndex ? (
-    <meta name="robots" content="noindex, nofollow" />
-  ) : (
-    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
-  )
-}
+{noIndex ? (
+  <meta name="robots" content="noindex, nofollow" />
+) : (
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
+)}
 <meta name="format-detection" content="telephone=no" />
 <link rel="canonical" href={fullCanonical} />
 

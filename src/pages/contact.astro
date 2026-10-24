@@ -23,48 +23,52 @@ const channels = resolveSocialLinks(t.contact.channels, { bluesky: SOCIAL.bluesk
 
     <section class="flow" aria-labelledby="product-support">
       <h2 id="product-support">{t.contact.supportHeading}</h2>
-      <p><a href={`mailto:${t.contact.supportEmail}`}>{t.contact.supportEmail}</a></p>
+      <p>
+        <a href={`mailto:${t.contact.supportEmail}`}>{t.contact.supportEmail}</a>
+      </p>
       <p>{t.contact.supportBody}</p>
     </section>
 
     <section class="flow" aria-labelledby="legal-contact">
       <h2 id="legal-contact">{t.contact.legalHeading}</h2>
-      <p><a href={`mailto:${t.contact.legalEmail}`}>{t.contact.legalEmail}</a></p>
+      <p>
+        <a href={`mailto:${t.contact.legalEmail}`}>{t.contact.legalEmail}</a>
+      </p>
       <p>{t.contact.legalBody}</p>
     </section>
 
     <section class="flow">
       <h2 id="mail">
-        <a class="anchor" href="#mail" aria-label="Permalink to Mail">#</a>
+        <a class="anchor" href="#mail" aria-label="Permalink to Mail">
+          #
+        </a>
         {t.contact.mailing.heading}
       </h2>
       <address class="mailing">
-        {
-          t.contact.mailing.lines.map((line: string) => (
-            <>
-              {line}
-              <br />
-            </>
-          ))
-        }
+        {t.contact.mailing.lines.map((line: string) => (
+          <>
+            {line}
+            <br />
+          </>
+        ))}
       </address>
     </section>
 
     <section class="flow">
       <h2 id="also">
-        <a class="anchor" href="#also" aria-label="Permalink to Also">#</a>
+        <a class="anchor" href="#also" aria-label="Permalink to Also">
+          #
+        </a>
         Also
       </h2>
       <ul class="channels">
-        {
-          channels.map((c) => (
-            <li>
-              <a href={c.href} rel={`${c.rel} external noopener`} title={c.label}>
-                {c.label}
-              </a>
-            </li>
-          ))
-        }
+        {channels.map((c) => (
+          <li>
+            <a href={c.href} rel={`${c.rel} external noopener`} title={c.label}>
+              {c.label}
+            </a>
+          </li>
+        ))}
       </ul>
     </section>
   </article>

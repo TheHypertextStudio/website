@@ -3,7 +3,8 @@ allowBuilds:
   sharp: true
   workerd: true
 
-# Reviewed immutable candidate 38116243716-1; shipping integrity is pinned in the lock.
+# Reviewed shared formatter release; shipping integrity is pinned in the lock.
 # Preserve pnpm's release-age policy for every other package and version.
 minimumReleaseAgeExclude:
-  - '@thehypertextstudio/web-config@0.0.1'
+  - '@thehypertextstudio/web-config@0.0.3'
+  - '@thehypertextstudio/format-config@0.0.1'

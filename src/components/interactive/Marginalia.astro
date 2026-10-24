@@ -38,7 +38,9 @@ const { for: anchor, label } = Astro.props;
 
 <aside class="marginalia" data-aside id={anchor ? `note-${anchor}` : undefined}>
   {label !== undefined && <span class="marginalia-label">{label}</span>}
-  <div class="marginalia-body"><slot /></div>
+  <div class="marginalia-body">
+    <slot />
+  </div>
 </aside>
 
 <style>

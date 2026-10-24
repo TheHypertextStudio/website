@@ -44,48 +44,42 @@ const respondNote = SOCIAL.bluesky ? labels.respondNoteWithBluesky : labels.resp
       </time>
     </dd>
 
-    {
-      publicSyndicationUrls.length > 0 && (
-        <>
-          <dt>{labels.alsoAt}</dt>
-          <dd>
-            <ul class="post-colophon-syndication" role="list">
-              {publicSyndicationUrls.map((url) => (
-                <li>
-                  <a class="u-syndication" href={url} rel="syndication external">
-                    {displaySource(url)}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </dd>
-        </>
-      )
-    }
+    {publicSyndicationUrls.length > 0 && (
+      <>
+        <dt>{labels.alsoAt}</dt>
+        <dd>
+          <ul class="post-colophon-syndication" role="list">
+            {publicSyndicationUrls.map((url) => (
+              <li>
+                <a class="u-syndication" href={url} rel="syndication external">
+                  {displaySource(url)}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </dd>
+      </>
+    )}
 
-    {
-      modifiedAt && (
-        <>
-          <dt>{labels.lastRevised}</dt>
-          <dd>
-            <time datetime={modifiedAt.toISOString()} class="dt-updated">
-              {isoDate(modifiedAt)}
-            </time>
-          </dd>
-        </>
-      )
-    }
+    {modifiedAt && (
+      <>
+        <dt>{labels.lastRevised}</dt>
+        <dd>
+          <time datetime={modifiedAt.toISOString()} class="dt-updated">
+            {isoDate(modifiedAt)}
+          </time>
+        </dd>
+      </>
+    )}
 
-    {
-      citationsCount > 0 && (
-        <>
-          <dt>{labels.citedBy}</dt>
-          <dd>
-            <a href="#citations-heading">{citationsCount}</a>
-          </dd>
-        </>
-      )
-    }
+    {citationsCount > 0 && (
+      <>
+        <dt>{labels.citedBy}</dt>
+        <dd>
+          <a href="#citations-heading">{citationsCount}</a>
+        </dd>
+      </>
+    )}
   </dl>
 
   <p class="post-colophon-respond">{respondNote}</p>

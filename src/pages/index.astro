@@ -58,7 +58,9 @@ const productArtMarkup = Object.fromEntries(
   <HCard />
   <div class="home">
     <header class="home-hero">
-      <h1><span class="home-hero__mark">Hypertext Studio</span> builds software for humans.</h1>
+      <h1>
+        <span class="home-hero__mark">Hypertext Studio</span> builds software for humans.
+      </h1>
       <p class="home-intro">
         I help founders and organizations solve product and technical problems, redesign software,
         and build custom websites, apps, and platforms.
@@ -68,72 +70,79 @@ const productArtMarkup = Object.fromEntries(
       <h2 id="services-heading">Services</h2>
       <div>
         <section class="flow">
-          <h3>Consulting</h3><p>
+          <h3>Consulting</h3>
+          <p>
             I can review your software, help you work through a product or technical decision, or
             figure out where AI would be useful. We’ll work out what needs to change and how to do
             it.
           </p>
         </section>
         <section class="home-build flow">
-          <h3>Design &amp; development</h3><p>
+          <h3>Design &amp; development</h3>
+          <p>
             I can redesign software you already have or build a custom website, app, or platform. If
             your team will build it, I can work with them on the design and technical decisions.
           </p>
         </section>
-        <a class="hx-service-action" href="/services/"
-          >Explore services <span aria-hidden="true">↗</span></a
-        >
+        <a class="hx-service-action" href="/services/">
+          Explore services <span aria-hidden="true">↗</span>
+        </a>
       </div>
     </section>
-    <header class="work-heading"><h2>Selected work</h2><p>These are my own products.</p></header>
+    <header class="work-heading">
+      <h2>Selected work</h2>
+      <p>These are my own products.</p>
+    </header>
 
     <section class="products-grid" id="products" aria-labelledby="products-heading">
-      <h2 class="sr-only" id="products-heading">Products</h2>
-      {
-        products.map((product) => (
-          <article class={`product-card product-card--${product.slug}`} id={product.slug}>
-            <div class="product-card__media" aria-hidden="true">
-              <pre
-                class="product-card__ascii"
-                aria-hidden="true"
-                set:html={productArtMarkup[product.slug]}
-              />
-            </div>
-            <div class="product-card__copy">
-              <h3>{product.name}</h3>
-              <p>{product.tagline}</p>
-              {product.detail && <p class="product-card__detail">{product.detail}</p>}
-            </div>
-            <div class="product-card__footer">
-              <span>{product.platforms}</span>
-              <a class="product-link interaction-target" href={product.url} rel="external noopener">
-                <span class="interaction-label">
-                  {product.linkLabel}
-                  <span class="product-link__external" aria-hidden="true">
-                    ↗
-                  </span>
+      <h2 class="sr-only" id="products-heading">
+        Products
+      </h2>
+      {products.map((product) => (
+        <article class={`product-card product-card--${product.slug}`} id={product.slug}>
+          <div class="product-card__media" aria-hidden="true">
+            <pre
+              class="product-card__ascii"
+              aria-hidden="true"
+              set:html={productArtMarkup[product.slug]}
+            />
+          </div>
+          <div class="product-card__copy">
+            <h3>{product.name}</h3>
+            <p>{product.tagline}</p>
+            {product.detail && <p class="product-card__detail">{product.detail}</p>}
+          </div>
+          <div class="product-card__footer">
+            <span>{product.platforms}</span>
+            <a class="product-link interaction-target" href={product.url} rel="external noopener">
+              <span class="interaction-label">
+                {product.linkLabel}
+                <span class="product-link__external" aria-hidden="true">
+                  ↗
                 </span>
-              </a>
-            </div>
-          </article>
-        ))
-      }
+              </span>
+            </a>
+          </div>
+        </article>
+      ))}
     </section>
     <section class="home-person flow" aria-labelledby="person-heading">
-      <h2 id="person-heading">Working with me</h2><p>
-        I’m Willie Chalmers. You’ll work directly with me.
-      </p><p>
+      <h2 id="person-heading">Working with me</h2>
+      <p>I’m Willie Chalmers. You’ll work directly with me.</p>
+      <p>
         I use Claude and Codex too. My job is to understand what you need, make the design and
         technical decisions, and see the work through.
-      </p><a class="hx-service-action" href="https://willie.page" rel="me external noopener"
-        >More of my work</a
-      >
+      </p>
+      <a class="hx-service-action" href="https://willie.page" rel="me external noopener">
+        More of my work
+      </a>
     </section>
     <aside class="hx-note">
-      <h2>Nonprofits &amp; social causes</h2><p>
-        If you’re working for a nonprofit, a community project, or a social cause, <a
-          href="/work-together/?nonprofit=1">ask about reduced rates</a
-        >. Tell me who the work helps and what you need.
+      <h2>Nonprofits &amp; social causes</h2>
+      <p>
+        If you’re working for a nonprofit, a community project, or a social cause,{' '}
+        <a href="/work-together/?nonprofit=1">ask about reduced rates</a>. Tell me who the work
+        helps and what you need.
       </p>
     </aside>
   </div>

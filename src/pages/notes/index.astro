@@ -55,54 +55,52 @@ const rows = notes.map((n: CollectionEntry<'notes'>, i: number) => ({
       <p class="lede">{t.notes.lede}</p>
     </header>
 
-    {
-      rows.length === 0 ? (
-        <section class="notes-empty">
-          <article class="note-card note-card--empty" aria-labelledby="empty-heading">
-            <h2 id="empty-heading">{t.notes.empty.heading}</h2>
-            <p>{t.notes.empty.body}</p>
-          </article>
-        </section>
-      ) : (
-        <section class="notes-list">
-          <ol role="list">
-            {rows.map(({ note, cited, replyHost, snippet }) => (
-              <li>
-                <article class="note-card">
-                  <p class="meta">
-                    <time datetime={note.data.publishedAt.toISOString()}>
-                      {isoDate(note.data.publishedAt)}
-                    </time>
-                    {replyHost && (
-                      <>
-                        <span aria-hidden="true">·</span>
-                        <span>
-                          {t.notes.inReplyToLabel}{' '}
-                          <a href={note.data.inReplyTo} rel="external">
-                            {replyHost}
-                          </a>
-                        </span>
-                      </>
-                    )}
-                    {cited > 0 && (
-                      <>
-                        <span aria-hidden="true">·</span>
-                        <span>
-                          {cited} {t.notes.citedSuffix}
-                        </span>
-                      </>
-                    )}
-                  </p>
-                  <p class="snippet">
-                    <a href={`/notes/${note.id}`}>{snippet}</a>
-                  </p>
-                </article>
-              </li>
-            ))}
-          </ol>
-        </section>
-      )
-    }
+    {rows.length === 0 ? (
+      <section class="notes-empty">
+        <article class="note-card note-card--empty" aria-labelledby="empty-heading">
+          <h2 id="empty-heading">{t.notes.empty.heading}</h2>
+          <p>{t.notes.empty.body}</p>
+        </article>
+      </section>
+    ) : (
+      <section class="notes-list">
+        <ol role="list">
+          {rows.map(({ note, cited, replyHost, snippet }) => (
+            <li>
+              <article class="note-card">
+                <p class="meta">
+                  <time datetime={note.data.publishedAt.toISOString()}>
+                    {isoDate(note.data.publishedAt)}
+                  </time>
+                  {replyHost && (
+                    <>
+                      <span aria-hidden="true">·</span>
+                      <span>
+                        {t.notes.inReplyToLabel}{' '}
+                        <a href={note.data.inReplyTo} rel="external">
+                          {replyHost}
+                        </a>
+                      </span>
+                    </>
+                  )}
+                  {cited > 0 && (
+                    <>
+                      <span aria-hidden="true">·</span>
+                      <span>
+                        {cited} {t.notes.citedSuffix}
+                      </span>
+                    </>
+                  )}
+                </p>
+                <p class="snippet">
+                  <a href={`/notes/${note.id}`}>{snippet}</a>
+                </p>
+              </article>
+            </li>
+          ))}
+        </ol>
+      </section>
+    )}
   </article>
 </Base>
 

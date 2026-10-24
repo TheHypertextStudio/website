@@ -16,25 +16,19 @@ import t from '@/i18n';
         <a href="/privacy">Privacy</a> · <a href="/legal/history">Policy history</a>
       </nav>
     </header>
-    {
-      t.terms.sections.map((section) => (
-        <section class="flow">
-          <h2 id={section.id}>
-            <a
-              class="anchor"
-              href={`#${section.id}`}
-              aria-label={`Permalink to ${section.heading}`}
-            >
-              #
-            </a>
-            {section.heading}
-          </h2>
-          {section.body.split('\n\n').map((paragraph) => (
-            <p set:html={paragraph} />
-          ))}
-        </section>
-      ))
-    }
+    {t.terms.sections.map((section) => (
+      <section class="flow">
+        <h2 id={section.id}>
+          <a class="anchor" href={`#${section.id}`} aria-label={`Permalink to ${section.heading}`}>
+            #
+          </a>
+          {section.heading}
+        </h2>
+        {section.body.split('\n\n').map((paragraph) => (
+          <p set:html={paragraph} />
+        ))}
+      </section>
+    ))}
   </article>
 </Base>
 

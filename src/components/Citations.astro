@@ -56,91 +56,89 @@ const lightweights: Array<readonly [string, Webmention[]]> = [
 const allReaders: Webmention[] = [...likes, ...reposts, ...bookmarks];
 ---
 
-{
-  renderSection && (
-    <section class="citations" aria-labelledby="citations-heading">
-      <h2 id="citations-heading" class="citations-heading">
-        {labels.heading}
-      </h2>
+{renderSection && (
+  <section class="citations" aria-labelledby="citations-heading">
+    <h2 id="citations-heading" class="citations-heading">
+      {labels.heading}
+    </h2>
 
-      {hasCitations && (
-        <ol class="citations-list" role="list">
-          {citations.map((m) => {
-            const date = formatDate(m.publishedAt ?? m.receivedAt);
-            const paragraphs = excerptParagraphs(m.content);
-            return (
-              <li>
-                <article class="citation h-cite">
-                  <header class="citation-meta">
-                    {m.authorUrl ? (
-                      <a class="citation-author p-author" href={m.authorUrl} rel="external">
-                        {authorLabel(m)}
-                      </a>
-                    ) : (
-                      <span class="citation-author p-author">{authorLabel(m)}</span>
-                    )}
-                    {date && (
-                      <time class="citation-date dt-published" datetime={date.datetime}>
-                        {date.display}
-                      </time>
-                    )}
-                    <a class="citation-source u-url" href={m.source} rel="external">
-                      {displaySource(m.source)}
-                    </a>
-                  </header>
-                  {paragraphs && (
-                    <blockquote class="citation-excerpt e-content">
-                      {paragraphs.map((p) => (
-                        <p>{p}</p>
-                      ))}
-                    </blockquote>
-                  )}
-                </article>
-              </li>
-            );
-          })}
-        </ol>
-      )}
-
-      {hasLightweights && (
-        <div class="citations-aggregate">
-          <p class="citations-aggregate-counts">
-            {lightweights
-              .filter(([, arr]) => arr.length > 0)
-              .map(([label, arr], i, visible) => (
-                <Fragment>
-                  <span>
-                    {label} {arr.length}.
-                  </span>
-                  {i < visible.length - 1 && <span aria-hidden="true"> </span>}
-                </Fragment>
-              ))}
-          </p>
-          <details class="citations-readers">
-            <summary>{labels.showReaders}</summary>
-            <ul role="list">
-              {allReaders.map((m) => (
-                <li>
+    {hasCitations && (
+      <ol class="citations-list" role="list">
+        {citations.map((m) => {
+          const date = formatDate(m.publishedAt ?? m.receivedAt);
+          const paragraphs = excerptParagraphs(m.content);
+          return (
+            <li>
+              <article class="citation h-cite">
+                <header class="citation-meta">
                   {m.authorUrl ? (
-                    <a href={m.authorUrl} rel="external">
+                    <a class="citation-author p-author" href={m.authorUrl} rel="external">
                       {authorLabel(m)}
                     </a>
                   ) : (
-                    <span>{authorLabel(m)}</span>
+                    <span class="citation-author p-author">{authorLabel(m)}</span>
                   )}
-                  <span aria-hidden="true"> · </span>
-                  <a href={m.source} rel="external" class="citations-readers-source">
-                    {authorFallback(m.source)}
+                  {date && (
+                    <time class="citation-date dt-published" datetime={date.datetime}>
+                      {date.display}
+                    </time>
+                  )}
+                  <a class="citation-source u-url" href={m.source} rel="external">
+                    {displaySource(m.source)}
                   </a>
-                </li>
-              ))}
-            </ul>
-          </details>
-        </div>
-      )}
-    </section>
-  )
-}
+                </header>
+                {paragraphs && (
+                  <blockquote class="citation-excerpt e-content">
+                    {paragraphs.map((p) => (
+                      <p>{p}</p>
+                    ))}
+                  </blockquote>
+                )}
+              </article>
+            </li>
+          );
+        })}
+      </ol>
+    )}
+
+    {hasLightweights && (
+      <div class="citations-aggregate">
+        <p class="citations-aggregate-counts">
+          {lightweights
+            .filter(([, arr]) => arr.length > 0)
+            .map(([label, arr], i, visible) => (
+              <Fragment>
+                <span>
+                  {label} {arr.length}.
+                </span>
+                {i < visible.length - 1 && <span aria-hidden="true"> </span>}
+              </Fragment>
+            ))}
+        </p>
+        <details class="citations-readers">
+          <summary>{labels.showReaders}</summary>
+          <ul role="list">
+            {allReaders.map((m) => (
+              <li>
+                {m.authorUrl ? (
+                  <a href={m.authorUrl} rel="external">
+                    {authorLabel(m)}
+                  </a>
+                ) : (
+                  <span>{authorLabel(m)}</span>
+                )}
+                <span aria-hidden="true"> · </span>
+                <a href={m.source} rel="external" class="citations-readers-source">
+                  {authorFallback(m.source)}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </details>
+      </div>
+    )}
+  </section>
+)}
 
 <style>
   .citations {

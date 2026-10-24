@@ -23,7 +23,7 @@ pnpm-debug.log*
 .dev.vars.*
 
 # build artifacts
-.hypertext/
+.hypertext/*
 test-results/
 playwright-report/
 coverage/
@@ -39,3 +39,14 @@ public/.well-known/atproto-did
 .vscode/*
 !.vscode/settings.json
 !.vscode/extensions.json
+/.hypertext/formatter-tools/runtime.json
+/.hypertext/formatter-tools/bin/
+/.hypertext/formatter-tools/__pycache__/
+
+# Track shared formatter policy and launchers; runtime evidence remains ignored.
+!.hypertext/formatters.json
+!.hypertext/formatting/
+!.hypertext/formatter-tools/
+
+# Local Python bytecode is never part of the managed engine.
+/.hypertext/formatting/**/__pycache__/

@@ -12,27 +12,27 @@ import t from '@/i18n';
       <h1>{t.privacy.title}</h1>
       <p class="lede">{t.privacy.intro}</p>
       <div class="policy-metadata">
-        <p>Published and effective <time datetime={t.privacy.effective}>October 14, 2026</time>.</p>
+        <p>
+          Published and effective <time datetime={t.privacy.effective}>October 14, 2026</time>.
+        </p>
         <nav aria-label="Policy navigation">
           <a href="/terms">Website terms</a> · <a href="/legal/history">Policy history</a>
         </nav>
       </div>
     </header>
-    {
-      t.privacy.sections.map((s) => (
-        <section class="flow">
-          <h2 id={s.id}>
-            <a class="anchor" href={`#${s.id}`} aria-label={`Permalink to ${s.heading}`}>
-              #
-            </a>
-            {s.heading}
-          </h2>
-          {s.body.split('\n\n').map((p) => (
-            <p set:html={p.replace(/`([^`]+)`/g, '<code>$1</code>')} />
-          ))}
-        </section>
-      ))
-    }
+    {t.privacy.sections.map((s) => (
+      <section class="flow">
+        <h2 id={s.id}>
+          <a class="anchor" href={`#${s.id}`} aria-label={`Permalink to ${s.heading}`}>
+            #
+          </a>
+          {s.heading}
+        </h2>
+        {s.body.split('\n\n').map((p) => (
+          <p set:html={p.replace(/`([^`]+)`/g, '<code>$1</code>')} />
+        ))}
+      </section>
+    ))}
   </article>
 </Base>
 

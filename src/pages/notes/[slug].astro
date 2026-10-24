@@ -43,42 +43,42 @@ const seoTitle = snippet || `${t.indieweb.post.noteLabel} · ${isoDate(data.publ
   canonical={canonical}
 >
   <article class="note h-entry" lang="en">
-    {
-      data.inReplyTo && (
-        <link rel="in-reply-to" href={data.inReplyTo} class="u-in-reply-to" hidden />
-      )
-    }
-    <a class="u-url" href={canonical} hidden>{canonical}</a>
+    {data.inReplyTo && (
+      <link rel="in-reply-to" href={data.inReplyTo} class="u-in-reply-to" hidden />
+    )}
+    <a class="u-url" href={canonical} hidden>
+      {canonical}
+    </a>
 
-    {
-      /* Notes have no visible title (mf2 post-type discovery treats e-content
+    {/* Notes have no visible title (mf2 post-type discovery treats e-content
         without p-name as a "note"). A screen-reader-only h1 keeps the page
-        landmark-correct without breaking the brief note typography. */
-    }
-    <h1 class="sr-only">{t.indieweb.post.noteLabel} · {isoDate(data.publishedAt)}</h1>
+        landmark-correct without breaking the brief note typography. */}
+    <h1 class="sr-only">
+      {t.indieweb.post.noteLabel} · {isoDate(data.publishedAt)}
+    </h1>
 
     <header class="note-header">
       <p class="note-meta">
         <span class="p-author h-card">
-          <a class="u-url p-name" href={SITE_URL} rel="author">{SITE_NAME}</a>
+          <a class="u-url p-name" href={SITE_URL} rel="author">
+            {SITE_NAME}
+          </a>
         </span>
         <span aria-hidden="true">·</span>
         <time class="dt-published" datetime={data.publishedAt.toISOString()}>
           {isoDate(data.publishedAt)}
         </time>
-        {
-          data.inReplyTo && (
-            <>
-              <span aria-hidden="true">·</span>
-              <span>
-                {t.indieweb.post.inReplyToLabel}{' '}
-                <a href={data.inReplyTo} rel="external">
-                  {new URL(data.inReplyTo).host}
-                </a>
-              </span>
-            </>
-          )
-        }
+        {data.inReplyTo && (
+          <>
+            <span aria-hidden="true">·</span>
+            <span>
+              {t.indieweb.post.inReplyToLabel}{' '}
+              <a href={data.inReplyTo} rel="external">
+                {new URL(data.inReplyTo).host}
+              </a>
+            </span>
+          </>
+        )}
       </p>
     </header>
 
@@ -86,19 +86,17 @@ const seoTitle = snippet || `${t.indieweb.post.noteLabel} · ${isoDate(data.publ
       <Content />
     </div>
 
-    {
-      data.tags.length > 0 && (
-        <footer class="note-tags" aria-label={t.indieweb.post.tagsLabel}>
-          <ul role="list">
-            {data.tags.map((t: string) => (
-              <li>
-                <span class="p-category">{t}</span>
-              </li>
-            ))}
-          </ul>
-        </footer>
-      )
-    }
+    {data.tags.length > 0 && (
+      <footer class="note-tags" aria-label={t.indieweb.post.tagsLabel}>
+        <ul role="list">
+          {data.tags.map((t: string) => (
+            <li>
+              <span class="p-category">{t}</span>
+            </li>
+          ))}
+        </ul>
+      </footer>
+    )}
   </article>
 
   <Citations groups={mentions} />

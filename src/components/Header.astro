@@ -10,7 +10,9 @@ const path = Astro.url.pathname.replace(/\/$/, '');
     rel="home"
     translate="no"
   >
-    <span class="interaction-label" aria-hidden="true">&lt;hypertext-studio&gt;</span>
+    <span class="interaction-label" aria-hidden="true">
+      &lt;hypertext-studio&gt;
+    </span>
     <span class="sr-only">Hypertext Studio home</span>
   </a>
   <nav aria-label="Primary">
@@ -18,24 +20,27 @@ const path = Astro.url.pathname.replace(/\/$/, '');
       class="interaction-target"
       href="/services/"
       aria-current={path === '/services' ? 'page' : undefined}
-      ><span class="interaction-label">Services</span></a
     >
-    <a class="interaction-target" href="/#products"
-      ><span class="interaction-label">Products</span></a
-    >
+      <span class="interaction-label">Services</span>
+    </a>
+    <a class="interaction-target" href="/#products">
+      <span class="interaction-label">Products</span>
+    </a>
     <a
       class="interaction-target"
       href="/about"
       aria-current={path === '/about' ? 'page' : undefined}
-      ><span class="interaction-label">About</span></a
     >
+      <span class="interaction-label">About</span>
+    </a>
   </nav>
   <a
     class="site-enquiry"
     href="/work-together/"
     aria-current={path === '/work-together' ? 'page' : undefined}
-    >Let’s talk <span aria-hidden="true">→</span></a
   >
+    Let’s talk <span aria-hidden="true">→</span>
+  </a>
 </header>
 
 <style>

@@ -13,14 +13,12 @@ import t from '@/i18n';
     <section class="flow">
       <h2>Stack</h2>
       <dl>
-        {
-          t.colophon.credits.map((c) => (
-            <>
-              <dt>{c.key}</dt>
-              <dd>{c.value}</dd>
-            </>
-          ))
-        }
+        {t.colophon.credits.map((c) => (
+          <>
+            <dt>{c.key}</dt>
+            <dd>{c.value}</dd>
+          </>
+        ))}
       </dl>
     </section>
 
