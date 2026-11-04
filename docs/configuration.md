@@ -2,11 +2,13 @@
 
 Use `.nvmrc` for Node 24.20.0, `package.json` for pnpm 11.9.0 and Wrangler 4.127.1, and `pnpm-lock.yaml` for dependencies. The existing shared worktree bootstrap prepares local dependencies; package scripts invoke the actual framework and provider tools.
 
-The shared frontend configuration package is the private GitHub Package `@thehypertextstudio/web-config`, pinned to `0.0.1` in `package.json` and resolved through `pnpm-lock.yaml`. Refresh it through the ordinary package workflow with approved registry access. Keep registry dependencies reproducible across local setup and CI; do not commit local package overrides or use a local tarball checksum as registry integrity.
+The shared frontend configuration package is the private GitHub Package `@thehypertextstudio/web-config`, pinned to `0.0.3` in `package.json` and resolved through `pnpm-lock.yaml`. Refresh it through the ordinary package workflow with approved registry access. Keep registry dependencies reproducible across local setup and CI; do not commit local package overrides or use a local tarball checksum as registry integrity.
+
+Run `./bootstrap packages setup` once per machine after `gh auth login --hostname github.com` with package-read access. The shared setup verifies access and installs a user-level GitHub CLI credential helper without saving a token. Fresh worktrees reuse the helper without shell exports. Repeat setup preserves unchanged files and unrelated npm settings. Use `./bootstrap packages check @thehypertextstudio/web-config` to verify effective access. Online `worktree prepare` checks every private Studio package in its frozen lockfile before installing dependencies.
 
 `pnpm-workspace.yaml` explicitly permits install scripts only for `esbuild`, `sharp`, and `workerd`, the same native dependencies already rebuilt by `scripts/bootstrap-worktree`. This checked-in policy lets fresh pnpm 11 installs prepare those tools without relying on machine-local build approvals. Dependency scripts outside this allowlist remain blocked.
 
-pnpm 11's default 24-hour release-age policy remains active. The only immediate-install exception is the exact reviewed internal version `@thehypertextstudio/web-config@0.0.1`. New package versions require their own review; no organization-wide age exception is configured.
+pnpm 11's default 24-hour release-age policy remains active. The only immediate-install exceptions are the exact reviewed internal versions `@thehypertextstudio/web-config@0.0.3` and `@thehypertextstudio/format-config@0.0.1`. New package versions require their own review; no organization-wide age exception is configured.
 
 CI uses each repository's short-lived `GITHUB_TOKEN` with `packages: read` and explicit package read grants. Install authentication uses a temporary trusted pnpm user configuration containing only an environment placeholder; the install step removes it on exit. Keep credentials outside repository files and build artifacts.
 
