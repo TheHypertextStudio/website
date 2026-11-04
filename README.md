@@ -5,9 +5,12 @@ The company website for Hypertext Studio: Docket, LogDate, Curfew, company infor
 ## Start here
 
 ```sh
+./bootstrap packages setup
 ./bootstrap worktree prepare
 pnpm dev
 ```
+
+Package authentication setup runs once per machine after GitHub CLI login with package-read access. Fresh worktrees reuse it without token exports.
 
 Node is pinned in `.nvmrc`; pnpm and the shared frontend packages are pinned in `package.json` and `pnpm-lock.yaml`. See [configuration](docs/configuration.md) for registry authentication and optional values.
 
