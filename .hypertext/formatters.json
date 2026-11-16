@@ -119,6 +119,11 @@
       "reason": "Tool-owned dependency lock, credential/value file, or exact line protocol; preserve its semantic bytes."
     },
     {
+      "include": [".github/CODEOWNERS"],
+      "kind": "non-formattable",
+      "reason": "Line-oriented ownership patterns; GitHub reads each line as a path rule."
+    },
+    {
       "include": [".gitattributes"],
       "kind": "non-formattable",
       "reason": "Tool-owned dependency lock, credential/value file, or exact line protocol; preserve its semantic bytes."
