@@ -26,7 +26,7 @@ Node is pinned in `.nvmrc`; pnpm and the shared frontend packages are pinned in 
 | `make dev-all`                 | Start the site and five supporting Workers locally    |
 | `make test-e2e-all`            | Run the existing cross-browser checks                 |
 
-Read [local development](docs/development.md) for the site and support-service workflows.
+Read [local development](docs/DEVELOPMENT.md) for the site and support-service workflows.
 
 ## Hosting and services
 
@@ -41,7 +41,7 @@ Production runs on Workers Static Assets through the managed `hypertext.studio` 
 ## Documentation
 
 - [Configuration](docs/configuration.md)
-- [Local development](docs/development.md)
+- [Local development](docs/DEVELOPMENT.md)
 - [Architecture](docs/architecture.md)
 - [Deployment and rollback](docs/deployment.md)
 - [Operations](docs/operations.md)

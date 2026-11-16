@@ -1,6 +1,25 @@
 # Local development
 
-Prepare a fresh checkout:
+## Quickstart
+
+Installing dependencies needs read access to the Studio's private `@thehypertextstudio` packages (`web-config`, which supplies the shared lint, format and TypeScript settings). Maintainers have it; without it, `pnpm install` stops with an authorization error. An outside contributor can still propose a change: open a pull request, and its checks install, test and build it.
+
+The toolchain is Node 24.20.0 (`.nvmrc`) and pnpm 11.9.0 (`packageManager` in `package.json`, activated by Corepack).
+
+With package access, a fresh clone builds and tests with:
+
+```sh
+corepack enable
+pnpm install --frozen-lockfile
+pnpm check
+pnpm build
+```
+
+`pnpm check` runs formatting, linting, type checking and the unit and Worker tests. `pnpm build` writes the site to `dist/`. Run `pnpm dev:astro` to serve the site on port 4321.
+
+## Maintainer setup
+
+Prepare a fresh checkout with the Studio bootstrap:
 
 ```sh
 ./bootstrap worktree prepare
